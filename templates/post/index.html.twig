@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% if is_granted('ROLE_USER') %}
+        {{ form_start(form) }}
+            {{ form_row(form.content) }}
+            <button type="submit" class="btn btn-primary" formnovalidate>Save</button>
+        {{ form_end(form) }}
+    {% endif %}
+
+    {% for post in posts %}
+        <div class="row mt-3">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mt-2 text-muted">{{ post.createdAt|date }}</h6>
+                        <p class="card-text">{{ post.content }}</p>
+                        <a href="{{ path('post_view', {'id': post.id}) }}" class="card-link">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

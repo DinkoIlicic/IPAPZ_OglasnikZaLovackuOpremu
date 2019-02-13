@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row mt-3">
+        <div class="col-lg-12">
+            <div class="jumbotron">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <p class="text-muted">{{ post.createdAt|date }}</p>
+                    </div>
+                    <div class="col-lg-9 text-right">
+                        {% if app.user == post.user %}
+                            <a href="{{ path('post_delete', {id: post.id}) }}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <p>{{ post.content }}</p>
+                {% if is_granted('ROLE_USER') %}
+                    <a href="{{ path('post_like', {id: post.id}) }}"
+                       class="fa{% if userLikesPost %}s{% else %}r{% endif %} fa-heart" id="post-likes">
+                        ({{ post.likesCount }})
+                    </a>
+                {% else %}
+                    Likes: {{ post.likesCount }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if is_granted('ROLE_USER') %}
+        {{ form_start(commentForm) }}
+            {{ form_row(commentForm.content) }}
+            <button type="submit" class="btn btn-primary" formnovalidate>Save</button>
+        {{ form_end(commentForm) }}
+    {% endif %}
+
+    {% for comment in post.comments %}
+        <div class="row mt-3">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mt-2 text-muted">{{ comment.createdAt|date }}</h6>
+                        <h5 class="card-title">{{ comment.user.fullName }} says:</h5>
+                        <p class="card-text">{{ comment.content }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/post_likes.js') }}"></script>
+{% endblock %}
