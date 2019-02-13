@@ -62,6 +62,19 @@ class Post
     private $likes;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Tag", mappedBy="post", cascade={"persist", "remove"})
+     */
+    private $tags;
+
+    /**
+     * @return Collection|Tag[]
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
      * @return Collection|Comment[]
      */
     public function getComments()
@@ -75,6 +88,34 @@ class Post
     public function getLikes()
     {
         return $this->likes;
+    }
+
+    /**
+     * @param Tag $tag
+     * @return $this
+     */
+    public function addTag(Tag $tag)
+    {
+        if (!$this->tags->contains($tag)) {
+            $tag->setPost($this);
+            $this->tags[] = $tag;
+        }
+        return $this;
+    }
+
+    /**
+     * @param Tag $tag
+     * @return $this
+     */
+    public function removeTag(Tag $tag)
+    {
+        if ($this->tags->contains($tag)) {
+            $this->tags->removeElement($tag);
+            if ($tag->getPost() === $this) {
+                $tag->setPost(null);
+            }
+        }
+        return $this;
     }
 
     /**
@@ -105,6 +146,10 @@ class Post
         return $this;
     }
 
+    /**
+     * @param PostLike $like
+     * @return $this
+     */
     public function addLike(PostLike $like)
     {
         if (!$this->likes->contains($like)) {
@@ -175,6 +220,7 @@ class Post
         $this->id = $id;
         return $this;
     }
+
 
     /**
      * @return string
