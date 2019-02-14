@@ -33,7 +33,7 @@ class Tag
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Post", inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Post", inversedBy="tags")
      * @ORM\JoinColumn(nullable=false)
      */
     private $post;

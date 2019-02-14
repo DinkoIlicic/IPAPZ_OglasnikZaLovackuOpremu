@@ -5,10 +5,13 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Entity\PostLike;
+use App\Entity\Tag;
 use App\Form\CommentFormType;
 use App\Form\PostFormType;
 use App\Repository\PostLikeRepository;
 use App\Repository\PostRepository;
+use App\Repository\TagRepository;
+use Doctrine\DBAL\Types\TextType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -17,6 +20,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class PostController extends AbstractController
 {
@@ -29,6 +35,7 @@ class PostController extends AbstractController
      */
     public function index(Request $request, EntityManagerInterface $entityManager, PostRepository $postRepository)
     {
+
         $form = $this->createForm(PostFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
@@ -41,13 +48,32 @@ class PostController extends AbstractController
             return $this->redirectToRoute('post_index');
         }
 
-        $posts = $postRepository->getAllInLastWeek();
-
+        $formSearch = $this->createFormBuilder(null)
+            ->add('query', TextareaType::class, [
+                'required' => false
+            ])
+            ->add('search', SubmitType::class, [
+                'attr' => [
+                    'class' => 'btn btn-primary'
+                ]
+            ])
+            ->getForm();
+        $formSearch->handleRequest($request);
+        $postsFind = $formSearch->getData();
+        if($formSearch->isSubmitted() && $formSearch->isValid() && $postsFind['query'] !== null) {
+            $postsFind = $formSearch->getData();
+            $posts = $postRepository->getAllPostsByTag($postsFind['query']);
+        } else {
+            $posts = $postRepository->getAllInLastWeek();
+        }
         return $this->render('post/index.html.twig', [
             'form' => $form->createView(),
-            'posts' => $posts
+            'posts' => $posts,
+            'formSearch' => $formSearch->createView()
         ]);
     }
+
+
 
     /**
      * @Route("/view/{id}", name="post_view")
@@ -57,6 +83,8 @@ class PostController extends AbstractController
      * @param PostLikeRepository $likeRepository
      * @return Response
      */
+
+
     public function show(Post $post, Request $request, EntityManagerInterface $entityManager, PostLikeRepository $likeRepository)
     {
         $form = $this->createForm(CommentFormType::class);
@@ -75,12 +103,15 @@ class PostController extends AbstractController
             'user' => $this->getUser(),
             'post' => $post
         ]);
+
+
         return $this->render('post/view.html.twig', [
             'post' => $post,
             'commentForm' => $form->createView(),
             'userLikesPost' => $userLikesPost
         ]);
     }
+
 
     /**
      * @Security("user == post.getUser()")

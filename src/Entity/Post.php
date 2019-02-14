@@ -24,6 +24,7 @@ class Post
     {
         $this->comments = new ArrayCollection();
         $this->likes = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     /**
@@ -96,11 +97,16 @@ class Post
      */
     public function addTag(Tag $tag)
     {
-        if (!$this->tags->contains($tag)) {
-            $tag->setPost($this);
-            $this->tags[] = $tag;
-        }
-        return $this;
+
+        $tag->setPost($this);
+
+        $this->tags->add($tag);
+
+//        if (!$this->tags->contains($tag)) {
+//            $tag->setPost($this);
+//            $this->tags[] = $tag;
+//        }
+//        return $this;
     }
 
     /**
@@ -109,13 +115,16 @@ class Post
      */
     public function removeTag(Tag $tag)
     {
-        if ($this->tags->contains($tag)) {
-            $this->tags->removeElement($tag);
-            if ($tag->getPost() === $this) {
-                $tag->setPost(null);
-            }
-        }
-        return $this;
+
+        $this->tags->removeElement($tag);
+
+//        if ($this->tags->contains($tag)) {
+//            $this->tags->removeElement($tag);
+//            if ($tag->getPost() === $this) {
+//                $tag->setPost(null);
+//            }
+//        }
+//        return $this;
     }
 
     /**
