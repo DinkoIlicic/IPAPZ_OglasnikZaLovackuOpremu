@@ -30,8 +30,8 @@ class PostRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->innerJoin('App\Entity\Tag','t','WITH','p.id = t.post')
-            ->where('t.name = :tag')
-            ->setParameter('tag', $tag)
+            ->where('t.name LIKE :tag')
+            ->setParameter('tag', '%' . $tag . '%')
             ->setMaxResults(100)
             ->orderBy('p.createdAt', 'DESC')
             ->getQuery()
