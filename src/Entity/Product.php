@@ -13,8 +13,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * Class Product
@@ -47,10 +45,7 @@ class Product
      */
     private $seller;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Sold", mappedBy="product")
-     */
-    private $sold;
+
 
     /**
      * @ORM\Column(type="decimal", scale=2)
@@ -74,12 +69,6 @@ class Product
      *
      */
     private $image;
-
-    public function __construct()
-    {
-        $this->sold = new ArrayCollection();
-    }
-
 
     /**
      * @return mixed
@@ -210,21 +199,5 @@ class Product
     public function getVisibility()
     {
         return $this->visibility;
-    }
-
-    /**
-     * @return Collection|Sold[]
-     */
-    public function getSold(): Collection
-    {
-        return $this->sold;
-    }
-
-    /**
-     * @param mixed $sold
-     */
-    public function setSold($sold): void
-    {
-        $this->sold = $sold;
     }
 }

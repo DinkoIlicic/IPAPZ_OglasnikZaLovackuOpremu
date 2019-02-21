@@ -11,8 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
@@ -58,15 +56,6 @@ class User extends AbstractController implements UserInterface
      */
     private $lastName;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Sold", mappedBy="user")
-     */
-    private $sold;
-
-    public function __construct()
-    {
-        $this->sold = new ArrayCollection();
-    }
 
     public function getFullName()
     {
@@ -186,21 +175,5 @@ class User extends AbstractController implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
-
-    /**
-     * @return Collection|Sold[]
-     */
-    public function getSold(): Collection
-    {
-        return $this->sold;
-    }
-
-    /**
-     * @param mixed $sold
-     */
-    public function setSold($sold): void
-    {
-        $this->sold = $sold;
     }
 }
