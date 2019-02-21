@@ -17,6 +17,7 @@ use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
+use App\Repository\SoldRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -135,6 +136,25 @@ class AdvertisementController extends AbstractController
             'product' => $product,
             'seller' => $seller,
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/myitems", name="myitems")
+     * @param CategoryRepository $categoryRepository
+     * @param SoldRepository $soldRepository
+     * @return Response
+     */
+    public function myItems(CategoryRepository $categoryRepository, SoldRepository $soldRepository)
+    {
+        $categories = $categoryRepository->findAll();
+        $myitems = $soldRepository->findBy([
+            'user' => $this->getUser()->getId()
+        ]);
+
+        return $this->render('advertisement/myitems.html.twig', [
+            'categories' => $categories,
+            'myitems' => $myitems
         ]);
     }
 }

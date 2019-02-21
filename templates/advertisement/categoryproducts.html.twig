@@ -5,6 +5,9 @@
             <a class="nav-link" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }} </a>
         </li>
     {% endfor %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('myitems') }}">My Items</a>
+    </li>
 {% endblock %}
 
 {% block body %}
@@ -41,5 +44,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-
 {% endblock %}

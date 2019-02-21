@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block categories %}
+    {% for category in categories %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }}</a>
+        </li>
+    {% endfor %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('myitems') }}">My Items</a>
+    </li>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            {% for item in myitems %}
+                <div class="col-sm">
+                    <img width="200" height="200" src="../../../../../uploads/image/{{ item.product.image }}" alt="">
+                    <p>Product Name: {{ item.product.name }}</p>
+                    <p>Category Name: {{ item.product.category.name }}</p>
+                    <p>Seller Name: {{ item.product.seller.firstname }} {{ item.product.seller.lastname }}</p>
+                    <p>Seller email: {{ item.product.seller.email }}</p>
+                    <p>Quantity: {{ item.quantity }}</p>
+                    <p>Additional info: {{ item.product.content }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

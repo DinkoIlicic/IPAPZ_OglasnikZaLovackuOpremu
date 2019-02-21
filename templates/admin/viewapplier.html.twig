@@ -7,11 +7,16 @@
     <div>
         <p> User Name: {{ seller.user.firstname }} {{ seller.user.lastname }}</p>
         <p> User Email: {{ seller.user.email }} </p>
-        <p> User Phonenumber: {{ seller.phonenumber  }} </p>
+        <p> User Phone number: {{ seller.phonenumber  }} </p>
         <p> Why should You accept me as seller: {{ seller.applycontent  }} </p>
     </div>  <hr />
 
     <div>
+        {% if verified == 0 %}
+            <a class="btn btn-primary" href="{{ path('verifyapplier', {'id': seller.id}) }}">Verify seller</a>
+        {% elseif verified == 1 %}
+            <a class="btn btn-primary" href="{{ path('unverifyapplier', {'id': seller.id}) }}">Undo verify seller</a>
+        {% endif %}
         <p>To do list:</p>
         <p>Change inside table seller row verified from 0 to 1 and add to user row roles[] role: ROLE_SELLER</p>
     </div>

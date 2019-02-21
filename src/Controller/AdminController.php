@@ -13,6 +13,7 @@ use App\Form\CategoryFormType;
 use App\Repository\CategoryRepository;
 use App\Repository\SellerRepository;
 use App\Repository\ProductRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,8 +57,51 @@ class AdminController extends AbstractController
     public function listOneApplierForSeller(Seller $seller, SellerRepository $sellerRepository)
     {
         $sell = $sellerRepository->findOneBy(['id' => $seller->getId()]);
+
+
         return $this->render('admin/viewapplier.html.twig', [
             'seller' => $sell,
+            'verified' => $sell->getVerified()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/verifyapplier/{id}", name="verifyapplier")
+     * @param SellerRepository $sellerRepository
+     * @param UserRepository $userRepository
+     * @param Seller $seller
+     * @return Response
+     */
+    public function verifyApplier(Seller $seller, SellerRepository $sellerRepository, UserRepository $userRepository)
+    {
+        $sellerRepository->updateSellerToVerify($seller->getUser()->getId());
+        $userRepository->updateUserRoleSeller($seller->getUser()->getId());
+
+        $sell = $sellerRepository->findOneBy(['id' => $seller->getId()]);
+
+        return $this->render('admin/viewapplier.html.twig', [
+            'seller' => $sell,
+            'verified' => 1
+        ]);
+    }
+
+    /**
+     * @Route("/admin/unverifyapplier/{id}", name="unverifyapplier")
+     * @param SellerRepository $sellerRepository
+     * @param UserRepository $userRepository
+     * @param Seller $seller
+     * @return Response
+     */
+    public function unVerifyApplier(Seller $seller, SellerRepository $sellerRepository, UserRepository $userRepository)
+    {
+        $sellerRepository->updateSellerToUnverify($seller->getUser()->getId());
+        $userRepository->updateUserRoleUser($seller->getUser()->getId());
+
+        $sell = $sellerRepository->findOneBy(['id' => $seller->getId()]);
+
+        return $this->render('admin/viewapplier.html.twig', [
+            'seller' => $sell,
+            'verified' => 0
         ]);
     }
 
