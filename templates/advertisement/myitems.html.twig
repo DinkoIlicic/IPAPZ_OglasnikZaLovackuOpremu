@@ -6,9 +6,11 @@
             <a class="nav-link" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }}</a>
         </li>
     {% endfor %}
-    <li class="nav-item">
-        <a class="nav-link" href="{{ path('myitems') }}">My Items</a>
-    </li>
+    {% if is_granted('ROLE_USER') %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('myitems') }}">My Items</a>
+        </li>
+    {% endif %}
 {% endblock %}
 
 {% block body %}

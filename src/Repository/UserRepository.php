@@ -26,7 +26,7 @@ class UserRepository extends ServiceEntityRepository
             ->set('s.roles', ':role')
             ->where('s.id=:user_id')
             ->setParameter('user_id', $user)
-            ->setParameter('role', ["ROLE_SELLER"])
+            ->setParameter('role', '["ROLE_SELLER"]')
             ->getQuery()
             ->getResult();
     }
@@ -38,7 +38,7 @@ class UserRepository extends ServiceEntityRepository
             ->set('s.roles', ':role')
             ->where('s.id=:user_id')
             ->setParameter('user_id', $user)
-            ->setParameter('role', ["ROLE_USER"])
+            ->setParameter('role', '["ROLE_USER"]')
             ->getQuery()
             ->getResult();
     }
