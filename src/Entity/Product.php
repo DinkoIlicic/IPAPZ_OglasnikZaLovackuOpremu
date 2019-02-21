@@ -45,8 +45,6 @@ class Product
      */
     private $seller;
 
-
-
     /**
      * @ORM\Column(type="decimal", scale=2)
      */

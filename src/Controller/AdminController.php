@@ -67,40 +67,37 @@ class AdminController extends AbstractController
 
     /**
      * @Route("/admin/verifyapplier/{id}", name="verifyapplier")
-     * @param SellerRepository $sellerRepository
-     * @param UserRepository $userRepository
      * @param Seller $seller
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function verifyApplier(Seller $seller, SellerRepository $sellerRepository, UserRepository $userRepository)
+    public function verifyApplier(Seller $seller, EntityManagerInterface $entityManager)
     {
-        $sellerRepository->updateSellerToVerify($seller->getUser()->getId());
-        $userRepository->updateUserRoleSeller($seller->getUser()->getId());
+        $seller->setVerified(1);
+        $seller->getUser()->setRoles(['ROLE_SELLER']);
+        $entityManager->flush();
 
-        $sell = $sellerRepository->findOneBy(['id' => $seller->getId()]);
 
         return $this->render('admin/viewapplier.html.twig', [
-            'seller' => $sell,
+            'seller' => $seller,
             'verified' => 1
         ]);
     }
 
     /**
      * @Route("/admin/unverifyapplier/{id}", name="unverifyapplier")
-     * @param SellerRepository $sellerRepository
-     * @param UserRepository $userRepository
+     * @param EntityManagerInterface $entityManager
      * @param Seller $seller
      * @return Response
      */
-    public function unVerifyApplier(Seller $seller, SellerRepository $sellerRepository, UserRepository $userRepository)
+    public function unVerifyApplier(Seller $seller, EntityManagerInterface $entityManager)
     {
-        $sellerRepository->updateSellerToUnverify($seller->getUser()->getId());
-        $userRepository->updateUserRoleUser($seller->getUser()->getId());
-
-        $sell = $sellerRepository->findOneBy(['id' => $seller->getId()]);
+        $seller->setVerified(0);
+        $seller->getUser()->setRoles(['ROLE_USER']);
+        $entityManager->flush();
 
         return $this->render('admin/viewapplier.html.twig', [
-            'seller' => $sell,
+            'seller' => $seller,
             'verified' => 0
         ]);
     }

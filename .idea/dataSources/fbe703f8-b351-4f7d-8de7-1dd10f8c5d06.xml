@@ -933,240 +933,299 @@
     <table id="235" parent="3" name="seller">
       <Collation>utf8mb4_unicode_ci</Collation>
     </table>
-    <table id="236" parent="3" name="user">
+    <table id="236" parent="3" name="sold">
       <Collation>utf8mb4_unicode_ci</Collation>
     </table>
-    <column id="237" parent="232" name="id">
+    <table id="237" parent="3" name="user">
+      <Collation>utf8mb4_unicode_ci</Collation>
+    </table>
+    <column id="238" parent="232" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="238" parent="232" name="user_id">
+    <column id="239" parent="232" name="user_id">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="239" parent="232" name="name">
+    <column id="240" parent="232" name="name">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="240" parent="232" name="visibility">
+    <column id="241" parent="232" name="visibility">
       <Position>4</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="241" parent="232" name="IDX_64C19C1A76ED395">
+    <index id="242" parent="232" name="IDX_64C19C1A76ED395">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="242" parent="232" name="PRIMARY">
+    <key id="243" parent="232" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="243" parent="232" name="FK_64C19C1A76ED395">
+    <foreign-key id="244" parent="232" name="FK_64C19C1A76ED395">
       <ColNames>user_id</ColNames>
       <RefSchemaName>lovackaoprema</RefSchemaName>
       <RefTableName>user</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="244" parent="233" name="version">
+    <column id="245" parent="233" name="version">
       <Position>1</Position>
       <DataType>varchar(14)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="245" parent="233" name="executed_at">
+    <column id="246" parent="233" name="executed_at">
       <Position>2</Position>
       <Comment>(DC2Type:datetime_immutable)</Comment>
       <DataType>datetime|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="246" parent="233" name="PRIMARY">
+    <key id="247" parent="233" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>version</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="247" parent="234" name="id">
+    <column id="248" parent="234" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="248" parent="234" name="category_id">
+    <column id="249" parent="234" name="category_id">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="249" parent="234" name="seller_id">
+    <column id="250" parent="234" name="seller_id">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="250" parent="234" name="name">
+    <column id="251" parent="234" name="name">
       <Position>4</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="251" parent="234" name="price">
+    <column id="252" parent="234" name="price">
       <Position>5</Position>
       <DataType>decimal(10,2 digit)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="252" parent="234" name="content">
+    <column id="253" parent="234" name="content">
       <Position>6</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="253" parent="234" name="visibility">
+    <column id="254" parent="234" name="visibility">
       <Position>7</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="254" parent="234" name="image">
+    <column id="255" parent="234" name="image">
       <Position>8</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="255" parent="234" name="IDX_D34A04AD12469DE2">
+    <index id="256" parent="234" name="IDX_D34A04AD12469DE2">
       <ColNames>category_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="256" parent="234" name="IDX_D34A04AD8DE820D9">
+    <index id="257" parent="234" name="IDX_D34A04AD8DE820D9">
       <ColNames>seller_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="257" parent="234" name="PRIMARY">
+    <key id="258" parent="234" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="258" parent="234" name="FK_D34A04AD12469DE2">
+    <foreign-key id="259" parent="234" name="FK_D34A04AD12469DE2">
       <ColNames>category_id</ColNames>
       <RefSchemaName>lovackaoprema</RefSchemaName>
       <RefTableName>category</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="259" parent="234" name="FK_D34A04AD8DE820D9">
+    <foreign-key id="260" parent="234" name="FK_D34A04AD8DE820D9">
       <ColNames>seller_id</ColNames>
       <RefSchemaName>lovackaoprema</RefSchemaName>
       <RefTableName>user</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="260" parent="235" name="id">
+    <column id="261" parent="235" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="261" parent="235" name="user_id">
+    <column id="262" parent="235" name="user_id">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="262" parent="235" name="phone_number">
+    <column id="263" parent="235" name="phone_number">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="263" parent="235" name="apply_content">
+    <column id="264" parent="235" name="apply_content">
       <Position>4</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="264" parent="235" name="verified">
+    <column id="265" parent="235" name="verified">
       <Position>5</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="265" parent="235" name="UNIQ_FB1AD3FCA76ED395">
+    <index id="266" parent="235" name="UNIQ_FB1AD3FCA76ED395">
       <ColNames>user_id</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="266" parent="235" name="PRIMARY">
+    <key id="267" parent="235" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="267" parent="235" name="UNIQ_FB1AD3FCA76ED395">
+    <key id="268" parent="235" name="UNIQ_FB1AD3FCA76ED395">
       <ColNames>user_id</ColNames>
       <UnderlyingIndexName>UNIQ_FB1AD3FCA76ED395</UnderlyingIndexName>
     </key>
-    <foreign-key id="268" parent="235" name="FK_FB1AD3FCA76ED395">
+    <foreign-key id="269" parent="235" name="FK_FB1AD3FCA76ED395">
       <ColNames>user_id</ColNames>
       <RefSchemaName>lovackaoprema</RefSchemaName>
       <RefTableName>user</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="269" parent="236" name="id">
+    <column id="270" parent="236" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="270" parent="236" name="email">
+    <column id="271" parent="236" name="user_id">
+      <Position>2</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="272" parent="236" name="product_id">
+      <Position>3</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="273" parent="236" name="quantity">
+      <Position>4</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="274" parent="236" name="bought_at">
+      <Position>5</Position>
+      <DataType>datetime|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="275" parent="236" name="IDX_98D2DD99A76ED395">
+      <ColNames>user_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="276" parent="236" name="IDX_98D2DD994584665A">
+      <ColNames>product_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="277" parent="236" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="278" parent="236" name="FK_98D2DD99A76ED395">
+      <ColNames>user_id</ColNames>
+      <RefSchemaName>lovackaoprema</RefSchemaName>
+      <RefTableName>user</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <foreign-key id="279" parent="236" name="FK_98D2DD994584665A">
+      <ColNames>product_id</ColNames>
+      <RefSchemaName>lovackaoprema</RefSchemaName>
+      <RefTableName>product</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <column id="280" parent="237" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="281" parent="237" name="email">
       <Position>2</Position>
       <DataType>varchar(180)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="271" parent="236" name="roles">
+    <column id="282" parent="237" name="roles">
       <Position>3</Position>
       <DataType>json|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="272" parent="236" name="password">
+    <column id="283" parent="237" name="password">
       <Position>4</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="273" parent="236" name="first_name">
+    <column id="284" parent="237" name="first_name">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="274" parent="236" name="last_name">
+    <column id="285" parent="237" name="last_name">
       <Position>6</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="275" parent="236" name="UNIQ_8D93D649E7927C74">
+    <index id="286" parent="237" name="UNIQ_8D93D649E7927C74">
       <ColNames>email</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="276" parent="236" name="PRIMARY">
+    <key id="287" parent="237" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="277" parent="236" name="UNIQ_8D93D649E7927C74">
+    <key id="288" parent="237" name="UNIQ_8D93D649E7927C74">
       <ColNames>email</ColNames>
       <UnderlyingIndexName>UNIQ_8D93D649E7927C74</UnderlyingIndexName>
     </key>

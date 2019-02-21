@@ -19,29 +19,6 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function updateUserRoleSeller($user)
-    {
-        return $this->createQueryBuilder('s')
-            ->update()
-            ->set('s.roles', ':role')
-            ->where('s.id=:user_id')
-            ->setParameter('user_id', $user)
-            ->setParameter('role', '["ROLE_SELLER"]')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function updateUserRoleUser($user)
-    {
-        return $this->createQueryBuilder('s')
-            ->update()
-            ->set('s.roles', ':role')
-            ->where('s.id=:user_id')
-            ->setParameter('user_id', $user)
-            ->setParameter('role', '["ROLE_USER"]')
-            ->getQuery()
-            ->getResult();
-    }
 
     // /**
     //  * @return User[] Returns an array of User objects
