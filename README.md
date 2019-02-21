@@ -1,16 +1,26 @@
-Symfony zadaća
-========
-Obavezne funkcionalnosti
---------
-1. Prilikom kreiranja novog posta dodati mogućnost kreiranja tagova
-2. Moguće je dodati neograničeni broj tagova, a sve dok se post ne spremi ih je moguće i obrisati
-3. Na početnoj stranici omogućiti pretraživanje postova po tagovima
+# IPAPZ_OglasnikZaLovackuOpremu
+
+Oglasnik(lovačka oprema)  
+
+Nužne funkcionalnosti
+Javne funckije: Pregled svih kategorija i proizvoda po kategorijama, poslati mail prodavacu, recenziju ostavit, 
+1. User, Seller, Admin
+2. User mogucnost pregleda, recenzije, javljanja prodavacu u vezi kupnje
+3. Seller Mogućnost unosa/prezentiranja proizvoda 
+4. Admin mogucnost nadgledavanja svih proizvoda, odobravanja/sakrivanje proizvoda, unos novih kategorija
+5. many to many kupac -> sale(quantity) <- product <- prodavac
 
 Poželjne funkcionalnosti
---------
-1. Dodati validaciju na tagove da ne smiju biti prazni i ispravno pokazati greške unutar forme
+1. Seller update
+2. Admin delete funckije
+3. Sve ostalo uz to raditi
+4. Rad s slikama vazno
 
 
-Kreirati GitHub repozitorij InchooPHPAkademijaSymfony.
-Na serveru koristiti bazu polaznikNN_symfony s pristupnim podacima koje ste dobili. 
-Zadaću postaviti na server u symfony direktorij. Aplikacija mora biti dostupna na adresi polaznikNNsymfony.inchoo4u.net. 
+Opcionalne funkcionalnosti
+1. rwd
+2.Export sold products in excel
+3.User pdf bought products
+4.grafikon
+5.slanje mailova
+6.na treci api paypal
