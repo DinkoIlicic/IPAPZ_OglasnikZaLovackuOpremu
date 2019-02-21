@@ -22,10 +22,12 @@
             </div>
             <div class="col-sm">
                 <p>Price: {{ product.price }} Euro per product</p>
-                {{ form_start(form) }}
-                    {{ form_row(form.quantity) }}
-                    <button type="submit" class="btn btn-primary" formnovalidate>Buy</button>
-                {{ form_end(form) }}
+                {% if is_granted('ROLE_USER') %}
+                    {{   form_start(form) }}
+                        {{ form_row(form.quantity) }}
+                        <button type="submit" class="btn btn-primary" formnovalidate>Buy</button>
+                    {{ form_end(form) }}
+                {% endif %}
             </div>
         </div>
         <hr />
