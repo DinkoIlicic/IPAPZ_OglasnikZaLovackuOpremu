@@ -8,9 +8,12 @@
 
 namespace App\Controller;
 use App\Entity\Category;
+use App\Entity\Product;
+use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Seller;
 use App\Form\SellerFormType;
+use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
@@ -98,5 +101,40 @@ class AdvertisementController extends AbstractController
                 'message' => ''
             ]);
         }
+    }
+
+    /**
+     * @Route("/checkproduct/{id}", name="checkproduct")
+     * @param CategoryRepository $categoryRepository
+     * @param SellerRepository $sellerRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Product $product
+     * @param Request $request
+     * @return Response
+     */
+    public function checkProduct(Request $request, Product $product, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, SellerRepository $sellerRepository)
+    {
+        $categories = $categoryRepository->findAll();
+        $seller = $sellerRepository->findOneBy([
+            'user' => $product->getSeller()
+        ]);
+        $form = $this->createForm(SoldFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
+            /** @var Sold $sold */
+            $sold = $form->getData();
+            $sold->setUser($this->getUser());
+            $sold->setProduct($product);
+            $entityManager->persist($sold);
+            $entityManager->flush();
+            $this->addFlash('success', 'Applied for seller position!');
+            return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
+        }
+        return $this->render('advertisement/productpage.html.twig', [
+            'categories' => $categories,
+            'product' => $product,
+            'seller' => $seller,
+            'form' => $form->createView()
+        ]);
     }
 }

@@ -8,10 +8,12 @@
 
 namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class Sold
  * @ORM\Entity(repositoryClass="App\Repository\SoldRepository")
+ * @ORM\HasLifecycleCallbacks()
  * @package App\Entity
  */
 class Sold
@@ -39,6 +41,11 @@ class Sold
      * @ORM\Column(type="integer")
      */
     private $quantity;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $boughtAt;
 
     /**
      * @return mixed
@@ -103,4 +110,29 @@ class Sold
     {
         $this->quantity = $quantity;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getBoughtAt()
+    {
+        return $this->boughtAt;
+    }
+
+    /**
+     * @param mixed $boughtAt
+     */
+    public function setBoughtAt($boughtAt): void
+    {
+        $this->boughtAt = $boughtAt;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function onPrePersist()
+    {
+        $this->boughtAt = new \DateTime('now');
+    }
+
 }

@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block categories %}
+    {% for category in categories %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }}</a>
+        </li>
+    {% endfor %}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <img width="200" height="200" src="../../../../../uploads/image/{{ product.image }}" alt="">
+                <p>Product Name: {{ product.name }}</p>
+                <p>Category Name: {{ product.category.name }}</p>
+                <p>Seller Name: {{ product.seller.firstname }} {{ product.seller.lastname }}</p>
+                <p>Seller email: {{ product.seller.email }}</p>
+                <p>Seller phone number: {{ seller.phonenumber }} </p>
+                <p>Additional info: {{ product.content }}</p>
+            </div>
+            <div class="col-sm">
+                <p>Price: {{ product.price }} Euro per product</p>
+                {{ form_start(form) }}
+                    {{ form_row(form.quantity) }}
+                    <button type="submit" class="btn btn-primary" formnovalidate>Buy</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-sm">
+                <p>To do: recenzija, email forma</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
