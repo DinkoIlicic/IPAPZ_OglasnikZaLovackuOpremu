@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <p>{{ message }}</p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">PhoneNumber</th>
+            <th scope="col">Content</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for seller in sellers %}
+                <tr>
+                    <td>{{ seller.id }}</td>
+                    <td><a href="{{ path('checkoneapplierforseller', {'id': seller.id}) }}" class="card-link">{{ seller.user.firstname }} {{ seller.user.lastname }}</a></td>
+                    <td>{{ seller.phonenumber }}</td>
+                    <td>{{ seller.applycontent }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

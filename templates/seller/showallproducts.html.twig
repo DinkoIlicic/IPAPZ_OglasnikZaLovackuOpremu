@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <p>All products</p>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">User name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Content</th>
+            <th scope="col">Price</th>
+            <th scope="col">Image</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.seller.firstname }} {{ product.seller.lastname }}</td>
+                <td>{{ product.category.name }}</td>
+                <td>{{ product.content }}</td>
+                <td>{{ product.price }} Euro</td>
+                <td><img width="50" height="50" src="../../../../../uploads/image/{{ product.image }}" alt=""></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

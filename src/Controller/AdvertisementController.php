@@ -1,0 +1,102 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dinko
+ * Date: 19.02.19.
+ * Time: 08:38
+ */
+
+namespace App\Controller;
+use App\Entity\Category;
+use App\Entity\User;
+use App\Entity\Seller;
+use App\Form\SellerFormType;
+use App\Repository\CategoryRepository;
+use App\Repository\ProductRepository;
+use App\Repository\SellerRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+class AdvertisementController extends AbstractController
+{
+    /**
+     * @Route("/", name="advertisement_index")
+     * @param CategoryRepository $categoryRepository
+     * @param ProductRepository $productRepository
+     * @return Response
+     */
+    public function index(CategoryRepository $categoryRepository, ProductRepository $productRepository)
+    {
+        $categories = $categoryRepository->findAll();
+        $products = $productRepository->findBy(
+            array('visibility' => 1),
+            array('id' => 'DESC'),
+            10,
+            0
+        );
+        return $this->render('advertisement/index.html.twig', [
+            'categories' => $categories,
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * @Route("/showcategories/{id}", name="showcategories")
+     * @param CategoryRepository $categoryRepository
+     * @param ProductRepository $productRepository
+     * @param Category $category
+     * @return Response
+     */
+    public function showProductsPerCategory(Category $category, CategoryRepository $categoryRepository, ProductRepository $productRepository)
+    {
+        $categories = $categoryRepository->findAll();
+        $products = $productRepository->findBy([
+            'category' => $category->getId()
+        ]);
+        return $this->render('advertisement/categoryproducts.html.twig', [
+            'categories' => $categories,
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * @Route("/applyforseller", name="applyforseller_index")
+     * @return Response
+     * @param EntityManagerInterface $entityManager
+     * @param SellerRepository $sellerRepository
+     * @param Request $request
+     */
+    public function applyForSeller(Request $request, EntityManagerInterface $entityManager, SellerRepository $sellerRepository)
+    {
+        $applied = $sellerRepository->findOneBy([
+            'user' => $this->getUser()
+        ]);
+
+        if($applied !== null) {
+            return $this->render('advertisement/applyforseller.html.twig', [
+                'message' => 'Applied',
+                'applied' => $applied
+            ]);
+        } else {
+            $form = $this->createForm(SellerFormType::class);
+            $form->handleRequest($request);
+            if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
+                /** @var Seller $seller */
+                $seller = $form->getData();
+                $seller->setUser($this->getUser());
+                $seller->setVerified(0);
+                $entityManager->persist($seller);
+                $entityManager->flush();
+                $this->addFlash('success', 'Applied for seller position!');
+                return $this->redirectToRoute('advertisement_index');
+            }
+            return $this->render('advertisement/applyforseller.html.twig', [
+                'form' => $form->createView(),
+                'message' => ''
+            ]);
+        }
+    }
+}

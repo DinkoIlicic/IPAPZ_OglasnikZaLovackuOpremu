@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <p>Welcome to Admin Page</p>
+    {% endif %}
+    <div>
+        <a class="nav-link" href="{{ path('checkapplyforseller') }}">List of appliers for Seller</a>
+        <a class="nav-link" href="{{ path('listofcategories') }}">List of categories</a>
+        <a class="nav-link" href="{{ path('listofproducts') }}">List of products</a>
+    </div>
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

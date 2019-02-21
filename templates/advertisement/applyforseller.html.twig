@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if is_granted('ROLE_USER') %}
+        {% if message %}
+            <p> Status: {{ message }} </p>
+            <p> Phone number: {{ applied.phonenumber }} </p>
+            <p> Apply content: {{ applied.applycontent }} </p>
+            {% if applied.verified == 0 %}
+                <p>Waiting for approval. </p>
+            {% elseif applied.verified == 1 %}
+                <p>Approved</p>
+            {% endif %}
+        {% else %}
+            {{ form_start(form) }}
+                {{ form_row(form.phone_number) }}
+                {{ form_row(form.apply_content) }}
+                <button type="submit" class="btn btn-primary" formnovalidate>Apply</button>
+            {{ form_end(form) }}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

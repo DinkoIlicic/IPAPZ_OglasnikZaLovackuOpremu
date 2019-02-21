@@ -2,16 +2,24 @@
 
 namespace App\Entity;
 
+use App\Entity\Seller;
+use App\Repository\SellerRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
-class User implements UserInterface
+class User extends AbstractController implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -49,6 +57,16 @@ class User implements UserInterface
      * @Assert\NotBlank()
      */
     private $lastName;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Sold", mappedBy="user")
+     */
+    private $sold;
+
+    public function __construct()
+    {
+        $this->sold = new ArrayCollection();
+    }
 
     public function getFullName()
     {
@@ -119,9 +137,14 @@ class User implements UserInterface
      */
     public function getRoles(): array
     {
+
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        if($this->email === 'mail1@gmail.com') {
+            $roles[] = 'ROLE_ADMIN';
+        } else {
+            $roles[] = 'ROLE_USER';
+        }
 
         return array_unique($roles);
     }
@@ -163,5 +186,21 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection|Sold[]
+     */
+    public function getSold(): Collection
+    {
+        return $this->sold;
+    }
+
+    /**
+     * @param mixed $sold
+     */
+    public function setSold($sold): void
+    {
+        $this->sold = $sold;
     }
 }

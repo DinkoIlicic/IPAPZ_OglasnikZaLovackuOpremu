@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <p>Hello to seller section</p>
+    </div>
+    <div>
+        <a class="nav-link" href="{{ path('insertproduct') }}">Insert new Product</a>
+        <a class="nav-link" href="{{ path('showproducts') }}">Show all Products</a>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

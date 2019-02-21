@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <p>Applying for seller position</p>
+    </div>
+    <div>
+        <p> User Name: {{ seller.user.firstname }} {{ seller.user.lastname }}</p>
+        <p> User Email: {{ seller.user.email }} </p>
+        <p> User Phonenumber: {{ seller.phonenumber  }} </p>
+        <p> Why should You accept me as seller: {{ seller.applycontent  }} </p>
+    </div>  <hr />
+
+    <div>
+        <p>To do list:</p>
+        <p>Change inside table seller row verified from 0 to 1 and add to user row roles[] role: ROLE_SELLER</p>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

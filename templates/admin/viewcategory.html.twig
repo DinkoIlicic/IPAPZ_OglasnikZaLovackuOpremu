@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <p>Category</p>
+    </div>
+    <div>
+        <p> Category name: {{ category.name }}</p>
+        <p> User Name: {{ category.user.firstname }} {{ category.user.lastname }}</p>
+        <p> Visibility: {{ category.visibility }} </p>
+    </div>  <hr />
+
+    <div>
+        <p>To do list:</p>
+        <p>Options to change visibility for category (hide/show)</p>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

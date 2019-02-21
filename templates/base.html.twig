@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{% block title %}PHP Academy Social Network{% endblock %}</title>
+    <title>{% block title %}Advertisement For Hunters{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -17,13 +17,30 @@
     <div class="navbar-collapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="{{ path('post_index') }}">Home</a>
+                <a class="nav-link" href="{{ path('advertisement_index') }}">Home</a>
             </li>
+            {% block categories %}
+            {% endblock %}
         </ul>
     </div>
     <div class="navbar-collapse">
         <ul class="navbar-nav ml-auto">
             {% if is_granted('ROLE_USER') %}
+                {% if is_granted('ROLE_USER') and not is_granted('ROLE_SELLER') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('applyforseller_index') }}">Apply For Seller</a>
+                    </li>
+                {% endif %}
+                {% if is_granted('ROLE_SELLER') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('seller_index') }}">Seller</a>
+                    </li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('admin_index') }}">Admin</a>
+                    </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
                 </li>
@@ -39,6 +56,7 @@
     </div>
 </nav>
 <div class="container">
+
     {% for message in app.flashes('success') %}
         <div class="row mt-3">
             <div class="col">
