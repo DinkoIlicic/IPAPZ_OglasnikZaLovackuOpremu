@@ -5,8 +5,11 @@
         <p>Hello to seller section</p>
     </div>
     <div>
-        <a class="nav-link" href="{{ path('insertproduct') }}">Insert new Product</a>
-        <a class="nav-link" href="{{ path('showproducts') }}">Show all Products</a>
+        <a class="btn btn-primary" href="{{ path('insertproduct') }}">Insert new Product</a>
+        <a class="btn btn-primary" href="{{ path('showproducts') }}">Show all Products</a>
+        <a class="btn btn-primary" href="{{ path('showmyproducts') }}">Show my Products</a>
+        <a class="btn btn-primary" href="{{ path('peoplethatboughtmyproduct') }}">Bought items per user</a>
+        <a class="btn btn-primary" href="{{ path('listofsolditemsperproduct') }}">Bought items per product</a>
     </div>
 {% endblock %}
 

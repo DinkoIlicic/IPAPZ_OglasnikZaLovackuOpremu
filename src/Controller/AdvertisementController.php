@@ -127,9 +127,13 @@ class AdvertisementController extends AbstractController
             $sold = $form->getData();
             $sold->setUser($this->getUser());
             $sold->setProduct($product);
+            $start = $product->getAvailableQuantity();
+            $minus = $sold->getQuantity();
+            $newQuantity = $start - $minus;
+            $product->setAvailableQuantity($newQuantity);
             $entityManager->persist($sold);
             $entityManager->flush();
-            $this->addFlash('success', 'Applied for seller position!');
+            $this->addFlash('success', 'Bought the product!');
             return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
         }
         return $this->render('advertisement/productpage.html.twig', [

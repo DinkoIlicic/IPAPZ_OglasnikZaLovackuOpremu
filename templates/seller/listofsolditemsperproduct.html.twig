@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        {{ form_start(form) }}
+            {{ form_row(form.product) }}
+        <button type="submit" class="btn btn-primary" formnovalidate>Show</button>
+        {{ form_end(form) }}
+        <br/><br />
+        <p><a class="btn btn-primary" href="{{ path('listofsolditemsperproduct') }}">Show all</a></p>
+    </div><hr />
+    {{ message }}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Product Name</th>
+            <th scope="col">Category Name</th>
+            <th scope="col">User Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Bought at</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in solditems %}
+            {% for eachitem in item %}
+                <tr>
+                    <td>{{ eachitem.product.name }}</td>
+                    <td>{{ eachitem.product.category.name }}</td>
+                    <td>{{ eachitem.user.firstname }} {{ eachitem.user.firstname}}</td>
+                    <td>{{ eachitem.quantity }}</td>
+                    <td>{{ eachitem.boughtAt|date("d.m.Y H:i:s") }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

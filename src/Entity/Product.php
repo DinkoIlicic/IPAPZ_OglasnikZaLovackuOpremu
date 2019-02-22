@@ -29,6 +29,7 @@ class Product
     private $id;
 
     /**
+     * @Assert\NotBlank(message="Please, insert product name.")
      * @ORM\Column(type="string")
      */
     private $name;
@@ -46,6 +47,7 @@ class Product
     private $seller;
 
     /**
+     * @Assert\NotBlank(message="Please, insert product price.")
      * @ORM\Column(type="decimal", scale=2)
      */
     private $price;
@@ -64,9 +66,14 @@ class Product
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Please, upload the image.")
      * @Assert\File(mimeTypes={ "image/jpg", "image/jpeg" })
-     *
      */
     private $image;
+
+    /**
+     * @Assert\NotBlank(message="Please, insert number of available products.")
+     * @ORM\Column(type="integer")
+     */
+    private $availableQuantity;
 
     /**
      * @return mixed
@@ -197,5 +204,21 @@ class Product
     public function getVisibility()
     {
         return $this->visibility;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAvailableQuantity()
+    {
+        return $this->availableQuantity;
+    }
+
+    /**
+     * @param mixed $availableQuantity
+     */
+    public function setAvailableQuantity($availableQuantity): void
+    {
+        $this->availableQuantity = $availableQuantity;
     }
 }

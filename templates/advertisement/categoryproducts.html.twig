@@ -25,6 +25,7 @@
             <th scope="col">Category</th>
             <th scope="col">Content</th>
             <th scope="col">Price</th>
+            <th scope="col">Available quantity</th>
             <th scope="col">Image</th>
         </tr>
         </thead>
@@ -36,6 +37,7 @@
                 <td>{{ product.category.name }}</td>
                 <td>{{ product.content }}</td>
                 <td>{{ product.price }} Euro</td>
+                <td>{{ product.availablequantity }}</td>
                 <td><img width="50" height="50" src="../../../../../uploads/image/{{ product.image }}" alt=""></td>
             </tr>
         {% endfor %}

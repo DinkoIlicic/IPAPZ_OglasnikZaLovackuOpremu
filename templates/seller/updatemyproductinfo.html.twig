@@ -2,14 +2,13 @@
 
 {% block body %}
     <div>
-        <p>New product</p>
+        <p>Update my product info</p>
     </div>
     <div>
         {{ form_start(form) }}
             {{ form_row(form.name) }}
             {{ form_row(form.price) }}
             {{ form_row(form.availableQuantity) }}
-            {{ form_row(form.image) }}
             {{ form_row(form.category) }}
             {{ form_row(form.content) }}
             <button type="submit" class="btn btn-primary" formnovalidate>Insert</button>
@@ -17,9 +16,9 @@
     </div>
 
 
+
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-
 {% endblock %}
