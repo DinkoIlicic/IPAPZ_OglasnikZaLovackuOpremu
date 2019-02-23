@@ -39,6 +39,12 @@ class Sold
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\GreaterThan(
+     *     value = 0
+     * )
+     * @Assert\LessThan(
+     *     value = 100
+     * )
      */
     private $quantity;
 
@@ -46,6 +52,21 @@ class Sold
      * @ORM\Column(type="datetime")
      */
     private $boughtAt;
+
+    /**
+     * @ORM\Column(type="decimal", scale=2)
+     */
+    private $price;
+
+    /**
+     * @ORM\Column(type="decimal", scale=2)
+     */
+    private $totalPrice;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $confirmed;
 
     /**
      * @return mixed
@@ -133,6 +154,54 @@ class Sold
     public function onPrePersist()
     {
         $this->boughtAt = new \DateTime('now');
+    }
+
+    /**
+     * @param mixed $price
+     */
+    public function setPrice($price): void
+    {
+        $this->price = $price;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param mixed $confirmed
+     */
+    public function setConfirmed($confirmed): void
+    {
+        $this->confirmed = $confirmed;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConfirmed()
+    {
+        return $this->confirmed;
+    }
+
+    /**
+     * @param mixed $totalPrice
+     */
+    public function setTotalPrice($totalPrice): void
+    {
+        $this->totalPrice = $totalPrice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTotalPrice()
+    {
+        return $this->totalPrice;
     }
 
 }

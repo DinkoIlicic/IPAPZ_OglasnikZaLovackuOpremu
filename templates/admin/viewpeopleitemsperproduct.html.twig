@@ -4,12 +4,12 @@
     <div>
         {{ form_start(form) }}
             {{ form_row(form.product) }}
-        <button type="submit" class="btn btn-primary" formnovalidate>Show</button>
+            <button type="submit" class="btn btn-primary" formnovalidate>Show</button>
         {{ form_end(form) }}
         <br/><br />
-        <p><a class="btn btn-primary" href="{{ path('listofsolditemsperproduct') }}">Show all</a></p>
+        <p><a class="btn btn-primary" href="{{ path('viewpeopleitemsperproduct') }}">Show all</a></p>
     </div><hr />
-    <h4>{{ message }}</h4>
+    {{ message }}
     <table class="table">
         <thead>
         <tr>
@@ -18,7 +18,6 @@
             <th scope="col">User Name</th>
             <th scope="col">Quantity</th>
             <th scope="col">Bought at</th>
-            <th scope="col">Status</th>
         </tr>
         </thead>
         <tbody>
@@ -30,12 +29,6 @@
                     <td>{{ eachitem.user.firstname }} {{ eachitem.user.firstname}}</td>
                     <td>{{ eachitem.quantity }}</td>
                     <td>{{ eachitem.boughtAt|date("d.m.Y H:i:s") }}</td>
-                    <td>{% if(eachitem.confirmed == 0) %}
-                            <a class="btn btn-primary" href="{{ path('confirmbuyperproduct', {'id': eachitem.id}) }}">Confirm</a>
-                        {% else %}
-                            <a class="btn btn-primary" href="{{ path('unconfirmbuyperproduct', {'id': eachitem.id}) }}">Confirmed</a>
-                        {% endif %}
-                    </td>
                 </tr>
             {% endfor %}
         {% endfor %}

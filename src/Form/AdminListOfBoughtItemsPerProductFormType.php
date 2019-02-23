@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: dinko
- * Date: 22.02.19.
- * Time: 19:02
+ * Date: 23.02.19.
+ * Time: 12:30
  */
 
 namespace App\Form;
@@ -16,23 +16,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
 
-class ListOfBoughtItemsPerProductFormType extends AbstractType
+class AdminListOfBoughtItemsPerProductFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /**
-         * @var User $user
-         */
-        $user = $options['user'];
-        $id = $user->getId();
         $builder
             ->add('product', EntityType::class, [
                 'class' => Product::class,
-                'query_builder' => function (EntityRepository $er) use ($id) {
-                    return $er->createQueryBuilder('u')
-                        ->WHERE('u.user = :id')
-                        ->setParameter('id', $id);
-                },
                 'choice_label' => function($product) {
                     /** @var Product $product */
                     return $product->getName();
@@ -45,8 +35,5 @@ class ListOfBoughtItemsPerProductFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Sold::class,
         ]);
-        $resolver->setRequired(array(
-            'user',
-        ));
     }
 }

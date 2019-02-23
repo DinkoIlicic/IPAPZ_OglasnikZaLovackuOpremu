@@ -40,6 +40,7 @@ class User extends AbstractController implements UserInterface
 
     /**
      * @var string The hashed password
+     * @Assert\NotBlank()
      * @ORM\Column(type="string")
      */
     private $password;
@@ -55,6 +56,12 @@ class User extends AbstractController implements UserInterface
      * @Assert\NotBlank()
      */
     private $lastName;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     */
+    private $phoneNumber;
 
 
     public function getFullName()
@@ -175,5 +182,21 @@ class User extends AbstractController implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
+    }
+
+    /**
+     * @param mixed $phoneNumber
+     */
+    public function setPhoneNumber($phoneNumber): void
+    {
+        $this->phoneNumber = $phoneNumber;
     }
 }

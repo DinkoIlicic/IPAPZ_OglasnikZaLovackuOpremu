@@ -7,19 +7,18 @@
             <button type="submit" class="btn btn-primary" formnovalidate>Show</button>
         {{ form_end(form) }}
         <br/><br />
-        <p><a class="btn btn-primary" href="{{ path('peoplethatboughtmyproduct') }}">Show all</a></p>
+        <p><a class="btn btn-primary" href="{{ path('viewpeopleitemsperperson') }}">Show all</a></p>
     </div><hr />
     <h4>{{ message }}</h4>
     <table class="table">
         <thead>
-            <tr>
-                <th scope="col">Product Name</th>
-                <th scope="col">Category Name</th>
-                <th scope="col">User Name</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Bought at</th>
-                <th scope="col">Status</th>
-            </tr>
+        <tr>
+            <th scope="col">Product Name</th>
+            <th scope="col">Category Name</th>
+            <th scope="col">User Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Bought at</th>
+        </tr>
         </thead>
         <tbody>
         {% for item in solditems %}
@@ -30,12 +29,6 @@
                     <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname }}</td>
                     <td>{{ eachitem.quantity }}</td>
                     <td>{{ eachitem.boughtAt|date("d.m.Y H:i:s") }}</td>
-                    <td>{% if(eachitem.confirmed == 0) %}
-                            <a class="btn btn-primary" href="{{ path('confirmbuy', {'id': eachitem.id}) }}">Confirm</a>
-                        {% else %}
-                            <a class="btn btn-primary" href="{{ path('unconfirmbuy', {'id': eachitem.id}) }}">Confirmed</a>
-                        {% endif %}
-                    </td>
                 </tr>
             {% endfor %}
         {% endfor %}

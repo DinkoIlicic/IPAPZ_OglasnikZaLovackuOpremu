@@ -9,10 +9,17 @@
 namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Seller;
+use App\Entity\User;
+use App\Entity\Product;
+use App\Entity\Sold;
 use App\Form\CategoryFormType;
+use App\Form\ListOfUserBoughtItemsFormType;
+use App\Form\AdminListOfBoughtItemsPerProductFormType;
+use App\Form\AdminListOfCategoriesFormType;
 use App\Repository\CategoryRepository;
 use App\Repository\SellerRepository;
 use App\Repository\ProductRepository;
+use App\Repository\SoldRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -120,6 +127,7 @@ class AdminController extends AbstractController
             $category = $form->getData();
             $category->setUser($this->getUser());
             $category->setVisibility(1);
+            $category->setVisibilityAdmin(1);
             $entityManager->persist($category);
             $entityManager->flush();
             $this->addFlash('success', 'Inserted new category!');
@@ -150,15 +158,36 @@ class AdminController extends AbstractController
      * @Route("/admin/listofproducts", name="listofproducts")
      * @param ProductRepository $productRepository
      * @param CategoryRepository $categoryRepository
+     * @param Request $request
      * @return Response
      */
-    public function showAllProducts(ProductRepository $productRepository, CategoryRepository $categoryRepository)
+    public function showAllProducts(Request $request, ProductRepository $productRepository, CategoryRepository $categoryRepository)
     {
-        $categories = $categoryRepository->findAll();
-        $products = $productRepository->findAll();
+        $products = [];
+        $form = $this->createForm(AdminListOfCategoriesFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            $category1 = $form->getData();
+            /**
+             * @var Category $category
+             */
+            $category = $category1->getId();
+            $message = $category->getName();
+            $products[] = $productRepository->findBy([
+                'category' => $category
+            ]);
+        } else {
+            $products[] = $productRepository->findBy([
+
+            ], [
+                'category' => 'ASC'
+            ]);
+            $message = "All categories";
+        }
         return $this->render('admin/viewproducts.html.twig', [
+            'form' => $form->createView(),
             'products' => $products,
-            'categories' => $categories
+            'message' => $message
         ]);
     }
 
@@ -177,6 +206,242 @@ class AdminController extends AbstractController
         return $this->render('admin/viewcategoryproducts.html.twig', [
             'products' => $products,
             'categoryName' => $category->getName()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/viewpeopleitemsperperson", name="viewpeopleitemsperperson")
+     * @param Request $request
+     * @param SoldRepository $soldRepository
+     * @param ProductRepository $productRepository
+     * @return Response
+     */
+    public function listOfPeopleThatBoughtMyProduct(Request $request, SoldRepository $soldRepository, ProductRepository $productRepository)
+    {
+        $products = $productRepository->findAll();
+        $soldperuser = [];
+        $form = $this->createForm(ListOfUserBoughtItemsFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            $userid = $form->getData()->getUser();
+            /**
+             * @var User $userid
+             */
+            $message = $userid->getFirstName() .' '. $userid->getLastName();
+            /**
+             * @var Product $product
+             */
+            $soldperuser[] = $soldRepository->findBy([
+                'user' => $userid,
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        } else {
+            $message = "All users";
+            /**
+             * @var Product $product
+             */
+            $soldperuser[] = $soldRepository->findBy([
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        }
+
+        return $this->render('admin/viewpeopleitemsperperson.html.twig', [
+            'form' => $form->createView(),
+            'solditems' => $soldperuser,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/admin/viewpeopleitemsperproduct", name="viewpeopleitemsperproduct")
+     * @param Request $request
+     * @param SoldRepository $soldRepository
+     * @param ProductRepository $productRepository
+     * @return Response
+     */
+    public function listOfBoughtItemsPerProduct(Request $request, SoldRepository $soldRepository, ProductRepository $productRepository)
+    {
+        $products = $productRepository->findAll();
+        $listforproduct = [];
+        $form = $this->createForm(AdminListOfBoughtItemsPerProductFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var Product $product
+             */
+            $product = $form->getData()->getProduct();
+            $message = $product->getName();
+            $listforproduct[] = $soldRepository->findBy([
+                'product' => $product->getId()
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        } else {
+            $message = "All products";
+            $listforproduct[] = $soldRepository->findBy([
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        }
+        return $this->render('admin/viewpeopleitemsperproduct.html.twig', [
+            'form' => $form->createView(),
+            'solditems' => $listforproduct,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/admin/makeVisible/{id}", name="makeVisible")
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @param CategoryRepository $categoryRepository
+     * @param Category $category1
+     * @return Response
+     */
+    public function makeVisible(Category $category1, Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository)
+    {
+        $category1->setVisibilityAdmin(1);
+        $entityManager->flush();
+        $allCategories = $categoryRepository->findAll();
+
+        $form = $this->createForm(CategoryFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /** @var Category $category */
+            $category = $form->getData();
+            $category->setUser($this->getUser());
+            $category->setVisibility(1);
+            $category->setVisibilityAdmin(1);
+            $entityManager->persist($category);
+            $entityManager->flush();
+            $this->addFlash('success', 'Inserted new category!');
+            return $this->redirectToRoute('listofcategories');
+        }
+        return $this->render('admin/categorylist.html.twig', [
+            'form' => $form->createView(),
+            'message' => '',
+            'categories' => $allCategories
+        ]);
+    }
+
+    /**
+     * @Route("/admin/makeNotVisible/{id}", name="makeNotVisible")
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @param CategoryRepository $categoryRepository
+     * @param Category $category1
+     * @return Response
+     */
+    public function makeNotVisible(Category $category1, Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository)
+    {
+        $category1->setVisibilityAdmin(0);
+        $entityManager->flush();
+        $allCategories = $categoryRepository->findAll();
+
+        $form = $this->createForm(CategoryFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /** @var Category $category */
+            $category = $form->getData();
+            $category->setUser($this->getUser());
+            $category->setVisibility(1);
+            $category->setVisibilityAdmin(1);
+            $entityManager->persist($category);
+            $entityManager->flush();
+            $this->addFlash('success', 'Inserted new category!');
+            return $this->redirectToRoute('listofcategories');
+        }
+        return $this->render('admin/categorylist.html.twig', [
+            'form' => $form->createView(),
+            'message' => '',
+            'categories' => $allCategories
+        ]);
+    }
+
+    /**
+     * @Route("/admin/makeVisibleProduct/{id}", name="makeVisibleProduct")
+     * @param ProductRepository $productRepository
+     * @param CategoryRepository $categoryRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param Product $product1
+     * @return Response
+     */
+    public function makeVisibleProduct(Product $product1, EntityManagerInterface $entityManager, Request $request, ProductRepository $productRepository, CategoryRepository $categoryRepository)
+    {
+        $product1->setVisibilityAdmin(1);
+        $entityManager->flush();
+        $products = [];
+        $form = $this->createForm(AdminListOfCategoriesFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            $category1 = $form->getData();
+            /**
+             * @var Category $category
+             */
+            $category = $category1->getId();
+            $message = $category->getName();
+            $products[] = $productRepository->findBy([
+                'category' => $category
+            ]);
+        } else {
+            $products[] = $productRepository->findBy([
+
+            ], [
+                'category' => 'ASC'
+            ]);
+            $message = "All categories";
+        }
+        return $this->render('admin/viewproducts.html.twig', [
+            'form' => $form->createView(),
+            'products' => $products,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/admin/makeNotVisibleProduct/{id}", name="makeNotVisibleProduct")
+     * @param ProductRepository $productRepository
+     * @param CategoryRepository $categoryRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param Product $product1
+     * @return Response
+     */
+    public function makeNotVisibleProduct(Product $product1, Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, CategoryRepository $categoryRepository)
+    {
+        $product1->setVisibilityAdmin(0);
+        $entityManager->flush();
+        $products = [];
+        $form = $this->createForm(AdminListOfCategoriesFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            $category1 = $form->getData();
+            /**
+             * @var Category $category
+             */
+            $category = $category1->getId();
+            $message = $category->getName();
+            $products[] = $productRepository->findBy([
+                'category' => $category
+            ]);
+        } else {
+            $products[] = $productRepository->findBy([
+
+            ], [
+                'category' => 'ASC'
+            ]);
+            $message = "All categories";
+        }
+        return $this->render('admin/viewproducts.html.twig', [
+            'form' => $form->createView(),
+            'products' => $products,
+            'message' => $message
         ]);
     }
 }

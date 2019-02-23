@@ -36,7 +36,7 @@ class AdvertisementController extends AbstractController
     {
         $categories = $categoryRepository->findAll();
         $products = $productRepository->findBy(
-            array('visibility' => 1),
+            array('visibility' => 1, 'visibilityAdmin' => 1),
             array('id' => 'DESC'),
             10,
             0
@@ -59,7 +59,9 @@ class AdvertisementController extends AbstractController
     {
         $categories = $categoryRepository->findAll();
         $products = $productRepository->findBy([
-            'category' => $category->getId()
+            'category' => $category->getId(),
+            'visibility' => 1,
+            'visibilityAdmin' => 1
         ]);
         return $this->render('advertisement/categoryproducts.html.twig', [
             'categories' => $categories,
@@ -118,23 +120,28 @@ class AdvertisementController extends AbstractController
     {
         $categories = $categoryRepository->findAll();
         $seller = $sellerRepository->findOneBy([
-            'user' => $product->getSeller()
+            'user' => $product->getUser()
         ]);
         $form = $this->createForm(SoldFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
             /** @var Sold $sold */
             $sold = $form->getData();
-            $sold->setUser($this->getUser());
-            $sold->setProduct($product);
-            $start = $product->getAvailableQuantity();
-            $minus = $sold->getQuantity();
-            $newQuantity = $start - $minus;
-            $product->setAvailableQuantity($newQuantity);
-            $entityManager->persist($sold);
-            $entityManager->flush();
-            $this->addFlash('success', 'Bought the product!');
-            return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
+            if($sold->getQuantity() > $product->getAvailableQuantity()) {
+                $this->addFlash('warning', 'Not enough available quantity!');
+                return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
+            } else {
+                $sold->setUser($this->getUser());
+                $sold->setProduct($product);
+                $sold->setPrice($product->getPrice());
+                $sold->setTotalPrice($sold->getQuantity() * $sold->getPrice());
+                $sold->setConfirmed(0);
+                $product->setAvailableQuantity($product->getAvailableQuantity() - $sold->getQuantity());
+                $entityManager->persist($sold);
+                $entityManager->flush();
+                $this->addFlash('success', 'Bought the product!');
+                return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
+            }
         }
         return $this->render('advertisement/productpage.html.twig', [
             'categories' => $categories,

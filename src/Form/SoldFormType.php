@@ -11,6 +11,7 @@ namespace App\Form;
 use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Seller;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -28,7 +29,7 @@ class SoldFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('quantity', NumberType::class, [
+            ->add('quantity', IntegerType::class, [
                 'label' => 'Quantity',
                 'data' => 1
             ]);

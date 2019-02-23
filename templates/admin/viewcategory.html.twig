@@ -7,13 +7,13 @@
     <div>
         <p> Category name: {{ category.name }}</p>
         <p> User Name: {{ category.user.firstname }} {{ category.user.lastname }}</p>
-        <p> Visibility: {{ category.visibility }} </p>
-    </div>  <hr />
-
-    <div>
-        <p>To do list:</p>
-        <p>Options to change visibility for category (hide/show)</p>
-    </div>
+        <p> {% if(category.visibilityAdmin == 1) %}
+                Visible
+            {% else %}
+                Not Visible
+            {% endif %}
+        </p>
+    </div><hr />
 {% endblock %}
 
 {% block javascripts %}

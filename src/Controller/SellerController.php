@@ -64,8 +64,9 @@ class SellerController extends AbstractController
             } catch (FileException $e) {
                 // ... handle exception if something happens during file upload
             }
-            $product->setSeller($this->getUser());
+            $product->setUser($this->getUser());
             $product->setVisibility(1);
+            $product->setVisibilityAdmin(1);
             $product->setImage($fileName);
             $entityManager->persist($product);
             $entityManager->flush();
@@ -103,8 +104,58 @@ class SellerController extends AbstractController
         ]);
 
         $products = $productRepository->findBy([
-            'seller' => $seller->getUser()->getId()
+            'user' => $seller->getUser()->getId()
             ]);
+
+        return $this->render('seller/showmyproducts.html.twig', [
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * @Route("/seller/makeproductvisible/{id}", name="makeproductvisible")
+     * @param ProductRepository $productRepository
+     * @param SellerRepository $sellerRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Product $product1
+     * @return Response
+     */
+    public function makeProductVisible(Product $product1, EntityManagerInterface $entityManager, ProductRepository $productRepository, SellerRepository $sellerRepository)
+    {
+        $product1->setVisibility(1);
+        $entityManager->flush();
+        $seller = $sellerRepository->findOneBy([
+            "user" => $this->getUser()->getId()
+        ]);
+
+        $products = $productRepository->findBy([
+            'user' => $seller->getUser()->getId()
+        ]);
+
+        return $this->render('seller/showmyproducts.html.twig', [
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * @Route("/seller/makeproductnotvisible/{id}", name="makeproductnotvisible")
+     * @param ProductRepository $productRepository
+     * @param SellerRepository $sellerRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Product $product1
+     * @return Response
+     */
+    public function makeProductNotVisible(Product $product1, EntityManagerInterface $entityManager, ProductRepository $productRepository, SellerRepository $sellerRepository)
+    {
+        $product1->setVisibility(0);
+        $entityManager->flush();
+        $seller = $sellerRepository->findOneBy([
+            "user" => $this->getUser()->getId()
+        ]);
+
+        $products = $productRepository->findBy([
+            'user' => $seller->getUser()->getId()
+        ]);
 
         return $this->render('seller/showmyproducts.html.twig', [
             'products' => $products
@@ -123,7 +174,7 @@ class SellerController extends AbstractController
         $product = new Product();
         $product->setName($productOld->getName());
         $product->setPrice($productOld->getPrice());
-        $product->setSeller($this->getUser());
+        $product->setUser($this->getUser());
         $product->setAvailableQuantity($productOld->getAvailableQuantity());
         $product->setCategory($productOld->getCategory());
         $product->setContent($productOld->getContent());
@@ -136,8 +187,9 @@ class SellerController extends AbstractController
              * @var Product $product
              */
             $product = $form->getData();
-            $product->setSeller($this->getUser());
-            $product->setVisibility(1);
+            $product->setUser($this->getUser());
+            $product->setVisibility($productOld->getVisibility());
+            $product->setVisibilityAdmin($productOld->getVisibilityAdmin());
             $product->setId($productOld->getId());
             $product->setImage($productOld->getImage());
             $entityManager->merge($product);
@@ -179,11 +231,12 @@ class SellerController extends AbstractController
             $product->setId($productOld->getId());
             $product->setName($productOld->getName());
             $product->setPrice($productOld->getPrice());
-            $product->setSeller($this->getUser());
+            $product->setUser($this->getUser());
             $product->setAvailableQuantity($productOld->getAvailableQuantity());
             $product->setCategory($productOld->getCategory());
             $product->setContent($productOld->getContent());
             $product->setVisibility($productOld->getVisibility());
+            $product->setVisibilityAdmin($productOld->getVisibility());
             $product->setImage($fileName);
             $entityManager->merge($product);
             $entityManager->flush();
@@ -205,7 +258,7 @@ class SellerController extends AbstractController
     public function listOfPeopleThatBoughtMyProduct(Request $request, SoldRepository $soldRepository, ProductRepository $productRepository)
     {
         $products = $productRepository->findBy([
-            'seller' => $this->getUser()->getId()
+            'user' => $this->getUser()->getId()
         ]);
         $soldperuser = [];
         $form = $this->createForm(ListOfUserBoughtItemsFormType::class);
@@ -254,7 +307,7 @@ class SellerController extends AbstractController
     public function listOfBoughtItemsPerProduct(Request $request, SoldRepository $soldRepository, ProductRepository $productRepository)
     {
         $products = $productRepository->findBy([
-            'seller' => $this->getUser()->getId()
+            'user' => $this->getUser()->getId()
         ]);
         $listforproduct = [];
         $sold = new Sold();
@@ -284,7 +337,204 @@ class SellerController extends AbstractController
             'solditems' => $listforproduct,
             'message' => $message
         ]);
+    }
 
+    /**
+     * @Route("/seller/confirmbuy/{id}", name="confirmbuy")
+     * @param Request $request
+     * @param SoldRepository $soldRepository
+     * @param ProductRepository $productRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold1
+     * @return Response
+     */
+    public function confirmBuy(Sold $sold1, Request $request, EntityManagerInterface $entityManager, SoldRepository $soldRepository, ProductRepository $productRepository)
+    {
+        $sold1->setConfirmed(1);
+        $entityManager->flush();
+        $products = $productRepository->findBy([
+            'user' => $this->getUser()->getId()
+        ]);
+        $soldperuser = [];
+        $form = $this->createForm(ListOfUserBoughtItemsFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
+            $userid = $form->getData()->getUser();
+            /**
+             * @var User $userid
+             */
+            $message = $userid->getFirstName() .' '. $userid->getLastName();
+            /**
+             * @var Product $product
+             */
+            $soldperuser[] = $soldRepository->findBy([
+                'user' => $userid,
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        } else {
+            $message = "All users";
+            /**
+             * @var Product $product
+             */
+            $soldperuser[] = $soldRepository->findBy([
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        }
+
+        return $this->render('seller/peoplethatboughtmyproduct.html.twig', [
+            'form' => $form->createView(),
+            'solditems' => $soldperuser,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/seller/unconfirmbuy/{id}", name="unconfirmbuy")
+     * @param Request $request
+     * @param SoldRepository $soldRepository
+     * @param ProductRepository $productRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold1
+     * @return Response
+     */
+    public function unConfirmBuy(Sold $sold1, Request $request, EntityManagerInterface $entityManager, SoldRepository $soldRepository, ProductRepository $productRepository)
+    {
+        $sold1->setConfirmed(0);
+        $entityManager->flush();
+        $products = $productRepository->findBy([
+            'user' => $this->getUser()->getId()
+        ]);
+        $soldperuser = [];
+        $form = $this->createForm(ListOfUserBoughtItemsFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
+            $userid = $form->getData()->getUser();
+            /**
+             * @var User $userid
+             */
+            $message = $userid->getFirstName() .' '. $userid->getLastName();
+            /**
+             * @var Product $product
+             */
+            $soldperuser[] = $soldRepository->findBy([
+                'user' => $userid,
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        } else {
+            $message = "All users";
+            /**
+             * @var Product $product
+             */
+            $soldperuser[] = $soldRepository->findBy([
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        }
+
+        return $this->render('seller/peoplethatboughtmyproduct.html.twig', [
+            'form' => $form->createView(),
+            'solditems' => $soldperuser,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/seller/confirmbuyperproduct/{id}", name="confirmbuyperproduct")
+     * @param Request $request
+     * @param SoldRepository $soldRepository
+     * @param ProductRepository $productRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold1
+     * @return Response
+     */
+    public function confirmBuyPerProduct(Sold $sold1, Request $request, EntityManagerInterface $entityManager, SoldRepository $soldRepository, ProductRepository $productRepository)
+    {
+        $sold1->setConfirmed(1);
+        $entityManager->flush();
+        $products = $productRepository->findBy([
+            'user' => $this->getUser()->getId()
+        ]);
+        $listforproduct = [];
+        $sold = new Sold();
+        $form = $this->createForm(ListOfBoughtItemsPerProductFormType::class, $sold, array("user" => $this->getUser()));
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var Product $product
+             */
+            $product = $form->getData()->getProduct();
+            $message = $product->getName();
+            $listforproduct[] = $soldRepository->findBy([
+                'product' => $product->getId()
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        } else {
+            $message = "All products";
+            $listforproduct[] = $soldRepository->findBy([
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        }
+        return $this->render('seller/listofsolditemsperproduct.html.twig', [
+            'form' => $form->createView(),
+            'solditems' => $listforproduct,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/seller/unconfirmbuyperproduct/{id}", name="unconfirmbuyperproduct")
+     * @param Request $request
+     * @param SoldRepository $soldRepository
+     * @param ProductRepository $productRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold1
+     * @return Response
+     */
+    public function unConfirmBuyPerProduct(Sold $sold1, Request $request, EntityManagerInterface $entityManager, SoldRepository $soldRepository, ProductRepository $productRepository)
+    {
+        $sold1->setConfirmed(0);
+        $entityManager->flush();
+        $products = $productRepository->findBy([
+            'user' => $this->getUser()->getId()
+        ]);
+        $listforproduct = [];
+        $sold = new Sold();
+        $form = $this->createForm(ListOfBoughtItemsPerProductFormType::class, $sold, array("user" => $this->getUser()));
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var Product $product
+             */
+            $product = $form->getData()->getProduct();
+            $message = $product->getName();
+            $listforproduct[] = $soldRepository->findBy([
+                'product' => $product->getId()
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        } else {
+            $message = "All products";
+            $listforproduct[] = $soldRepository->findBy([
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        }
+        return $this->render('seller/listofsolditemsperproduct.html.twig', [
+            'form' => $form->createView(),
+            'solditems' => $listforproduct,
+            'message' => $message
+        ]);
     }
 
     private function generateUniqueFileName()

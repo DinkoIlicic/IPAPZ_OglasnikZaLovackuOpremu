@@ -21,8 +21,8 @@
                     <img width="200" height="200" src="../../../../../uploads/image/{{ item.product.image }}" alt="">
                     <p>Product Name: {{ item.product.name }}</p>
                     <p>Category Name: {{ item.product.category.name }}</p>
-                    <p>Seller Name: {{ item.product.seller.firstname }} {{ item.product.seller.lastname }}</p>
-                    <p>Seller email: {{ item.product.seller.email }}</p>
+                    <p>Seller Name: {{ item.product.user.firstname }} {{ item.product.user.lastname }}</p>
+                    <p>Seller email: {{ item.product.user.email }}</p>
                     <p>Quantity: {{ item.quantity }}</p>
                     <p>Additional info: {{ item.product.content }}</p>
                 </div>

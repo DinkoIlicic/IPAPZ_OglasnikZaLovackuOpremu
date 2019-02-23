@@ -35,11 +35,7 @@ class Seller
     private $user;
 
     /**
-     * @ORM\Column(type="string")
-     */
-    private $phoneNumber;
-
-    /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string")
      */
     private $applyContent;
@@ -63,22 +59,6 @@ class Seller
     public function setApplyContent($applyContent): void
     {
         $this->applyContent = $applyContent;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPhoneNumber()
-    {
-        return $this->phoneNumber;
-    }
-
-    /**
-     * @param mixed $phoneNumber
-     */
-    public function setPhoneNumber($phoneNumber): void
-    {
-        $this->phoneNumber = $phoneNumber;
     }
 
     /**

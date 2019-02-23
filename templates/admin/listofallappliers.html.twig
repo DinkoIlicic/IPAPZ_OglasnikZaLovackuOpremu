@@ -7,8 +7,8 @@
         <tr>
             <th scope="col">Id</th>
             <th scope="col">Name</th>
-            <th scope="col">PhoneNumber</th>
             <th scope="col">Content</th>
+            <th scope="col">Status</th>
         </tr>
         </thead>
         <tbody>
@@ -16,8 +16,13 @@
                 <tr>
                     <td>{{ seller.id }}</td>
                     <td><a href="{{ path('checkoneapplierforseller', {'id': seller.id}) }}" class="card-link">{{ seller.user.firstname }} {{ seller.user.lastname }}</a></td>
-                    <td>{{ seller.phonenumber }}</td>
                     <td>{{ seller.applycontent }}</td>
+                    <td>{% if(seller.verified == 1) %}
+                            Verified
+                        {% else %}
+                            Not verified
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

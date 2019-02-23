@@ -25,9 +25,6 @@ class SellerFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('phone_number', TextType::class, [
-                'label' => 'Insert Your phone number'
-            ])
             ->add('apply_content', TextareaType::class, [
                 'label' => 'Why do You want to become a seller'
             ]);

@@ -50,6 +50,11 @@ class Category
      */
     private $visibility;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $visibilityAdmin;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -133,5 +138,21 @@ class Category
     public function setVisibility($visibility): void
     {
         $this->visibility = $visibility;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVisibilityAdmin()
+    {
+        return $this->visibilityAdmin;
+    }
+
+    /**
+     * @param mixed $visibilityAdmin
+     */
+    public function setVisibilityAdmin($visibilityAdmin): void
+    {
+        $this->visibilityAdmin = $visibilityAdmin;
     }
 }

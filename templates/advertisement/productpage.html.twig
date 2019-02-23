@@ -20,17 +20,22 @@
                 <img width="200" height="200" src="../../../../../uploads/image/{{ product.image }}" alt="">
                 <p>Product Name: {{ product.name }}</p>
                 <p>Category Name: {{ product.category.name }}</p>
-                <p>Seller Name: {{ product.seller.firstname }} {{ product.seller.lastname }}</p>
-                <p>Seller email: {{ product.seller.email }}</p>
+                <p>Seller Name: {{ product.user.firstname }} {{ product.user.lastname }}</p>
+                <p>Seller email: {{ product.user.email }}</p>
                 <p>Additional info: {{ product.content }}</p>
             </div>
             <div class="col-sm">
                 <p>Price: {{ product.price }} Euro per product</p>
-                {% if is_granted('ROLE_USER') %}
-                    {{   form_start(form) }}
-                        {{ form_row(form.quantity) }}
-                        <button type="submit" class="btn btn-primary" formnovalidate>Buy</button>
-                    {{ form_end(form) }}
+                <p>Available Quantity: {{ product.availableQuantity }} </p>
+                {% if (product.availableQuantity == 0) %}
+                    <p>Out of stock!</p>
+                {% else %}
+                    {% if is_granted('ROLE_USER') %}
+                        {{   form_start(form) }}
+                            {{ form_row(form.quantity) }}
+                            <button type="submit" class="btn btn-primary" formnovalidate>Buy</button>
+                        {{ form_end(form) }}
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

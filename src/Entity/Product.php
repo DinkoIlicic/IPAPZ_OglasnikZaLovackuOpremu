@@ -44,11 +44,14 @@ class Product
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $seller;
+    private $user;
 
     /**
      * @Assert\NotBlank(message="Please, insert product price.")
      * @ORM\Column(type="decimal", scale=2)
+     * @Assert\GreaterThan(
+     *     value = 0
+     * )
      */
     private $price;
 
@@ -63,6 +66,11 @@ class Product
     private $visibility;
 
     /**
+     * @ORM\Column(type="integer")
+     */
+    private $visibilityAdmin;
+
+    /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Please, upload the image.")
      * @Assert\File(mimeTypes={ "image/jpg", "image/jpeg" })
@@ -70,8 +78,13 @@ class Product
     private $image;
 
     /**
-     * @Assert\NotBlank(message="Please, insert number of available products.")
      * @ORM\Column(type="integer")
+     * @Assert\GreaterThanOrEqual(
+     *     value = 0
+     * )
+     * @Assert\LessThan(
+     *     value = 10000
+     * )
      */
     private $availableQuantity;
 
@@ -175,19 +188,19 @@ class Product
     }
 
     /**
-     * @param mixed $seller
+     * @return mixed
      */
-    public function setSeller($seller): void
+    public function getUser()
     {
-        $this->seller = $seller;
+        return $this->user;
     }
 
     /**
-     * @return mixed
+     * @param mixed $user
      */
-    public function getSeller()
+    public function setUser($user): void
     {
-        return $this->seller;
+        $this->user = $user;
     }
 
     /**
@@ -220,5 +233,21 @@ class Product
     public function setAvailableQuantity($availableQuantity): void
     {
         $this->availableQuantity = $availableQuantity;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVisibilityAdmin()
+    {
+        return $this->visibilityAdmin;
+    }
+
+    /**
+     * @param mixed $visibilityAdmin
+     */
+    public function setVisibilityAdmin($visibilityAdmin): void
+    {
+        $this->visibilityAdmin = $visibilityAdmin;
     }
 }
