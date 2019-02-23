@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+    <h1>Profile</h1>
+    {{ form_start(profileForm) }}
+        {{ form_row(profileForm.firstName) }}
+        {{ form_row(profileForm.lastName) }}
+        {{ form_row(profileForm.email) }}
+        {{ form_row(profileForm.phoneNumber) }}
+        <button class="btn btn-lg btn-primary" formnovalidate>Update</button>
+    {{ form_end(profileForm) }}
+    <br />
+    <a href="{{ path('updatepassword') }}" class="card-link">Change password</a>
+{% endblock %}

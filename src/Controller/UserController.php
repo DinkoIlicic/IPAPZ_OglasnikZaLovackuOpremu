@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\PasswordFormType;
+use App\Form\ProfileFormType;
 use App\Form\RegistrationFormType;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -86,6 +88,69 @@ class UserController extends AbstractController
 
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/profile", name="app_profile")
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return null|Response
+     */
+    public function profile(
+        Request $request,
+        EntityManagerInterface $entityManager
+    ) {
+
+        $user = $this->getUser();
+        $form = $this->createForm(ProfileFormType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+
+        return $this->render('security/profile.html.twig', [
+            'profileForm' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/newpassword", name="updatepassword")
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param EntityManagerInterface $entityManager
+     * @return null|Response
+     */
+    public function newPassword(
+        Request $request,
+        UserPasswordEncoderInterface $passwordEncoder,
+        EntityManagerInterface $entityManager
+    ) {
+
+        $user = $this->getUser();
+        $form = $this->createForm(PasswordFormType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            );
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+            $this->addFlash('success', 'Password Updated!');
+            return $this->redirectToRoute('app_profile');
+        }
+
+        return $this->render('security/newpassword.html.twig', [
+            'profileForm' => $form->createView(),
         ]);
     }
 
