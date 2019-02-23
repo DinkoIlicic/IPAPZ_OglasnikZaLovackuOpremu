@@ -13,6 +13,8 @@ use App\Entity\User;
 use App\Entity\Product;
 use App\Entity\Sold;
 use App\Form\CategoryFormType;
+use App\Form\ProductInfoFormType;
+use App\Form\ProductImageFormType;
 use App\Form\ListOfUserBoughtItemsFormType;
 use App\Form\AdminListOfBoughtItemsPerProductFormType;
 use App\Form\AdminListOfCategoriesFormType;
@@ -21,11 +23,14 @@ use App\Repository\SellerRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SoldRepository;
 use App\Repository\UserRepository;
+use Doctrine\Migrations\Configuration\Exception\FileAlreadyLoaded;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\File;
 
 class AdminController extends AbstractController
 {
@@ -443,5 +448,103 @@ class AdminController extends AbstractController
             'products' => $products,
             'message' => $message
         ]);
+    }
+
+    /**
+     * @Route("/admin/updateproductinfo/{id}", name="updateproductinfo")
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param Product $productOld
+     * @return Response
+     */
+    public function updateProductInfo(Product $productOld, Request $request, EntityManagerInterface $entityManager)
+    {
+
+        $product = new Product();
+        $product->setName($productOld->getName());
+        $product->setPrice($productOld->getPrice());
+        $product->setUser($productOld->getUser());
+        $product->setAvailableQuantity($productOld->getAvailableQuantity());
+        $product->setCategory($productOld->getCategory());
+        $product->setContent($productOld->getContent());
+        $product->setImage(new File($this->getParameter('image_directory').'/'.$productOld->getImage()));
+
+        $form = $this->createForm(ProductInfoFormType::class, $product);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var Product $product
+             */
+            $product = $form->getData();
+            $product->setUser($productOld->getUser());
+            $product->setVisibility($productOld->getVisibility());
+            $product->setVisibilityAdmin($productOld->getVisibilityAdmin());
+            $product->setId($productOld->getId());
+            $product->setImage($productOld->getImage());
+            $entityManager->merge($product);
+            $entityManager->flush();
+            $this->addFlash('success', 'Updated the Product Info!');
+            return $this->redirectToRoute('listofproducts');
+        }
+        return $this->render('admin/updateproductinfo.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/seller/updateproductimage/{id}", name="updateproductimage")
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param Product $productOld
+     * @return Response
+     */
+    public function updateMyProductImage(Product $productOld, Request $request, EntityManagerInterface $entityManager)
+    {
+        $product1 = new Product();
+        $product1->setName($productOld->getName());
+        $product1->setPrice($productOld->getPrice());
+        $product1->setImage(new File($this->getParameter('image_directory').'/'.$productOld->getImage()));
+        $form = $this->createForm(ProductImageFormType::class, $product1);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var Product $product
+             */
+            $product = $form->getData();
+            $file = $product->getImage();
+            $fileName = $this->generateUniqueFileName().'.'.$file->guessExtension();
+            try {
+                $file->move(
+                    $this->getParameter('image_directory'),
+                    $fileName
+                );
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
+            }
+            $product->setId($productOld->getId());
+            $product->setName($productOld->getName());
+            $product->setPrice($productOld->getPrice());
+            $product->setUser($productOld->getUser());
+            $product->setAvailableQuantity($productOld->getAvailableQuantity());
+            $product->setCategory($productOld->getCategory());
+            $product->setContent($productOld->getContent());
+            $product->setVisibility($productOld->getVisibility());
+            $product->setVisibilityAdmin($productOld->getVisibility());
+            $product->setImage($fileName);
+            $entityManager->merge($product);
+            $entityManager->flush();
+            $this->addFlash('success', 'Updated the Product Image!!');
+            return $this->redirectToRoute('listofproducts');
+        }
+        return $this->render('admin/updateproductimage.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    private function generateUniqueFileName()
+    {
+        // md5() reduces the similarity of the file names generated by
+        // uniqid(), which is based on timestamps
+        return md5(uniqid());
     }
 }

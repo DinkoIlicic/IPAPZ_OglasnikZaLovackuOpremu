@@ -194,7 +194,7 @@ class SellerController extends AbstractController
             $product->setImage($productOld->getImage());
             $entityManager->merge($product);
             $entityManager->flush();
-            $this->addFlash('success', 'Updated the product!');
+            $this->addFlash('success', 'Updated the Product Info!');
             return $this->redirectToRoute('showmyproducts');
         }
         return $this->render('seller/updatemyproductinfo.html.twig', [
@@ -211,9 +211,13 @@ class SellerController extends AbstractController
      */
     public function updateMyProductImage(Product $productOld, Request $request, EntityManagerInterface $entityManager)
     {
-        $form = $this->createForm(ProductImageFormType::class);
+        $product1 = new Product();
+        $product1->setName($productOld->getName());
+        $product1->setPrice($productOld->getPrice());
+        $product1->setImage(new File($this->getParameter('image_directory').'/'.$productOld->getImage()));
+        $form = $this->createForm(ProductImageFormType::class, $product1);
         $form->handleRequest($request);
-        if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->getData()->getImage()->isValid()) {
+        if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
             /**
              * @var Product $product
              */
@@ -240,7 +244,7 @@ class SellerController extends AbstractController
             $product->setImage($fileName);
             $entityManager->merge($product);
             $entityManager->flush();
-            $this->addFlash('success', 'Inserted new product!');
+            $this->addFlash('success', 'Updated the Product Image!');
             return $this->redirectToRoute('showmyproducts');
         }
         return $this->render('seller/updatemyproductimage.html.twig', [
@@ -405,6 +409,71 @@ class SellerController extends AbstractController
     {
         $sold1->setConfirmed(0);
         $entityManager->flush();
+        $products = $productRepository->findBy([
+            'user' => $this->getUser()->getId()
+        ]);
+        $soldperuser = [];
+        $form = $this->createForm(ListOfUserBoughtItemsFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
+            $userid = $form->getData()->getUser();
+            /**
+             * @var User $userid
+             */
+            $message = $userid->getFirstName() .' '. $userid->getLastName();
+            /**
+             * @var Product $product
+             */
+            $soldperuser[] = $soldRepository->findBy([
+                'user' => $userid,
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        } else {
+            $message = "All users";
+            /**
+             * @var Product $product
+             */
+            $soldperuser[] = $soldRepository->findBy([
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        }
+
+        return $this->render('seller/peoplethatboughtmyproduct.html.twig', [
+            'form' => $form->createView(),
+            'solditems' => $soldperuser,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/seller/deletesolditemperuser/{id}", name="deletesolditemperuser")
+     * @param Request $request
+     * @param SoldRepository $soldRepository
+     * @param ProductRepository $productRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold1
+     * @param Product $productold
+     * @return Response
+     */
+    public function deleteSoldItemPerUser(Sold $sold1, Request $request, EntityManagerInterface $entityManager, SoldRepository $soldRepository, ProductRepository $productRepository)
+    {
+        if(is_object($sold1)) {
+            /**
+             * @var Product $productold
+             */
+            $productold = $productRepository->findOneBy([
+                'id' => $sold1->getProduct()->getId()
+            ]);
+            $productold->setAvailableQuantity($productold->getAvailableQuantity() + $sold1->getQuantity());
+
+            $entityManager->remove($sold1);
+            $entityManager->flush();
+        }
+
         $products = $productRepository->findBy([
             'user' => $this->getUser()->getId()
         ]);

@@ -32,8 +32,11 @@ class ProductImageFormType extends AbstractType
     {
         $builder
             ->add('image', FileType::class, [
-                'label' => 'Insert Your Image here (jpg, jpeg): ',
-                'empty_data' => 'test.txt'
+                'label' => 'Insert Your Image here (jpg, jpeg): '
+            ])
+            ->add('name', HiddenType::class, [
+            ])
+            ->add('price', HiddenType::class, [
             ]);
 
     }

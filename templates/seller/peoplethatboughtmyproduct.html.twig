@@ -36,6 +36,11 @@
                             <a class="btn btn-primary" href="{{ path('unconfirmbuy', {'id': eachitem.id}) }}">Confirmed</a>
                         {% endif %}
                     </td>
+                    {% if(eachitem.confirmed == 0) %}
+                        <td>
+                            <a class="btn btn-danger" href="{{ path('deletesolditemperuser', {'id': eachitem.id}) }}">Delete</a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         {% endfor %}

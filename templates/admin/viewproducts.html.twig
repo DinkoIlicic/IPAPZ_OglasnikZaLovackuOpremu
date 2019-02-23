@@ -17,13 +17,15 @@
             <th scope="col">Category Name</th>
             <th scope="col">User Name</th>
             <th scope="col">Visibility</th>
+            <th scope="col">Image</th>
+            <th scope="col">Update image</th>
         </tr>
         </thead>
         <tbody>
         {% for item in products %}
             {% for eachitem in item %}
                 <tr>
-                    <td>{{ eachitem.name }}</td>
+                    <td><a class="nav-link" href="{{ path('updateproductinfo', {'id': eachitem.id}) }}">{{ eachitem.name }}</a></td>
                     <td>{{ eachitem.category.name }}</td>
                     <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname}}</td>
                     <td>{% if(eachitem.visibilityAdmin == 1) %}
@@ -32,6 +34,8 @@
                             <a class="nav-link" href="{{ path('makeVisibleProduct', {'id': eachitem.id}) }}">Not Visible</a>
                         {% endif %}
                     </td>
+                    <td><img width="50" height="50" src="../../../../../uploads/image/{{ eachitem.image }}" alt=""></td>
+                    <td><a href="{{ path('updateproductimage', {'id': eachitem.id}) }}" class="card-link">New Image</a></td>
                 </tr>
             {% endfor %}
         {% endfor %}

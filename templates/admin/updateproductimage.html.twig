@@ -2,21 +2,14 @@
 
 {% block body %}
     <div>
-        <p>Update my product info</p>
+        <p>Update the product image</p>
     </div>
     <div>
         {{ form_start(form) }}
-            {{ form_row(form.name) }}
-            {{ form_row(form.price) }}
-            {{ form_row(form.availableQuantity) }}
-            {{ form_row(form.category) }}
-            {{ form_row(form.content) }}
+            {{ form_row(form.image) }}
             <button type="submit" class="btn btn-primary" formnovalidate>Update</button>
         {{ form_end(form) }}
     </div>
-
-
-
 {% endblock %}
 
 {% block javascripts %}
