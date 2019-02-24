@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59b5c5d8-9188-484e-a1c8-5f6f010ea3b0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/Controller/AdvertisementController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/AdvertisementController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/advertisement/myitems.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/advertisement/myitems.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/advertisement/productpage.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/advertisement/productpage.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/SellerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/SellerController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/seller/showallproducts.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/seller/showallproducts.html.twig" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -54,13 +53,34 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Controller/AdvertisementController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="632">
               <caret line="64" column="34" selection-start-line="64" selection-start-column="34" selection-end-line="64" selection-end-column="34" />
               <folding>
                 <element signature="e#114#138#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/seller/showallproducts.html.twig">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="333">
+              <caret line="29" column="17" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/Controller/SellerController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="418">
+              <caret line="466" column="9" selection-start-line="466" selection-start-column="9" selection-end-line="466" selection-end-column="9" />
+              <folding>
+                <element signature="e#114#134#0#PHP" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -122,12 +142,10 @@
         <option value="$PROJECT_DIR$/templates/admin/header.html.twig" />
         <option value="$PROJECT_DIR$/templates/admin/viewusers.html.twig" />
         <option value="$PROJECT_DIR$/templates/admin/categorylist.html.twig" />
-        <option value="$PROJECT_DIR$/templates/seller/showallproducts.html.twig" />
         <option value="$PROJECT_DIR$/templates/seller/showmyproducts.html.twig" />
         <option value="$PROJECT_DIR$/templates/admin/listofallappliers.html.twig" />
         <option value="$PROJECT_DIR$/templates/admin/viewproducts.html.twig" />
         <option value="$PROJECT_DIR$/src/Controller/AdminController.php" />
-        <option value="$PROJECT_DIR$/src/Controller/SellerController.php" />
         <option value="$PROJECT_DIR$/templates/admin/viewpeopleitemsperproduct.html.twig" />
         <option value="$PROJECT_DIR$/templates/admin/viewpeopleitemsperperson.html.twig" />
         <option value="$PROJECT_DIR$/templates/seller/listofsolditemsperproduct.html.twig" />
@@ -137,6 +155,8 @@
         <option value="$PROJECT_DIR$/templates/advertisement/myitems.html.twig" />
         <option value="$PROJECT_DIR$/templates/advertisement/productpage.html.twig" />
         <option value="$PROJECT_DIR$/src/Controller/AdvertisementController.php" />
+        <option value="$PROJECT_DIR$/templates/seller/showallproducts.html.twig" />
+        <option value="$PROJECT_DIR$/src/Controller/SellerController.php" />
       </list>
     </option>
   </component>
@@ -286,13 +306,13 @@
               <item name="zavrsni" type="b2602c69:ProjectViewProjectNode" />
               <item name="zavrsni" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="admin" type="462c0819:PsiDirectoryNode" />
+              <item name="security" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="zavrsni" type="b2602c69:ProjectViewProjectNode" />
               <item name="zavrsni" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="advertisement" type="462c0819:PsiDirectoryNode" />
+              <item name="seller" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="zavrsni" type="b2602c69:ProjectViewProjectNode" />
@@ -362,12 +382,12 @@
       <workItem from="1550820666898" duration="27990000" />
       <workItem from="1550918463024" duration="24581000" />
       <workItem from="1551006670760" duration="12814000" />
-      <workItem from="1551026216057" duration="12164000" />
+      <workItem from="1551026216057" duration="12943000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="189029000" />
+    <option name="totallyTimeSpent" value="189808000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -382,7 +402,7 @@
     <frame x="67" y="25" width="1299" height="678" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49362478" visible="true" weight="0.35115722" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49362478" visible="true" weight="0.35115722" />
       <window_info id="Structure" order="1" sideWeight="0.50637525" side_tool="true" weight="0.34557062" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -624,13 +644,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/seller/showallproducts.html.twig">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="28">
-          <caret line="9" column="50" selection-start-line="9" selection-start-column="50" selection-end-line="9" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/seller/showmyproducts.html.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
@@ -672,16 +685,6 @@
           <caret line="631" column="45" selection-start-line="631" selection-start-column="45" selection-end-line="631" selection-end-column="45" />
           <folding>
             <element signature="e#114#138#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller/SellerController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="103">
-          <caret line="289" column="23" selection-start-line="289" selection-start-column="23" selection-end-line="289" selection-end-column="23" />
-          <folding>
-            <element signature="e#114#134#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -784,17 +787,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://b6dc656c-51ca-4448-8b81-b5e7bf79ad45/schema/polaznik18_zavrsni/table/sold">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/advertisement/productpage.html.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="27" column="61" selection-start-line="27" selection-start-column="61" selection-end-line="27" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/seller/showallproducts.html.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="333">
+          <caret line="29" column="17" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -804,6 +807,23 @@
           <caret line="64" column="34" selection-start-line="64" selection-start-column="34" selection-end-line="64" selection-end-column="34" />
           <folding>
             <element signature="e#114#138#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://b6dc656c-51ca-4448-8b81-b5e7bf79ad45/schema/polaznik18_zavrsni/table/sold">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Controller/SellerController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="466" column="9" selection-start-line="466" selection-start-column="9" selection-end-line="466" selection-end-column="9" />
+          <folding>
+            <element signature="e#114#134#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>

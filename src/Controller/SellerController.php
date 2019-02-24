@@ -150,6 +150,9 @@ class SellerController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager)
     {
+        if($this->getUser() !== $productOld->getUser()) {
+            return $this->redirectToRoute('showmyproducts');
+        }
         $product = new Product();
         $product->setName($productOld->getName());
         $product->setPrice($productOld->getPrice());
@@ -192,6 +195,9 @@ class SellerController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager)
     {
+        if($this->getUser() !== $productOld->getUser()) {
+            return $this->redirectToRoute('showmyproducts');
+        }
         $product = new Product();
         $product->setName($productOld->getName());
         $product->setPrice($productOld->getPrice());
@@ -293,6 +299,9 @@ class SellerController extends AbstractController
         Sold $sold,
         EntityManagerInterface $entityManager)
     {
+        if($this->getUser() !== $sold->getProduct()->getUser()) {
+            return $this->redirectToRoute('peoplethatboughtmyproduct');
+        }
         $sold->setConfirmed(1);
         $entityManager->flush();
         $this->addFlash('success', 'Buy confirmed!');
@@ -311,6 +320,9 @@ class SellerController extends AbstractController
         Sold $sold,
         EntityManagerInterface $entityManager)
     {
+        if($this->getUser() !== $sold->getProduct()->getUser()) {
+            return $this->redirectToRoute('peoplethatboughtmyproduct');
+        }
         $sold->setConfirmed(0);
         $entityManager->flush();
         $this->addFlash('success', 'Buy unconfirmed!');
@@ -331,6 +343,9 @@ class SellerController extends AbstractController
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository)
     {
+        if($this->getUser() !== $sold->getProduct()->getUser()) {
+            return $this->redirectToRoute('peoplethatboughtmyproduct');
+        }
         if(is_object($sold)) {
             /**
              * @var Product $productold
@@ -403,6 +418,9 @@ class SellerController extends AbstractController
         Sold $sold,
         EntityManagerInterface $entityManager)
     {
+        if($this->getUser() !== $sold->getProduct()->getUser()) {
+            return $this->redirectToRoute('listofsolditemsperproduct');
+        }
         $sold->setConfirmed(1);
         $entityManager->flush();
         $this->addFlash('success', 'Buy confirmed!');
@@ -421,6 +439,9 @@ class SellerController extends AbstractController
         Sold $sold,
         EntityManagerInterface $entityManager)
     {
+        if($this->getUser() !== $sold->getProduct()->getUser()) {
+            return $this->redirectToRoute('listofsolditemsperproduct');
+        }
         $sold->setConfirmed(0);
         $entityManager->flush();
         $this->addFlash('success', 'Buy unconfirmed!');
@@ -441,6 +462,9 @@ class SellerController extends AbstractController
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository)
     {
+        if($this->getUser() !== $sold->getProduct()->getUser()) {
+            return $this->redirectToRoute('listofsolditemsperproduct');
+        }
         if(is_object($sold)) {
             /**
              * @var Product $productold

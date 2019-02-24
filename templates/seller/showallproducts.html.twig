@@ -10,10 +10,9 @@
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th scope="col">Name</th>
-                <th scope="col">User name</th>
+                <th scope="col">Product Name</th>
                 <th scope="col">Category</th>
-                <th scope="col">Content</th>
+                <th scope="col">Seller</th>
                 <th scope="col">Price</th>
                 <th scope="col">Available quantity</th>
                 <th scope="col">Image</th>
@@ -23,9 +22,8 @@
         {% for product in products %}
             <tr>
                 <td>{{ product.name }}</td>
-                <td>{{ product.user.firstname }} {{ product.user.lastname }}</td>
                 <td>{{ product.category.name }}</td>
-                <td>{{ product.content }}</td>
+                <td>{{ product.user.firstname }} {{ product.user.lastname }}</td>
                 <td>{{ product.price }} Euro</td>
                 <td>{{ product.availablequantity }}</td>
                 <td><img width="40" height="40" src="../../../../../uploads/image/{{ product.image }}" alt=""></td>
