@@ -30,6 +30,7 @@
                             <p style="color: black"><strong>Quantity: {{ item.quantity }}</strong></p>
                             <p style="color: black"><strong>Price: €{{ item.price }}</strong></p>
                             <p style="color: black"><strong>Total Price: €{{ item.totalPrice }}</strong></p>
+                            <p style="color: black"><strong>Bought at: {{ item.boughtAt|date("d.m.Y H:i") }}</strong></p>
                         </a>
                     </div>
                 {% endfor %}

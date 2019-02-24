@@ -170,7 +170,7 @@ class AdvertisementController extends AbstractController
         $categories = $categoryRepository->findAll();
         $myitems = $soldRepository->findBy([
             'user' => $this->getUser()->getId()
-        ]);
+        ], ['boughtAt' => 'DESC']);
         return $this->render('advertisement/myitems.html.twig', [
             'categories' => $categories,
             'myitems' => $myitems
