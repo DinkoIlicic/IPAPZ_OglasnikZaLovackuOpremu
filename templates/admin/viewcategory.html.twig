@@ -5,15 +5,11 @@
         <p>Category</p>
     </div>
     <div>
-        <p> Category name: {{ category.name }}</p>
-        <p> User Name: {{ category.user.firstname }} {{ category.user.lastname }}</p>
-        <p> {% if(category.visibilityAdmin == 1) %}
-                Visible
-            {% else %}
-                Not Visible
-            {% endif %}
-        </p>
-    </div><hr />
+        {{ form_start(form) }}
+            {{ form_row(form.name) }}
+            <button type="submit" class="btn btn-primary" formnovalidate>Update</button>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}
 
 {% block javascripts %}

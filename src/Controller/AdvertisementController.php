@@ -10,7 +10,6 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Product;
 use App\Entity\Sold;
-use App\Entity\User;
 use App\Entity\Seller;
 use App\Form\SellerFormType;
 use App\Form\SoldFormType;
@@ -41,7 +40,6 @@ class AdvertisementController extends AbstractController
             10,
             0
         );
-
         return $this->render('advertisement/index.html.twig', [
             'categories' => $categories,
             'products' => $products
@@ -55,7 +53,10 @@ class AdvertisementController extends AbstractController
      * @param Category $category
      * @return Response
      */
-    public function showProductsPerCategory(Category $category, CategoryRepository $categoryRepository, ProductRepository $productRepository)
+    public function showProductsPerCategory(
+        Category $category,
+        CategoryRepository $categoryRepository,
+        ProductRepository $productRepository)
     {
         $categories = $categoryRepository->findAll();
         $products = $productRepository->findBy([
@@ -76,12 +77,14 @@ class AdvertisementController extends AbstractController
      * @param SellerRepository $sellerRepository
      * @param Request $request
      */
-    public function applyForSeller(Request $request, EntityManagerInterface $entityManager, SellerRepository $sellerRepository)
+    public function applyForSeller(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SellerRepository $sellerRepository)
     {
         $applied = $sellerRepository->findOneBy([
             'user' => $this->getUser()
         ]);
-
         if($applied !== null) {
             return $this->render('advertisement/applyforseller.html.twig', [
                 'message' => 'Applied',
@@ -116,7 +119,12 @@ class AdvertisementController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function checkProduct(Request $request, Product $product, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, SellerRepository $sellerRepository)
+    public function checkProduct(
+        Request $request,
+        Product $product,
+        EntityManagerInterface $entityManager,
+        CategoryRepository $categoryRepository,
+        SellerRepository $sellerRepository)
     {
         $categories = $categoryRepository->findAll();
         $seller = $sellerRepository->findOneBy([
@@ -163,7 +171,6 @@ class AdvertisementController extends AbstractController
         $myitems = $soldRepository->findBy([
             'user' => $this->getUser()->getId()
         ]);
-
         return $this->render('advertisement/myitems.html.twig', [
             'categories' => $categories,
             'myitems' => $myitems

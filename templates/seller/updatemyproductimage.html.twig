@@ -14,4 +14,12 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        $('#product_image_form_image').on('change',function(){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName);
+        })
+    </script>
 {% endblock %}

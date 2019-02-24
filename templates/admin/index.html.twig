@@ -2,21 +2,14 @@
 
 {% block body %}
     {% if is_granted('ROLE_ADMIN') %}
-        <p>Welcome to Admin Page</p>
+        <h2>Welcome to Admin Page</h2>
     {% endif %}
     <div>
         <a class="btn btn-primary" href="{{ path('checkapplyforseller') }}">List of appliers for Seller</a>
         <a class="btn btn-primary" href="{{ path('listofcategories') }}">List of categories</a>
         <a class="btn btn-primary" href="{{ path('listofproducts') }}">List of products</a>
+        <a class="btn btn-primary" href="{{ path('listofusers') }}">List of users</a>
         <a class="btn btn-primary" href="{{ path('viewpeopleitemsperperson') }}">List of people items</a>
         <a class="btn btn-primary" href="{{ path('viewpeopleitemsperproduct') }}">List of people items per product</a>
     </div>
-
-
-
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
 {% endblock %}

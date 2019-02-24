@@ -64,7 +64,7 @@ class UserController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($$form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
                 $passwordEncoder->encodePassword(
@@ -101,17 +101,14 @@ class UserController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager
     ) {
-
         $user = $this->getUser();
         $form = $this->createForm(ProfileFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-
+        if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($user);
             $entityManager->flush();
         }
-
         return $this->render('security/profile.html.twig', [
             'profileForm' => $form->createView(),
         ]);
@@ -129,12 +126,10 @@ class UserController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder,
         EntityManagerInterface $entityManager
     ) {
-
         $user = $this->getUser();
         $form = $this->createForm(PasswordFormType::class, $user);
         $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
 
             $user->setPassword(
                 $passwordEncoder->encodePassword(
@@ -142,13 +137,11 @@ class UserController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
-
             $entityManager->persist($user);
             $entityManager->flush();
             $this->addFlash('success', 'Password Updated!');
             return $this->redirectToRoute('app_profile');
         }
-
         return $this->render('security/newpassword.html.twig', [
             'profileForm' => $form->createView(),
         ]);
