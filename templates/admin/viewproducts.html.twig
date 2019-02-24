@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
+    </div><br />
     <p>
         {{ form_start(form) }}
             {{ form_row(form.id) }}
@@ -9,7 +12,7 @@
     </p><br/><br />
     <p><a class="btn btn-primary" href="{{ path('listofproducts') }}">Show all</a></p>
     <hr />
-    {{ message }}
+    <p>{{ message }}</p>
     <table class="table">
         <thead>
         <tr>
@@ -18,7 +21,6 @@
             <th scope="col">User Name</th>
             <th scope="col">Visibility</th>
             <th scope="col">Image</th>
-            <th scope="col">Update image</th>
         </tr>
         </thead>
         <tbody>
@@ -34,16 +36,14 @@
                             <a class="nav-link" href="{{ path('makeVisibleProduct', {'id': eachitem.id}) }}">Not Visible</a>
                         {% endif %}
                     </td>
-                    <td><img width="50" height="50" src="../../../../../uploads/image/{{ eachitem.image }}" alt=""></td>
-                    <td><a href="{{ path('updateproductimage', {'id': eachitem.id}) }}" class="card-link">New Image</a></td>
+                    <td>
+                        <a href="{{ path('updateproductimage', {'id': eachitem.id}) }}" class="card-link">
+                            <img width="50" height="50" src="../../../../../uploads/image/{{ eachitem.image }}" alt="">
+                        </a>
+                    </td>
                 </tr>
             {% endfor %}
         {% endfor %}
         </tbody>
     </table>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
 {% endblock %}

@@ -2,6 +2,9 @@
 
 {% block body %}
     <div>
+        <a class="btn btn-primary" href="{{ path('seller_index') }}">Back</a>
+    </div><br />
+    <div>
         <p>All products</p>
     </div>
     <table class="table">
@@ -14,7 +17,6 @@
                 <th scope="col">Price</th>
                 <th scope="col">Available quantity</th>
                 <th scope="col">Image</th>
-                <th scope="col">Update image</th>
                 <th scope="col">Visibility</th>
                 <th scope="col">Status</th>
             </tr>
@@ -28,8 +30,11 @@
                 <td>{{ product.content }}</td>
                 <td>{{ product.price }} Euro</td>
                 <td>{{ product.availablequantity }}</td>
-                <td><img width="50" height="50" src="../../../../../uploads/image/{{ product.image }}" alt=""></td>
-                <td><a href="{{ path('updatemyproductimage', {'id': product.id}) }}" class="card-link">New Image</a></td>
+                <td>
+                    <a href="{{ path('updatemyproductimage', {'id': product.id}) }}" class="card-link">
+                        <img width="50" height="50" src="../../../../../uploads/image/{{ product.image }}" alt="">
+                    </a>
+                </td>
                 <td>
                     {% if(product.visibility == 1) %}
                         <a class="nav-link" href="{{ path('makeproductnotvisible', {'id': product.id}) }}">Visible</a>
@@ -48,10 +53,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
 {% endblock %}

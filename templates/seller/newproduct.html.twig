@@ -2,6 +2,9 @@
 
 {% block body %}
     <div>
+        <a class="btn btn-primary" href="{{ path('seller_index') }}">Back</a>
+    </div><br />
+    <div>
         <p>New product</p>
     </div>
     <div>
@@ -15,10 +18,7 @@
             <button type="submit" class="btn btn-primary" formnovalidate>Insert</button>
         {{ form_end(form) }}
     </div>
-
-
 {% endblock %}
-
 {% block javascripts %}
     {{ parent() }}
     <script>

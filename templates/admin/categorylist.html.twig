@@ -1,7 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {{ message }}
+    <div>
+        <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
+    </div><br />
+    <h2>{{ message }}</h2>
 
     <table class="table">
         <thead>
@@ -34,9 +37,4 @@
         {{ form_row(form.name) }}
         <button type="submit" class="btn btn-primary" formnovalidate>Insert</button>
     {{ form_end(form) }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
 {% endblock %}

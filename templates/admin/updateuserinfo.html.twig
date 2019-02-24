@@ -3,6 +3,9 @@
 {% block title %}Profile{% endblock %}
 
 {% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('listofusers') }}">Back</a>
+    </div><br />
     <h1>User profile</h1>
         {{ form_start(profileForm) }}
         {{ form_row(profileForm.firstName) }}

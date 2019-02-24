@@ -2,6 +2,9 @@
 
 {% block body %}
     <div>
+        <a class="btn btn-primary" href="{{ path('checkapplyforseller') }}">Back</a>
+    </div><br />
+    <div>
         <p>Applying for seller position</p>
     </div>
     <div>
@@ -17,9 +20,4 @@
             <a class="btn btn-primary" href="{{ path('unverifyapplier', {'id': seller.id}) }}">Undo verify seller</a>
         {% endif %}
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
 {% endblock %}

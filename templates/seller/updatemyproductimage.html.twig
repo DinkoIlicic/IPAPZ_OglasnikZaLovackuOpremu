@@ -2,6 +2,9 @@
 
 {% block body %}
     <div>
+        <a class="btn btn-primary" href="{{ path('showmyproducts') }}">Back</a>
+    </div><br />
+    <div>
         <p>Update my product image</p>
     </div>
     <div>
@@ -11,7 +14,6 @@
         {{ form_end(form) }}
     </div>
 {% endblock %}
-
 {% block javascripts %}
     {{ parent() }}
     <script>

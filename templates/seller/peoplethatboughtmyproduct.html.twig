@@ -2,6 +2,9 @@
 
 {% block body %}
     <div>
+        <a class="btn btn-primary" href="{{ path('seller_index') }}">Back</a>
+    </div><br />
+    <div>
         {{ form_start(form) }}
             {{ form_row(form.user) }}
             <button type="submit" class="btn btn-primary" formnovalidate>Show</button>
@@ -46,10 +49,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
 {% endblock %}

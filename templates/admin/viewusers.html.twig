@@ -2,6 +2,9 @@
 
 {% block body %}
     <div>
+        <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
+    </div><br />
+    <div>
         <p>List of users</p>
     </div>
     <div>
@@ -17,18 +20,13 @@
             <tbody>
                 {% for user in users %}
                     <tr>
-                        <td><a class="btn btn-primary" href="{{ path('newuserinfoadmin', {'id': user.id}) }}">{{ user.firstName }} {{ user.lastName }}</a></td>
+                        <td><a class="card-link" href="{{ path('newuserinfoadmin', {'id': user.id}) }}">{{ user.firstName }} {{ user.lastName }}</a></td>
                         <td>{{ user.email }}</td>
                         <td>{{ user.phoneNumber }}</td>
-                        <td><a class="btn btn-primary" href="{{ path('newpasswordadmin', {'id': user.id}) }}">Change password</a></td>
+                        <td><a class="card-link" href="{{ path('newpasswordadmin', {'id': user.id}) }}">Change password</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
 {% endblock %}

@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
+    </div><br />
     <p>{{ message }}</p>
     <table class="table">
         <thead>
@@ -27,9 +30,4 @@
             {% endfor %}
         </tbody>
     </table>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
 {% endblock %}
