@@ -284,12 +284,12 @@ class SellerController extends AbstractController
 
 
     /**
-     * @Route("/seller/confirmbuy/{id}", name="confirmbuy")
+     * @Route("/seller/confirmbuyperperson/{id}", name="confirmbuyperperson")
      * @param EntityManagerInterface $entityManager
      * @param Sold $sold
      * @return Response
      */
-    public function confirmBuy(
+    public function confirmBuyPerPerson(
         Sold $sold,
         EntityManagerInterface $entityManager)
     {
@@ -302,12 +302,12 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/unconfirmbuy/{id}", name="unconfirmbuy")
+     * @Route("/seller/unconfirmbuyperperson/{id}", name="unconfirmbuyperperson")
      * @param EntityManagerInterface $entityManager
      * @param Sold $sold
      * @return Response
      */
-    public function unConfirmBuy(
+    public function unConfirmBuyPerPerson(
         Sold $sold,
         EntityManagerInterface $entityManager)
     {
@@ -455,6 +455,18 @@ class SellerController extends AbstractController
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute('listofsolditemsperproduct', [
             'id' => $this->getUser()->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/seller/soldproduct/{id}", name="viewsoldproductinfo")
+     * @param Sold $sold
+     * @return Response
+     */
+    public function viewSoldProductInfo(Sold $sold)
+    {
+        return $this->render('seller/viewsolditem.html.twig', [
+            'sold' => $sold
         ]);
     }
 

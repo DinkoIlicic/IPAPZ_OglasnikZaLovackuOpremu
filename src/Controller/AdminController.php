@@ -9,6 +9,7 @@
 namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Seller;
+use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Product;
 use App\Form\CategoryFormType;
@@ -490,6 +491,71 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/confirmbuyperpersonadmin/{id}", name="confirmbuyperpersonadmin")
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold
+     * @return Response
+     */
+    public function confirmBuyPerPersonAdmin(
+        Sold $sold,
+        EntityManagerInterface $entityManager)
+    {
+        $sold->setConfirmed(1);
+        $entityManager->flush();
+        $this->addFlash('success', 'Buy confirmed!');
+        return $this->redirectToRoute('viewpeopleitemsperperson', [
+            'id' => $this->getUser()->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/unconfirmbuyperpersonadmin/{id}", name="unconfirmbuyperpersonadmin")
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold
+     * @return Response
+     */
+    public function unConfirmBuyPerPersonAdmin(
+        Sold $sold,
+        EntityManagerInterface $entityManager)
+    {
+        $sold->setConfirmed(0);
+        $entityManager->flush();
+        $this->addFlash('success', 'Buy unconfirmed!');
+        return $this->redirectToRoute('viewpeopleitemsperperson', [
+            'id' => $this->getUser()->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/seller/deletesolditemperpersonadmin/{id}", name="deletesolditemperpersonadmin")
+     * @param ProductRepository $productRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold
+     * @return Response
+     */
+    public function deleteSoldItemPerUser(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        ProductRepository $productRepository)
+    {
+        if(is_object($sold)) {
+            /**
+             * @var Product $productold
+             */
+            $productold = $productRepository->findOneBy([
+                'id' => $sold->getProduct()->getId()
+            ]);
+            $productold->setAvailableQuantity($productold->getAvailableQuantity() + $sold->getQuantity());
+            $entityManager->remove($sold);
+            $entityManager->flush();
+        }
+        $this->addFlash('success', 'Item deleted!');
+        return $this->redirectToRoute('viewpeopleitemsperperson', [
+            'id' => $this->getUser()->getId()
+        ]);
+    }
+
+    /**
      * @Route("/admin/itemsoldperproduct", name="viewpeopleitemsperproduct")
      * @param Request $request
      * @param SoldRepository $soldRepository
@@ -530,6 +596,85 @@ class AdminController extends AbstractController
             'message' => $message
         ]);
     }
+
+    /**
+     * @Route("/admin/confirmbuyperproductadmin/{id}", name="confirmbuyperproductadmin")
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold
+     * @return Response
+     */
+    public function confirmBuyPerProductAdmin(
+        Sold $sold,
+        EntityManagerInterface $entityManager)
+    {
+        $sold->setConfirmed(1);
+        $entityManager->flush();
+        $this->addFlash('success', 'Buy confirmed!');
+        return $this->redirectToRoute('viewpeopleitemsperproduct', [
+            'id' => $this->getUser()->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/unconfirmbuyperproductadmin/{id}", name="unconfirmbuyperproductadmin")
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold
+     * @return Response
+     */
+    public function unConfirmBuyPerProductAdmin(
+        Sold $sold,
+        EntityManagerInterface $entityManager)
+    {
+        $sold->setConfirmed(0);
+        $entityManager->flush();
+        $this->addFlash('success', 'Buy unconfirmed!');
+        return $this->redirectToRoute('viewpeopleitemsperproduct', [
+            'id' => $this->getUser()->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/deletesolditemperproductadmin/{id}", name="deletesolditemperproductadmin")
+     * @param ProductRepository $productRepository
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold
+     * @return Response
+     */
+    public function deleteSoldItemPerProduct(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        ProductRepository $productRepository)
+    {
+        if(is_object($sold)) {
+            /**
+             * @var Product $productold
+             */
+            $productold = $productRepository->findOneBy([
+                'id' => $sold->getProduct()->getId()
+            ]);
+            $productold->setAvailableQuantity($productold->getAvailableQuantity() + $sold->getQuantity());
+            $entityManager->remove($sold);
+            $entityManager->flush();
+        }
+        $this->addFlash('success', 'Item deleted!');
+        return $this->redirectToRoute('viewpeopleitemsperproduct', [
+            'id' => $this->getUser()->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/soldproduct/{id}", name="viewsoldproductinfoadmin")
+     * @param Sold $sold
+     * @return Response
+     */
+    public function viewSoldProductInfo(Sold $sold)
+    {
+        return $this->render('admin/viewsolditem.html.twig', [
+            'sold' => $sold
+        ]);
+    }
+
+
 
     private function generateUniqueFileName()
     {

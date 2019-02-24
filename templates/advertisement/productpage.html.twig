@@ -1,18 +1,22 @@
 {% extends 'base.html.twig' %}
-
 {% block categories %}
-    {% for category in categories %}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }}</a>
-        </li>
-    {% endfor %}
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Categories
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            {% for category in categories %}
+                <a class="dropdown-item" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }} </a>
+            {% endfor %}
+        </div>
+    </div>
     {% if is_granted('ROLE_USER') %}
         <li class="nav-item">
             <a class="nav-link" href="{{ path('myitems') }}">My Items</a>
         </li>
     {% endif %}
 {% endblock %}
-
 {% block body %}
     <div class="container">
         <div class="row">

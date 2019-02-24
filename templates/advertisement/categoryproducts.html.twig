@@ -1,10 +1,16 @@
 {% extends 'base.html.twig' %}
 {% block categories %}
-    {% for category in categories %}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }} </a>
-        </li>
-    {% endfor %}
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Categories
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            {% for category in categories %}
+                <a class="dropdown-item" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }} </a>
+            {% endfor %}
+        </div>
+    </div>
     {% if is_granted('ROLE_USER') %}
         <li class="nav-item">
             <a class="nav-link" href="{{ path('myitems') }}">My Items</a>
@@ -13,34 +19,19 @@
 {% endblock %}
 {% block body %}
     {% if(products) %}
-    <div>
-        <p>Products</p>
-    </div>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">User name</th>
-            <th scope="col">Category</th>
-            <th scope="col">Content</th>
-            <th scope="col">Price</th>
-            <th scope="col">Available quantity</th>
-            <th scope="col">Image</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for product in products %}
-            <tr>
-                <td><a href="{{ path('checkproduct', {'id': product.id}) }}" class="card-link">{{ product.name }}</a></td>
-                <td>{{ product.user.firstname }} {{ product.user.lastname }}</td>
-                <td>{{ product.category.name }}</td>
-                <td>{{ product.content }}</td>
-                <td>{{ product.price }} Euro</td>
-                <td>{{ product.availablequantity }}</td>
-                <td><img width="50" height="50" src="../../../../../uploads/image/{{ product.image }}" alt=""></td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="container">
+            <div class="row" style="margin-top: 50px">
+                {% for product in products %}
+                    <div class="col-sm" align="center" style="margin-bottom: 50px; margin-right: 10px;">
+                        <a href="{{ path('checkproduct', {'id': product.id}) }}">
+                            <img width="300" height="300" src="../../../../../uploads/image/{{ product.image }}" alt="">
+                            <p style="color: black"><strong>{{ product.name }}</strong></p>
+                            <p style="color: black"><strong>{{ product.category.name }}</strong></p>
+                            <p style="color: black"><strong>€{{ product.price }}</strong></p>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
 {% endblock %}

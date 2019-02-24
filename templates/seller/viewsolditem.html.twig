@@ -1,0 +1,37 @@
+{% extends '/seller/header.html.twig' %}
+{% block body %}
+    <br />
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <img width="300" height="300" src="../../../../../uploads/image/{{ sold.product.image }}" alt="">
+            </div>
+            <div class="col-sm">
+                <p>Product info:</p>
+                <p>Product name: {{ sold.product.name }}</p>
+                <p>Category: {{ sold.product.category.name }}</p>
+                <p>Seller name: {{ sold.product.user.firstName }} {{ sold.product.user.lastName }}</p>
+                <p>Seller email: {{ sold.product.user.email }}</p>
+                <p>Seller phone number: {{ sold.product.user.phoneNumber }}</p>
+                <p>Additional info: {{ sold.product.content }}</p>
+            </div>
+
+            <div class="col-sm">
+                <p>Buyer info:</p>
+                <p>Name: {{ sold.user.firstName }} {{ sold.user.lastName }}</p>
+                <p>Email: {{ sold.user.email }}</p>
+                <p>Phone number: {{ sold.user.phoneNumber }}</p>
+                <p>Amount: {{ sold.quantity }}</p>
+                <p>Price: {{ sold.price }}</p>
+                <p>Total price: {{  sold.totalPrice }} </p>
+                <p>Status:
+                    {% if(sold.confirmed == 1) %}
+                        Finished transaction
+                    {% else %}
+                        Open
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

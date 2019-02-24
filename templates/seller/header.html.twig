@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block categories %}
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Products
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('insertproduct') }}">New Product</a>
+            <a class="dropdown-item" href="{{ path('showproducts') }}">All Products</a>
+            <a class="dropdown-item" href="{{ path('showmyproducts') }}">My Products</a>
+        </div>
+    </div>
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Sold items
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('peoplethatboughtmyproduct') }}">Per person</a>
+            <a class="dropdown-item" href="{{ path('listofsolditemsperproduct') }}">Per product</a>
+        </div>
+    </div>
+{% endblock %}

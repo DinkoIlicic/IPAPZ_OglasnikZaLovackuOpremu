@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '/admin/header.html.twig' %}
 
 {% block body %}
     <div>
@@ -13,12 +13,13 @@
     <p><a class="btn btn-primary" href="{{ path('listofproducts') }}">Show all</a></p>
     <hr />
     <p>{{ message }}</p>
-    <table class="table">
+    <table class="table table-bordered table-hover">
         <thead>
         <tr>
             <th scope="col">Product Name</th>
             <th scope="col">Category Name</th>
-            <th scope="col">User Name</th>
+            <th scope="col">Seller</th>
+            <th scope="col">Available Quantity</th>
             <th scope="col">Visibility</th>
             <th scope="col">Image</th>
         </tr>
@@ -30,6 +31,7 @@
                     <td><a class="nav-link" href="{{ path('updateproductinfo', {'id': eachitem.id}) }}">{{ eachitem.name }}</a></td>
                     <td>{{ eachitem.category.name }}</td>
                     <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname}}</td>
+                    <td>{{ eachitem.availableQuantity }}</td>
                     <td>{% if(eachitem.visibilityAdmin == 1) %}
                             <a class="nav-link" href="{{ path('makeNotVisibleProduct', {'id': eachitem.id}) }}">Visible</a>
                         {% else %}
@@ -38,7 +40,7 @@
                     </td>
                     <td>
                         <a href="{{ path('updateproductimage', {'id': eachitem.id}) }}" class="card-link">
-                            <img width="50" height="50" src="../../../../../uploads/image/{{ eachitem.image }}" alt="">
+                            <img width="40" height="40" src="../../../../../uploads/image/{{ eachitem.image }}" alt="">
                         </a>
                     </td>
                 </tr>

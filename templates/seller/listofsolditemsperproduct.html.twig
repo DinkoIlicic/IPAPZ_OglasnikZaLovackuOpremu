@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '/seller/header.html.twig' %}
 
 {% block body %}
     <div>
@@ -13,26 +13,28 @@
         <p><a class="btn btn-primary" href="{{ path('listofsolditemsperproduct') }}">Show all</a></p>
     </div><hr />
     <h4>{{ message }}</h4>
-    <table class="table">
+    <table class="table table-bordered table-hover">
         <thead>
-        <tr>
-            <th scope="col">Product Name</th>
-            <th scope="col">Category Name</th>
-            <th scope="col">User Name</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Bought at</th>
-            <th scope="col">Status</th>
-        </tr>
+            <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Buyer</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col">Total Price</th>
+                <th scope="col">Bought at</th>
+                <th scope="col">Status</th>
+            </tr>
         </thead>
         <tbody>
         {% for item in solditems %}
             {% for eachitem in item %}
                 <tr>
-                    <td>{{ eachitem.product.name }}</td>
-                    <td>{{ eachitem.product.category.name }}</td>
-                    <td>{{ eachitem.user.firstname }} {{ eachitem.user.firstname}}</td>
+                    <td><a href="{{ path('viewsoldproductinfo', {'id': eachitem.id}) }}" class="card-link">{{ eachitem.product.name }}</a></td>
+                    <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname }}</td>
                     <td>{{ eachitem.quantity }}</td>
-                    <td>{{ eachitem.boughtAt|date("d.m.Y H:i:s") }}</td>
+                    <td>{{ eachitem.price }}</td>
+                    <td>{{ eachitem.totalPrice }}</td>
+                    <td>{{ eachitem.boughtAt|date("d.m.Y H:i") }}</td>
                     <td>{% if(eachitem.confirmed == 0) %}
                             <a class="btn btn-primary" href="{{ path('confirmbuyperproduct', {'id': eachitem.id}) }}">Confirm</a>
                         {% else %}

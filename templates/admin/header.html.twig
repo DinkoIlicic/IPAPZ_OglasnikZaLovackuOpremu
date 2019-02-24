@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+{% block categories %}
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Appliers
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('checkapplyforseller') }}">List of appliers for Seller</a>
+        </div>
+    </div>
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Categories
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('listofcategories') }}">List of categories</a>
+            <a class="dropdown-item" href="{{ path('listofproducts') }}">List of products</a>
+        </div>
+    </div>
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Users
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('listofusers') }}">List of users</a>
+        </div>
+    </div>
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Sold items
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('viewpeopleitemsperperson') }}">Per person</a>
+            <a class="dropdown-item" href="{{ path('viewpeopleitemsperproduct') }}">Per product</a>
+        </div>
+    </div>
+{% endblock %}

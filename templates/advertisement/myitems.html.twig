@@ -1,32 +1,39 @@
 {% extends 'base.html.twig' %}
-
 {% block categories %}
-    {% for category in categories %}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }}</a>
-        </li>
-    {% endfor %}
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Categories
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            {% for category in categories %}
+                <a class="dropdown-item" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }} </a>
+            {% endfor %}
+        </div>
+    </div>
     {% if is_granted('ROLE_USER') %}
         <li class="nav-item">
             <a class="nav-link" href="{{ path('myitems') }}">My Items</a>
         </li>
     {% endif %}
 {% endblock %}
-
 {% block body %}
-    <div class="container">
-        <div class="row">
-            {% for item in myitems %}
-                <div class="col-sm">
-                    <img width="200" height="200" src="../../../../../uploads/image/{{ item.product.image }}" alt="">
-                    <p>Product Name: {{ item.product.name }}</p>
-                    <p>Category Name: {{ item.product.category.name }}</p>
-                    <p>Seller Name: {{ item.product.user.firstname }} {{ item.product.user.lastname }}</p>
-                    <p>Seller email: {{ item.product.user.email }}</p>
-                    <p>Quantity: {{ item.quantity }}</p>
-                    <p>Additional info: {{ item.product.content }}</p>
-                </div>
-            {% endfor %}
+    {% if(myitems) %}
+        <div class="container">
+            <div class="row" style="margin-top: 50px">
+                {% for item in myitems %}
+                    <div class="col-sm" align="center" style="margin-bottom: 50px; margin-right: 10px;">
+                        <a href="{{ path('checkproduct', {'id': item.product.id}) }}">
+                            <img width="300" height="300" src="../../../../../uploads/image/{{ item.product.image }}" alt="">
+                            <p style="color: black"><strong>Product name: {{ item.product.name }}</strong></p>
+                            <p style="color: black"><strong>Category: {{ item.product.category.name }}</strong></p>
+                            <p style="color: black"><strong>Quantity: {{ item.quantity }}</strong></p>
+                            <p style="color: black"><strong>Price: €{{ item.price }}</strong></p>
+                            <p style="color: black"><strong>Total Price: €{{ item.totalPrice }}</strong></p>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}

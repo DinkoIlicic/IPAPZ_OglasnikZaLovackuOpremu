@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '/seller/header.html.twig' %}
 
 {% block body %}
     <div>
@@ -7,7 +7,7 @@
     <div>
         <p>All products</p>
     </div>
-    <table class="table">
+    <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th scope="col">Name</th>
@@ -32,7 +32,7 @@
                 <td>{{ product.availablequantity }}</td>
                 <td>
                     <a href="{{ path('updatemyproductimage', {'id': product.id}) }}" class="card-link">
-                        <img width="50" height="50" src="../../../../../uploads/image/{{ product.image }}" alt="">
+                        <img width="40" height="40" src="../../../../../uploads/image/{{ product.image }}" alt="">
                     </a>
                 </td>
                 <td>

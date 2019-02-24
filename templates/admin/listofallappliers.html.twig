@@ -1,25 +1,21 @@
-{% extends 'base.html.twig' %}
+{% extends '/admin/header.html.twig' %}
 
 {% block body %}
     <div>
         <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
     </div><br />
     <p>{{ message }}</p>
-    <table class="table">
+    <table class="table table-bordered table-hover">
         <thead>
         <tr>
-            <th scope="col">Id</th>
             <th scope="col">Name</th>
-            <th scope="col">Content</th>
             <th scope="col">Status</th>
         </tr>
         </thead>
         <tbody>
             {% for seller in sellers %}
                 <tr>
-                    <td>{{ seller.id }}</td>
                     <td><a href="{{ path('checkoneapplierforseller', {'id': seller.id}) }}" class="card-link">{{ seller.user.firstname }} {{ seller.user.lastname }}</a></td>
-                    <td>{{ seller.applycontent }}</td>
                     <td>{% if(seller.verified == 1) %}
                             Verified
                         {% else %}

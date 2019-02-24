@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '/seller/header.html.twig' %}
 
 {% block body %}
     <div>
@@ -7,7 +7,7 @@
     <div>
         <p>All products</p>
     </div>
-    <table class="table">
+    <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th scope="col">Name</th>
@@ -28,7 +28,7 @@
                 <td>{{ product.content }}</td>
                 <td>{{ product.price }} Euro</td>
                 <td>{{ product.availablequantity }}</td>
-                <td><img width="50" height="50" src="../../../../../uploads/image/{{ product.image }}" alt=""></td>
+                <td><img width="40" height="40" src="../../../../../uploads/image/{{ product.image }}" alt=""></td>
             </tr>
         {% endfor %}
         </tbody>

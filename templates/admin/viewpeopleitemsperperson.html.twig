@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '/admin/header.html.twig' %}
 
 {% block body %}
     <div>
@@ -13,25 +13,40 @@
         <p><a class="btn btn-primary" href="{{ path('viewpeopleitemsperperson') }}">Show all</a></p>
     </div><hr />
     <h4>{{ message }}</h4>
-    <table class="table">
+    <table class="table table-bordered table-hover">
         <thead>
         <tr>
             <th scope="col">Product Name</th>
-            <th scope="col">Category Name</th>
-            <th scope="col">User Name</th>
+            <th scope="col">Seller</th>
+            <th scope="col">Buyer</th>
             <th scope="col">Quantity</th>
+            <th scope="col">Total price</th>
             <th scope="col">Bought at</th>
+            <th scope="col">Status</th>
         </tr>
         </thead>
         <tbody>
         {% for item in solditems %}
             {% for eachitem in item %}
                 <tr>
-                    <td>{{ eachitem.product.name }}</td>
-                    <td>{{ eachitem.product.category.name }}</td>
+                    <td><a href="{{ path('viewsoldproductinfoadmin', {'id': eachitem.id}) }}" class="card-link">{{ eachitem.product.name }}</a></td>
+                    <td>{{ eachitem.product.user.firstName }} {{ eachitem.product.user.lastName }}</td>
                     <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname }}</td>
                     <td>{{ eachitem.quantity }}</td>
-                    <td>{{ eachitem.boughtAt|date("d.m.Y H:i:s") }}</td>
+                    <td>{{ eachitem.totalPrice }}</td>
+                    <td>{{ eachitem.boughtAt|date("d.m.Y H:i") }}</td>
+                    <td>
+                        {% if(eachitem.confirmed == 0) %}
+                            <a class="btn btn-primary" href="{{ path('confirmbuyperpersonadmin', {'id': eachitem.id}) }}">Confirm</a>
+                        {% else %}
+                            <a class="btn btn-primary" href="{{ path('unconfirmbuyperpersonadmin', {'id': eachitem.id}) }}">Confirmed</a>
+                        {% endif %}
+                    </td>
+                    {% if(eachitem.confirmed == 0) %}
+                        <td>
+                            <a class="btn btn-danger" href="{{ path('deletesolditemperpersonadmin', {'id': eachitem.id}) }}">Delete</a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         {% endfor %}
