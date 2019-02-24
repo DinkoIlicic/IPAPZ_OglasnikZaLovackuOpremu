@@ -74,6 +74,12 @@ class Product
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Please, upload the image.")
      * @Assert\File(mimeTypes={ "image/jpg", "image/jpeg" })
+     * @Assert\Image(
+     *     minWidth = 300,
+     *     maxWidth = 2000,
+     *     minHeight = 300,
+     *     maxHeight = 2000
+     * )
      */
     private $image;
 
