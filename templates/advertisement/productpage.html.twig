@@ -46,10 +46,25 @@
             </div>
         </div>
         <hr />
-        <div class="row">
-            <div class="col-sm">
-                <p>To do: recenzija, email forma</p>
+        {% if is_granted('ROLE_USER') %}
+            {{ form_start(commentForm) }}
+                {{ form_row(commentForm.content) }}
+                <button type="submit" class="btn btn-primary" formnovalidate>Save</button>
+            {{ form_end(commentForm) }}
+        {% endif %}<br />
+        <p>Comments:</p>
+        {% for comment in product.comments %}
+            <div class="row mt-3">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mt-2 text-muted">{{ comment.createdAt|date }}</h6>
+                            <h5 class="card-title">{{ comment.user.fullName }} says:</h5>
+                            <p class="card-text">{{ comment.content }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}

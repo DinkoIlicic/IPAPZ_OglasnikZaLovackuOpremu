@@ -11,13 +11,16 @@ use App\Entity\Category;
 use App\Entity\Product;
 use App\Entity\Sold;
 use App\Entity\Seller;
+use App\Entity\Comment;
+use App\Form\CommentFormType;
+use App\Form\ContactFormType;
 use App\Form\SellerFormType;
 use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
-use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
-use App\Repository\SoldRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\Handler\SwiftMailerHandler;
+use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -116,6 +119,7 @@ class AdvertisementController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @param Product $product
      * @param Request $request
+     * @param SwiftMailer $mailer
      * @return Response
      */
     public function checkProduct(
@@ -150,11 +154,28 @@ class AdvertisementController extends AbstractController
                 return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
             }
         }
+
+        $formComment = $this->createForm(CommentFormType::class);
+        $formComment->handleRequest($request);
+        if ($this->isGranted('ROLE_USER') && $formComment->isSubmitted() && $formComment->isValid()) {
+            /** @var Comment $comment */
+            $comment = $formComment->getData();
+            $comment->setUser($this->getUser());
+            $comment->setProduct($product);
+            $product->addComment($comment);
+            $entityManager->flush();
+            $this->addFlash('success', 'Comment added!');
+            return $this->redirectToRoute('checkproduct', [
+                'id' => $product->getId()
+            ]);
+        }
+
         return $this->render('advertisement/productpage.html.twig', [
             'categories' => $categories,
             'product' => $product,
             'seller' => $seller,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'commentForm' => $formComment->createView()
         ]);
     }
 

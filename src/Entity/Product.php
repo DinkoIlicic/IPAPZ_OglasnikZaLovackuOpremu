@@ -8,6 +8,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -21,6 +23,15 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Product
 {
+
+    /**
+     * Product constructor.
+     */
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+    }
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -93,6 +104,12 @@ class Product
      * )
      */
     private $availableQuantity;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="product", cascade={"persist", "remove"})
+     * @ORM\OrderBy({"createdAt"="DESC"})
+     */
+    private $comments;
 
     /**
      * @return mixed
@@ -255,5 +272,41 @@ class Product
     public function setVisibilityAdmin($visibilityAdmin): void
     {
         $this->visibilityAdmin = $visibilityAdmin;
+    }
+
+    /**
+     * @param Comment $comment
+     * @return $this
+     */
+    public function addComment(Comment $comment)
+    {
+        if (!$this->comments->contains($comment)) {
+            $comment->setPost($this);
+            $this->comments[] = $comment;
+        }
+        return $this;
+    }
+
+    /**
+     * @param Comment $comment
+     * @return $this
+     */
+    public function removeComment(Comment $comment)
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            if ($comment->getPost() === $this) {
+                $comment->setPost(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 }
