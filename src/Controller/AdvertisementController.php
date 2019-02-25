@@ -18,6 +18,7 @@ use App\Form\SellerFormType;
 use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
 use App\Repository\SellerRepository;
+use App\Repository\SoldRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Handler\SwiftMailerHandler;
 use Psr\Container\ContainerInterface;
@@ -26,6 +27,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\ProductService;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class AdvertisementController extends AbstractController
 {
@@ -230,5 +234,59 @@ class AdvertisementController extends AbstractController
             'categories' => $categories,
             'myitems' => $data
         ]);
+    }
+
+    /**
+     * @Route("/exceluser", name="exceluser")
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     * @param SoldRepository $soldRepository
+     */
+    public function excelUser(SoldRepository $soldRepository)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sold = $soldRepository->findBy(['user' => $this->getUser()], ['product' => 'ASC']);
+
+        /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Product name');
+        $sheet->setCellValue('B1', 'Category name');
+        $sheet->setCellValue('C1', 'Seller');
+        $sheet->setCellValue('D1', 'Email');
+        $sheet->setCellValue('E1', 'Qauntity');
+        $sheet->setCellValue('F1', 'Price');
+        $sheet->setCellValue('G1', 'Total Price');
+        $sheet->setCellValue('H1', 'Bought at');
+        $i = 2;
+        foreach($sold as $item) {
+            /**
+             * @var Sold $item
+             */
+            $sheet->setCellValue('A' . $i, $item->getProduct()->getName());
+            $sheet->setCellValue('B' . $i, $item->getProduct()->getCategory()->getName());
+            $sheet->setCellValue('C' . $i, $item->getProduct()->getUser()->getFullName());
+            $sheet->setCellValue('D' . $i, $item->getProduct()->getUser()->getEmail());
+            $sheet->setCellValue('E' . $i, $item->getQuantity());
+            $sheet->setCellValue('F' . $i, $item->getPrice());
+            $sheet->setCellValue('G' . $i, $item->getTotalPrice());
+            $sheet->setCellValue('H' . $i, $item->getBoughtAt());
+            $i++;
+        }
+
+        $sheet->setTitle("Bought items");
+
+        // Create your Office 2007 Excel (XLSX Format)
+        $writer = new Xlsx($spreadsheet);
+
+        // Create a Temporary file in the system
+        $fileName = 'my_first_excel_symfony4.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+
+        // Create the excel file in the tmp directory of the system
+        $writer->save($temp_file);
+
+        // Return the excel file as an attachment
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }
