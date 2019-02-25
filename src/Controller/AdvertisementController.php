@@ -46,7 +46,9 @@ class AdvertisementController extends AbstractController
         Request $request
     )
     {
-        $categories = $categoryRepository->findAll();
+        $categories = $categoryRepository->findBy([
+            'visibilityAdmin' => 1
+        ]);
         $data = $productService->returnData($request);
         return $this->render('advertisement/index.html.twig', [
             'categories' => $categories,
@@ -68,7 +70,9 @@ class AdvertisementController extends AbstractController
         ProductService $productService,
         Request $request)
     {
-        $categories = $categoryRepository->findAll();
+        $categories = $categoryRepository->findBy([
+            'visibilityAdmin' => 1
+        ]);
         $data = $productService->returnDataPerCategory($request, $category);
         return $this->render('advertisement/categoryproducts.html.twig', [
             'categories' => $categories,
@@ -123,7 +127,6 @@ class AdvertisementController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @param Product $product
      * @param Request $request
-     * @param SwiftMailer $mailer
      * @return Response
      */
     public function checkProduct(
@@ -133,7 +136,9 @@ class AdvertisementController extends AbstractController
         CategoryRepository $categoryRepository,
         SellerRepository $sellerRepository)
     {
-        $categories = $categoryRepository->findAll();
+        $categories = $categoryRepository->findBy([
+            'visibilityAdmin' => 1
+        ]);
         $seller = $sellerRepository->findOneBy([
             'user' => $product->getUser()
         ]);
@@ -228,7 +233,9 @@ class AdvertisementController extends AbstractController
         ProductService $productService,
         Request $request)
     {
-        $categories = $categoryRepository->findAll();
+        $categories = $categoryRepository->findBy([
+            'visibilityAdmin' => 1
+        ]);
         $data = $productService->returnDataMyItems($request, $this->getUser()->getId());
         return $this->render('advertisement/myitems.html.twig', [
             'categories' => $categories,

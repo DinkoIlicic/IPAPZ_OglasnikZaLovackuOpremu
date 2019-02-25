@@ -35,7 +35,7 @@
                 {% if (product.availableQuantity == 0) %}
                     <p>Out of stock!</p>
                 {% else %}
-                    {% if (is_granted('ROLE_USER') and product.visibility == 1 and product.visibilityAdmin == 1)%}
+                    {% if (is_granted('ROLE_USER') and product.visibility == 1 and product.visibilityAdmin == 1 and product.category.visibilityAdmin) %}
                         {{ form_start(form) }}
                             {{ form_row(form.quantity) }}
                             <button type="submit" class="btn btn-primary" formnovalidate>Buy</button>
