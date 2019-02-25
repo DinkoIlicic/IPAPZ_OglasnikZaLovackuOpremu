@@ -57,11 +57,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Controller/AdvertisementController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-153">
-              <caret line="51" column="41" selection-start-line="51" selection-start-column="41" selection-end-line="51" selection-end-column="41" />
+            <state relative-caret-position="297">
+              <caret line="81" lean-forward="true" selection-start-line="81" selection-end-line="81" />
               <folding>
                 <element signature="e#114#138#0#PHP" expanded="true" />
               </folding>
@@ -81,11 +81,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/advertisement/productpage.html.twig">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="198">
-              <caret line="37" column="148" selection-start-line="37" selection-start-column="148" selection-end-line="37" selection-end-column="148" />
+              <caret line="37" column="153" selection-start-line="37" selection-start-column="153" selection-end-line="37" selection-end-column="153" />
             </state>
           </provider>
         </entry>
@@ -158,9 +158,9 @@
         <option value="$PROJECT_DIR$/.env.local" />
         <option value="$PROJECT_DIR$/src/Controller/UserController.php" />
         <option value="$PROJECT_DIR$/src/Entity/User.php" />
-        <option value="$PROJECT_DIR$/templates/advertisement/productpage.html.twig" />
         <option value="$PROJECT_DIR$/src/Controller/AdvertisementController.php" />
         <option value="$PROJECT_DIR$/src/Service/ProductService.php" />
+        <option value="$PROJECT_DIR$/templates/advertisement/productpage.html.twig" />
       </list>
     </option>
   </component>
@@ -430,12 +430,12 @@
       <workItem from="1551088634775" duration="611000" />
       <workItem from="1551089294059" duration="16773000" />
       <workItem from="1551112262640" duration="1257000" />
-      <workItem from="1551113576354" duration="8815000" />
+      <workItem from="1551113576354" duration="9226000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="219288000" />
+    <option name="totallyTimeSpent" value="219699000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -450,7 +450,7 @@
     <frame x="67" y="25" width="1299" height="678" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49362478" visible="true" weight="0.25937748" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49362478" visible="true" weight="0.2585794" />
       <window_info id="Structure" order="1" sideWeight="0.50637525" side_tool="true" weight="0.34557062" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -794,13 +794,6 @@
     <entry file="file://$PROJECT_DIR$/config/services.yaml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/advertisement/productpage.html.twig">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="37" column="148" selection-start-line="37" selection-start-column="148" selection-end-line="37" selection-end-column="148" />
-        </state>
-      </provider>
-    </entry>
     <entry file="das://b6dc656c-51ca-4448-8b81-b5e7bf79ad45/schema/polaznik18_zavrsni/table/category">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -825,11 +818,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/AdvertisementController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-153">
-          <caret line="51" column="41" selection-start-line="51" selection-start-column="41" selection-end-line="51" selection-end-column="41" />
+        <state relative-caret-position="297">
+          <caret line="81" lean-forward="true" selection-start-line="81" selection-end-line="81" />
           <folding>
             <element signature="e#114#138#0#PHP" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/advertisement/productpage.html.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="37" column="153" selection-start-line="37" selection-start-column="153" selection-end-line="37" selection-end-column="153" />
         </state>
       </provider>
     </entry>
