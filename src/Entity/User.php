@@ -40,7 +40,6 @@ class User extends AbstractController implements UserInterface
 
     /**
      * @var string The hashed password
-     * @Assert\NotBlank()
      * @ORM\Column(type="string")
      */
     private $password;
