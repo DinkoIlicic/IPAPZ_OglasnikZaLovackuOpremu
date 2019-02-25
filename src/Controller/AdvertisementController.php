@@ -22,51 +22,50 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\ProductService;
 
 class AdvertisementController extends AbstractController
 {
     /**
      * @Route("/", name="advertisement_index")
      * @param CategoryRepository $categoryRepository
-     * @param ProductRepository $productRepository
+     * @param ProductService $productService
+     * @param Request $request
      * @return Response
      */
-    public function index(CategoryRepository $categoryRepository, ProductRepository $productRepository)
+    public function index(
+        CategoryRepository $categoryRepository,
+        ProductService $productService,
+        Request $request
+    )
     {
         $categories = $categoryRepository->findAll();
-        $products = $productRepository->findBy(
-            array('visibility' => 1, 'visibilityAdmin' => 1),
-            array('id' => 'DESC'),
-            10,
-            0
-        );
+        $data = $productService->returnData($request);
         return $this->render('advertisement/index.html.twig', [
             'categories' => $categories,
-            'products' => $products
+            'products' => $data
         ]);
     }
 
     /**
      * @Route("/showcategories/{id}", name="showcategories")
      * @param CategoryRepository $categoryRepository
-     * @param ProductRepository $productRepository
+     * @param ProductService $productService
+     * @param Request $request
      * @param Category $category
      * @return Response
      */
     public function showProductsPerCategory(
         Category $category,
         CategoryRepository $categoryRepository,
-        ProductRepository $productRepository)
+        ProductService $productService,
+        Request $request)
     {
         $categories = $categoryRepository->findAll();
-        $products = $productRepository->findBy([
-            'category' => $category->getId(),
-            'visibility' => 1,
-            'visibilityAdmin' => 1
-        ]);
+        $data = $productService->returnDataPerCategory($request, $category);
         return $this->render('advertisement/categoryproducts.html.twig', [
             'categories' => $categories,
-            'products' => $products
+            'products' => $data
         ]);
     }
 
@@ -162,18 +161,20 @@ class AdvertisementController extends AbstractController
     /**
      * @Route("/myitems", name="myitems")
      * @param CategoryRepository $categoryRepository
-     * @param SoldRepository $soldRepository
+     * @param ProductService $productService
+     * @param Request $request
      * @return Response
      */
-    public function myItems(CategoryRepository $categoryRepository, SoldRepository $soldRepository)
+    public function myItems(
+        CategoryRepository $categoryRepository,
+        ProductService $productService,
+        Request $request)
     {
         $categories = $categoryRepository->findAll();
-        $myitems = $soldRepository->findBy([
-            'user' => $this->getUser()->getId()
-        ], ['boughtAt' => 'DESC']);
+        $data = $productService->returnDataMyItems($request, $this->getUser()->getId());
         return $this->render('advertisement/myitems.html.twig', [
             'categories' => $categories,
-            'myitems' => $myitems
+            'myitems' => $data
         ]);
     }
 }
