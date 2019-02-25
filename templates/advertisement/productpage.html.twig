@@ -26,6 +26,7 @@
                 <p>Category Name: {{ product.category.name }}</p>
                 <p>Seller Name: {{ product.user.firstname }} {{ product.user.lastname }}</p>
                 <p>Seller email: {{ product.user.email }}</p>
+                <p>Seller Phone number: {{ product.user.phoneNumber }}</p>
                 <p>Additional info: {{ product.content }}</p>
             </div>
             <div class="col-sm">
@@ -47,12 +48,29 @@
         </div>
         <hr />
         {% if is_granted('ROLE_USER') %}
-            {{ form_start(commentForm) }}
-                {{ form_row(commentForm.content) }}
-                <button type="submit" class="btn btn-primary" formnovalidate>Save</button>
-            {{ form_end(commentForm) }}
-        {% endif %}<br />
-        <p>Comments:</p>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_start(emailForm) }}
+                        {{ form_row(emailForm.name) }}
+                        {{ form_row(emailForm.from) }}
+                        {{ form_row(emailForm.message) }}
+                        <button type="submit" class="btn btn-primary" formnovalidate>Send</button>
+                    {{ form_end(emailForm) }}
+                </div>
+            </div>
+            <br /><hr />
+        {% endif %}
+        {% if is_granted('ROLE_USER') %}
+            <div class="row">
+                <div class="col-12">
+                    {{ form_start(commentForm) }}
+                        {{ form_row(commentForm.content) }}
+                        <button type="submit" class="btn btn-primary" formnovalidate>Comment</button>
+                    {{ form_end(commentForm) }}
+                </div>
+            </div><br />
+        {% endif %}
+        <p>Comments: </p>
         {% for comment in product.comments %}
             <div class="row mt-3">
                 <div class="col-lg-6">

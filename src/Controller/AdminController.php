@@ -53,7 +53,9 @@ class AdminController extends AbstractController
      */
     public function listAllAppliersForSeller(SellerRepository $sellerRepository)
     {
-        $sellers = $sellerRepository->findAll();
+        $sellers = $sellerRepository->findBy([], [
+            'id' => 'DESC'
+        ]);
         $message = "List of all appliers: ";
         return $this->render('admin/listofallappliers.html.twig', [
             'message' => $message,
@@ -122,7 +124,9 @@ class AdminController extends AbstractController
         EntityManagerInterface $entityManager,
         CategoryRepository $categoryRepository)
     {
-        $allCategories = $categoryRepository->findAll();
+        $allCategories = $categoryRepository->findBy([], [
+            'name' => 'ASC'
+        ]);
         $form = $this->createForm(CategoryFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
@@ -225,10 +229,11 @@ class AdminController extends AbstractController
             $message = $category->getName();
             $products[] = $productRepository->findBy([
                 'category' => $category->getId()
-            ]);
+            ], [
+                'name' => 'ASC']);
         } else {
             $products[] = $productRepository->findBy([], [
-                'category' => 'ASC'
+                'name' => 'ASC'
             ]);
             $message = "All categories";
         }
@@ -457,7 +462,7 @@ class AdminController extends AbstractController
         $soldperuser = [];
         $form = $this->createForm(ListOfUserBoughtItemsFormType::class);
         $form->handleRequest($request);
-        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted()) {
             $userid = $form->getData()->getUser();
             /**
              * @var User $userid

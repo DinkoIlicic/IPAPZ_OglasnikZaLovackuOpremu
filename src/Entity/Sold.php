@@ -38,8 +38,7 @@ class Sold
     private $product;
 
     /**
-     * @Assert\NotBlank()
-     * @ORM\Column(type="integer")gi
+     * @ORM\Column(type="integer")
      * @Assert\GreaterThan(
      *     value = 0
      * )

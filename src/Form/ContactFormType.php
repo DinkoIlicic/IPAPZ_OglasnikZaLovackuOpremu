@@ -19,7 +19,8 @@ class ContactFormType extends AbstractType
     {
         $builder
                 ->add('name', TextType::class, [
-                    'label' => 'Name: '
+                    'label' => 'Name: ',
+                    'required' => true
                 ])
                 ->add('from', EmailType::class, [
                     'label' => 'Your email: '

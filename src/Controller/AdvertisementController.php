@@ -138,6 +138,11 @@ class AdvertisementController extends AbstractController
         if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
             /** @var Sold $sold */
             $sold = $form->getData();
+            $quan = $sold->getQuantity();
+            if($quan === null ) {
+                $this->addFlash('warning', 'Please insert correct number in field Quantity!');
+                return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
+            }
             if($sold->getQuantity() > $product->getAvailableQuantity()) {
                 $this->addFlash('warning', 'Not enough available quantity!');
                 return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
@@ -152,6 +157,33 @@ class AdvertisementController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'Bought the product!');
                 return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
+            }
+        }
+
+        $formMail = $this->createForm(ContactFormType::class);
+        $formMail->handleRequest($request);
+        if ($this->isGranted('ROLE_USER') && $formMail->isSubmitted() && $formMail->isValid()) {
+            $formMailData = $formMail->getData();
+            $name = $formMailData['name'];
+            $from = $formMailData['from'];
+            $message = $formMailData['message'];
+            $to = $product->getUser()->getEmail();
+            if(empty($name) || empty($from) || empty($message)) {
+                $this->addFlash('warning', 'Please fill out all fields to send mail!');
+                return $this->redirectToRoute('checkproduct', [
+                    'id' => $product->getId()
+                ]);
+            } elseif(filter_var($from, FILTER_VALIDATE_EMAIL)){
+                $this->addFlash('success', 'Mail sent. Name: ' . $name . ', from: ' . $from . ', to: '
+                    . $to . ', message: ' . $message);
+                return $this->redirectToRoute('checkproduct', [
+                    'id' => $product->getId()
+                ]);
+            } else {
+                $this->addFlash('warning', 'Your email is not valid!');
+                return $this->redirectToRoute('checkproduct', [
+                    'id' => $product->getId()
+                ]);
             }
         }
 
@@ -175,7 +207,8 @@ class AdvertisementController extends AbstractController
             'product' => $product,
             'seller' => $seller,
             'form' => $form->createView(),
-            'commentForm' => $formComment->createView()
+            'commentForm' => $formComment->createView(),
+            'emailForm' => $formMail->createView()
         ]);
     }
 

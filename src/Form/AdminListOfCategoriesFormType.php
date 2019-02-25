@@ -8,6 +8,7 @@
 
 namespace App\Form;
 use App\Entity\Category;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,10 @@ class AdminListOfCategoriesFormType extends AbstractType
         $builder
             ->add('id', EntityType::class, [
                 'class' => Category::class,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->orderBy('u.name', 'ASC');
+                },
                 'label' => 'Category name',
                 'choice_label' => function($id) {
                     /** @var Category $id */
