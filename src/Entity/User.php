@@ -136,7 +136,7 @@ class User extends AbstractController implements UserInterface
 
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        if($this->email === 'mail1@gmail.com') {
+        if($this->email === 'admin@gmail.com') {
             $roles[] = 'ROLE_ADMIN';
         } else {
             $roles[] = 'ROLE_USER';
