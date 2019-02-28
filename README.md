@@ -1,11 +1,33 @@
 # IPAPZ_OglasnikZaLovackuOpremu
 
-Oglasnik(lovačka oprema)  
+Advertisement page
 
-3 razine prava: User, Seller i Admin
+3 authority levels: user, seller and admin
 
-Mogućnosti usera: pregled svih proizvoda, kupnja, ostavljanje recezije na proizvodu i pregled svih kupnji putem stranice i excel filea, te prijava za sellera
+Everyone can view the page and all products listed
 
-Seller: Unos i promjena proizvoda, pregled svojih proizvoda, pregled svih kupnji odrađenih na vlastitim proizvodima, odobravanje kupnji ili brisanje kupnju, te mogućnost sakrivanja proizvoda
-
-Admin: Odobravanje userima da postanu selleri, unos novih i izmjena postojecih kategorija i proizvoda, mogućnost sakrivanja kategorije i proizvoda, odobravanje kupnji ili brisanje kupnji, pregled svih odradenih kupnji na stranici
+User:
+  - can buy products
+  - leave comments about the product
+  - view bought products 
+  - apply for seller position
+  
+Seller: 
+  - add new products 
+  - edit product info, image and visibility 
+  - check who bought their product and confirm or delete the buy
+  - has all rights that user has
+  
+Admin:
+  - allow users to become sellers
+  - add and edit categories and products
+  - hide categories and products
+  - view list of registered users and edit their information
+  - list of bought products and all info related to the product and user who bought it
+  - has all the rights as user and seller
+  
+TO DO:
+  - include js and ajax, improve existing functions
+  - add paypal option to buy
+  - add mail service
+  - optimize code 
