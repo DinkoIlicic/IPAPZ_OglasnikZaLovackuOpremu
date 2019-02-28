@@ -2,25 +2,10 @@
 
 Oglasnik(lovačka oprema)  
 
-Nužne funkcionalnosti
-Javne funckije: Pregled svih kategorija i proizvoda po kategorijama, poslati mail prodavacu, recenziju ostavit, 
-1. User, Seller, Admin
-2. User mogucnost pregleda, recenzije, javljanja prodavacu u vezi kupnje
-3. Seller Mogućnost unosa/prezentiranja proizvoda 
-4. Admin mogucnost nadgledavanja svih proizvoda, odobravanja/sakrivanje proizvoda, unos novih kategorija
-5. many to many kupac -> sale(quantity) <- product <- prodavac
+3 razine prava: User, Seller i Admin
 
-Poželjne funkcionalnosti
-1. Seller update
-2. Admin delete funckije
-3. Sve ostalo uz to raditi
-4. Rad s slikama vazno
+Mogućnosti usera: pregled svih proizvoda, kupnja, ostavljanje recezije na proizvodu i pregled svih kupnji putem stranice i excel filea, te prijava za sellera
 
+Seller: Unos i promjena proizvoda, pregled svojih proizvoda, pregled svih kupnji odrađenih na vlastitim proizvodima, odobravanje kupnji ili brisanje kupnju, te mogućnost sakrivanja proizvoda
 
-Opcionalne funkcionalnosti
-1. rwd
-2.Export sold products in excel
-3.User pdf bought products
-4.grafikon
-5.slanje mailova
-6.na treci api paypal
+Admin: Odobravanje userima da postanu selleri, unos novih i izmjena postojecih kategorija i proizvoda, mogućnost sakrivanja kategorije i proizvoda, odobravanje kupnji ili brisanje kupnji, pregled svih odradenih kupnji na stranici
