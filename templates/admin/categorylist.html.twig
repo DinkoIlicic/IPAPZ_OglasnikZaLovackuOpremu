@@ -19,11 +19,14 @@
             <tr>
                 <td><a href="{{ path('checkonecategory', {'id': category.id}) }}" class="card-link">{{ category.name }}</a></td>
                 <td>{{ category.user.firstname }} {{ category.user.lastname }}</td>
-                <td>{% if(category.visibilityAdmin == 1) %}
-                        <a class="nav-link" href="{{ path('makeNotVisible', {'id': category.id}) }}">Visible</a>
-                    {% else %}
-                        <a class="nav-link" href="{{ path('makeVisible', {'id': category.id}) }}">Not Visible</a>
-                    {% endif %}
+                <td>
+                    <a class="nav-link" href="{{ path('categoryvisibilityadmin', {'id': category.id}) }}">
+                        {% if(category.visibilityAdmin == 1) %}
+                            Visible
+                        {% elseif(category.visibilityAdmin == 0) %}
+                            Not Visible
+                        {% endif %}
+                    </a>
                 </td>
             </tr>
         {% endfor %}

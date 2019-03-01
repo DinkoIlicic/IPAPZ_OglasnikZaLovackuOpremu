@@ -177,36 +177,31 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/makeVisible/{id}", name="makeVisible")
+     * @Route("/admin/catvisibility/{id}", name="categoryvisibilityadmin")
      * @param EntityManagerInterface $entityManager
      * @param Category $category
      * @return Response
      */
-    public function makeVisibleCategory(
+    public function updateCategoryVisibilityAdmin(
         Category $category,
         EntityManagerInterface $entityManager)
     {
-        $category->setVisibilityAdmin(1);
-        $entityManager->flush();
-        $this->addFlash('success', 'Category made visible!');
-        return $this->redirectToRoute('listofcategories');
+        if($category->getVisibilityAdmin() === 0) {
+            $category->setVisibilityAdmin(1);
+            $entityManager->flush();
+            $this->addFlash('success', 'Category made visible!');
+            return $this->redirectToRoute('listofcategories');
+        } elseif($category->getVisibilityAdmin() === 1) {
+            $category->setVisibilityAdmin(0);
+            $entityManager->flush();
+            $this->addFlash('success', 'Category hidden!');
+            return $this->redirectToRoute('listofcategories');
+        } else {
+            $this->addFlash('warning', 'Something went wrong!');
+            return $this->redirectToRoute('listofcategories');
+        }
     }
 
-    /**
-     * @Route("/admin/makeNotVisible/{id}", name="makeNotVisible")
-     * @param EntityManagerInterface $entityManager
-     * @param Category $category
-     * @return Response
-     */
-    public function makeNotVisibleCategory(
-        Category $category,
-        EntityManagerInterface $entityManager)
-    {
-        $category->setVisibilityAdmin(0);
-        $entityManager->flush();
-        $this->addFlash('success', 'Category made not visible!');
-        return $this->redirectToRoute('listofcategories');
-    }
 
     /**
      * @Route("/admin/products", name="listofproducts")
@@ -341,35 +336,29 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/makeVisibleProduct/{id}", name="makeVisibleProduct")
+     * @Route("/admin/prodvisibility/{id}", name="updateproductvisibilityadmin")
      * @param EntityManagerInterface $entityManager
      * @param Product $product
      * @return Response
      */
-    public function makeVisibleProduct(
+    public function updateProductVisibilityAdmin(
         Product $product,
         EntityManagerInterface $entityManager)
     {
-        $product->setVisibilityAdmin(1);
-        $entityManager->flush();
-        $this->addFlash('success', 'Product made visible!');
-        return $this->redirectToRoute('listofproducts');
-    }
-
-    /**
-     * @Route("/admin/makeNotVisibleProduct/{id}", name="makeNotVisibleProduct")
-     * @param EntityManagerInterface $entityManager
-     * @param Product $product
-     * @return Response
-     */
-    public function makeNotVisibleProduct(
-        Product $product,
-        EntityManagerInterface $entityManager)
-    {
-        $product->setVisibilityAdmin(0);
-        $entityManager->flush();
-        $this->addFlash('success', 'Product made not visible!');
-        return $this->redirectToRoute('listofproducts');
+        if($product->getVisibilityAdmin() === 0) {
+            $product->setVisibilityAdmin(1);
+            $entityManager->flush();
+            $this->addFlash('success', 'Product made visible!');
+            return $this->redirectToRoute('listofproducts');
+        } elseif($product->getVisibilityAdmin() === 1) {
+            $product->setVisibilityAdmin(0);
+            $entityManager->flush();
+            $this->addFlash('success', 'Product hidden!');
+            return $this->redirectToRoute('listofproducts');
+        } else {
+            $this->addFlash('warning', 'Something went wrong');
+            return $this->redirectToRoute('listofproducts');
+        }
     }
 
     /**

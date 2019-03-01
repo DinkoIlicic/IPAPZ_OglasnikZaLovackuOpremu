@@ -107,35 +107,29 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/makeproductvisible/{id}", name="makeproductvisible")
+     * @Route("/seller/productvisibility/{id}", name="updateproductvisibilityseller")
      * @param EntityManagerInterface $entityManager
      * @param Product $product
      * @return Response
      */
-    public function makeProductVisible(
+    public function updateProductVisibilitySeller(
         Product $product,
         EntityManagerInterface $entityManager)
     {
-        $product->setVisibility(1);
-        $entityManager->flush();
-        $this->addFlash('success', 'Product made visible!');
-        return $this->redirectToRoute('showmyproducts');
-    }
-
-    /**
-     * @Route("/seller/makeproductnotvisible/{id}", name="makeproductnotvisible")
-     * @param EntityManagerInterface $entityManager
-     * @param Product $product
-     * @return Response
-     */
-    public function makeProductNotVisible(
-        Product $product,
-        EntityManagerInterface $entityManager)
-    {
-        $product->setVisibility(0);
-        $entityManager->flush();
-        $this->addFlash('success', 'Product made not visible!');
-        return $this->redirectToRoute('showmyproducts');
+        if($product->getVisibility() === 0) {
+            $product->setVisibility(1);
+            $entityManager->flush();
+            $this->addFlash('success', 'Product made visible!');
+            return $this->redirectToRoute('showmyproducts');
+        } elseif($product->getVisibility() === 1) {
+            $product->setVisibility(0);
+            $entityManager->flush();
+            $this->addFlash('success', 'Product hidden!');
+            return $this->redirectToRoute('showmyproducts');
+        } else {
+            $this->addFlash('warning', 'Something went wrong');
+            return $this->redirectToRoute('showmyproducts');
+        }
     }
 
     /**
