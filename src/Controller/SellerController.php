@@ -136,25 +136,19 @@ class SellerController extends AbstractController
      * @Route("/seller/updatemyproductinfo/{id}", name="updatemyproductinfo")
      * @param EntityManagerInterface $entityManager
      * @param Request $request
-     * @param Product $productOld
+     * @param Product $product
      * @return Response
      */
     public function updateMyProductInfo(
-        Product $productOld,
+        Product $product,
         Request $request,
         EntityManagerInterface $entityManager)
     {
-        if($this->getUser() !== $productOld->getUser()) {
+        if($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('showmyproducts');
         }
-        $product = new Product();
-        $product->setName($productOld->getName());
-        $product->setPrice($productOld->getPrice());
-        $product->setUser($this->getUser());
-        $product->setAvailableQuantity($productOld->getAvailableQuantity());
-        $product->setCategory($productOld->getCategory());
-        $product->setContent($productOld->getContent());
-        $product->setImage(new File($this->getParameter('image_directory').'/'.$productOld->getImage()));
+        $productIm = $product->getImage();
+        $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
         $form = $this->createForm(ProductInfoFormType::class, $product);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
@@ -162,11 +156,7 @@ class SellerController extends AbstractController
              * @var Product $product
              */
             $product = $form->getData();
-            $product->setUser($this->getUser());
-            $product->setVisibility($productOld->getVisibility());
-            $product->setVisibilityAdmin($productOld->getVisibilityAdmin());
-            $product->setId($productOld->getId());
-            $product->setImage($productOld->getImage());
+            $product->setImage($productIm);
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
@@ -181,21 +171,18 @@ class SellerController extends AbstractController
      * @Route("/seller/updatemyproductimage/{id}", name="updatemyproductimage")
      * @param EntityManagerInterface $entityManager
      * @param Request $request
-     * @param Product $productOld
+     * @param Product $product
      * @return Response
      */
     public function updateMyProductImage(
-        Product $productOld,
+        Product $product,
         Request $request,
         EntityManagerInterface $entityManager)
     {
-        if($this->getUser() !== $productOld->getUser()) {
+        if($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('showmyproducts');
         }
-        $product = new Product();
-        $product->setName($productOld->getName());
-        $product->setPrice($productOld->getPrice());
-        $product->setImage(new File($this->getParameter('image_directory').'/'.$productOld->getImage()));
+        $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
         $form = $this->createForm(ProductImageFormType::class, $product);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
@@ -213,15 +200,6 @@ class SellerController extends AbstractController
             } catch (FileException $e) {
                 // ... handle exception if something happens during file upload
             }
-            $product->setId($productOld->getId());
-            $product->setName($productOld->getName());
-            $product->setPrice($productOld->getPrice());
-            $product->setUser($this->getUser());
-            $product->setAvailableQuantity($productOld->getAvailableQuantity());
-            $product->setCategory($productOld->getCategory());
-            $product->setContent($productOld->getContent());
-            $product->setVisibility($productOld->getVisibility());
-            $product->setVisibilityAdmin($productOld->getVisibility());
             $product->setImage($fileName);
             $entityManager->merge($product);
             $entityManager->flush();
