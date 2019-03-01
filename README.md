@@ -1,26 +1,33 @@
 # IPAPZ_OglasnikZaLovackuOpremu
 
-Oglasnik(lovačka oprema)  
+Advertisement page
 
-Nužne funkcionalnosti
-Javne funckije: Pregled svih kategorija i proizvoda po kategorijama, poslati mail prodavacu, recenziju ostavit, 
-1. User, Seller, Admin
-2. User mogucnost pregleda, recenzije, javljanja prodavacu u vezi kupnje
-3. Seller Mogućnost unosa/prezentiranja proizvoda 
-4. Admin mogucnost nadgledavanja svih proizvoda, odobravanja/sakrivanje proizvoda, unos novih kategorija
-5. many to many kupac -> sale(quantity) <- product <- prodavac
+3 authority levels: user, seller and admin
 
-Poželjne funkcionalnosti
-1. Seller update
-2. Admin delete funckije
-3. Sve ostalo uz to raditi
-4. Rad s slikama vazno
+Everyone can view the page and all products listed
 
-
-Opcionalne funkcionalnosti
-1. rwd
-2.Export sold products in excel
-3.User pdf bought products
-4.grafikon
-5.slanje mailova
-6.na treci api paypal
+User:
+  - can buy products
+  - leave comments about the product
+  - view bought products 
+  - apply for seller position
+  
+Seller: 
+  - add new products 
+  - edit product info, image and visibility 
+  - check who bought their product and confirm or delete the buy
+  - has all rights that user has
+  
+Admin:
+  - allow users to become sellers
+  - add and edit categories and products
+  - hide categories and products
+  - view list of registered users and edit their information
+  - list of bought products and all info related to the product and user who bought it
+  - has all the rights as user and seller
+  
+TO DO:
+  - include js and ajax, improve existing functions
+  - add paypal option to buy
+  - add mail service
+  - optimize code 
