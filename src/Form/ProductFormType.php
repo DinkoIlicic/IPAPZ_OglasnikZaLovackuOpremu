@@ -39,7 +39,7 @@ class ProductFormType extends AbstractType
             ->add('image', FileType::class, [
                 'label' => 'Insert Your Image here (jpg, jpeg): '
             ])
-            ->add('category', EntityType::class,[
+            ->add('categories', EntityType::class,[
                 'class' => Category::class,
                 'choice_label' => 'name'
             ])

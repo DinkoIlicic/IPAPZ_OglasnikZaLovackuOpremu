@@ -93,22 +93,6 @@ class Comment
     }
 
     /**
-     * @return mixed
-     */
-    public function getPost()
-    {
-        return $this->post;
-    }
-
-    /**
-     * @param mixed $post
-     */
-    public function setPost($post)
-    {
-        $this->post = $post;
-    }
-
-    /**
      * @ORM\PrePersist()
      */
     public function onPrePersist()

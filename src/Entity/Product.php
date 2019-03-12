@@ -30,6 +30,7 @@ class Product
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     /**
@@ -46,10 +47,10 @@ class Product
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="products")
-     * @ORM\JoinColumn(nullable=false)
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="App\Entity\Category", mappedBy="products")
      */
-    private $category;
+    private $categories;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
@@ -160,22 +161,16 @@ class Product
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection
      */
-    public function getCategory(): ?Category
+    public function getCategories(): ArrayCollection
     {
-        return $this->category;
+        return $this->categories;
     }
 
-    /**
-     * @param Category $category
-     * @return mixed
-     */
-    public function setCategory(?Category $category): self
+    public function setCategories(Category $category)
     {
-        $this->category = $category;
-
-        return $this;
+        $this->categories[] = $category;
     }
 
     /**
@@ -274,33 +269,6 @@ class Product
         $this->visibilityAdmin = $visibilityAdmin;
     }
 
-    /**
-     * @param Comment $comment
-     * @return $this
-     */
-    public function addComment(Comment $comment)
-    {
-        if (!$this->comments->contains($comment)) {
-            $comment->setPost($this);
-            $this->comments[] = $comment;
-        }
-        return $this;
-    }
-
-    /**
-     * @param Comment $comment
-     * @return $this
-     */
-    public function removeComment(Comment $comment)
-    {
-        if ($this->comments->contains($comment)) {
-            $this->comments->removeElement($comment);
-            if ($comment->getPost() === $this) {
-                $comment->setPost(null);
-            }
-        }
-        return $this;
-    }
 
     /**
      * @return Collection|Comment[]

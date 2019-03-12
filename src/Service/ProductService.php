@@ -38,7 +38,7 @@ class ProductService
             FROM 
               App\Entity\Product p
             JOIN 
-              p.category c
+              p.categories c
             WHERE 
               p.visibility = 1 and
               p.visibilityAdmin = 1 and
