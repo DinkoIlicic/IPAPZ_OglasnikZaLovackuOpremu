@@ -76,7 +76,8 @@ class AdvertisementController extends AbstractController
         $data = $productService->returnDataPerCategory($request, $category);
         return $this->render('advertisement/categoryproducts.html.twig', [
             'categories' => $categories,
-            'products' => $data
+            'products' => $data,
+            'category' => $category
         ]);
     }
 
