@@ -27,7 +27,14 @@ Admin:
   - has all the rights as user and seller
   
 TO DO:
-  - include js and ajax, improve existing functions
-  - add paypal option to buy
-  - add mail service
-  - optimize code 
+  - Vezanje proizvoda na više kategorija
+  - Dodati mogućnost dodavanja proizvoljnog url-a za pojedini produkt koji će koristiti isti kontroler kao i originalni url
+  - Dodati wishlist od customera. Kada je proizvod nazad "in stock" svi koji ga imaju u wishlistu dobiju one-time notifikaciju pored proizvoda u izlistavanju wishlista
+  - Dodati mogućnost kreiranja kupon kodova i korištenja kupon kodova od strane kupca
+  - Dodati mogućnost pravljenja custom page-eva u adminu npr. Home page, O nama, FAQ, i slično. Ti page-ovi mogu imati custom url i primaju html kao input koji outputaju na frontendu
+  - Dodati konfiguraciju shipping metoda u admin. Cijena shippinga po državi da se može manualno i mora se moći importati iz .csv file-a
+  - Sold items - autocomplete kada se krene upisivati ime prodavača
+  - Kada se klikne na ime prodavača, ajaxom napraviti grid update
+  - Dodati wishlist od customera
+  - Vrste plaćanja : po pouzeću, Paypal payment gateway implementacija. Način plaćanja mora biti vidljiv u admin orderima i mora se moći osposobiti/ugasiti u adminu
+  - Poželjno je promisliti o implementaciji te modificirati dodatne stvari kako bi korisniku približili aplikaciju. Slobodno dodati nove funkcionalnosti. Postojeće funkcionalnosti ukratko dokumentirati u features/{određeni_entity}.md kako bi aplikacija bila preglednija i lakša za upoznavanje
