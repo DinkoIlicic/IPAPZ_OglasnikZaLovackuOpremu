@@ -10,6 +10,8 @@ namespace App\Form;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Entity\ProductCategory;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -39,7 +41,7 @@ class ProductFormType extends AbstractType
             ->add('image', FileType::class, [
                 'label' => 'Insert Your Image here (jpg, jpeg): '
             ])
-            ->add('categories', EntityType::class,[
+            ->add('productCategory', EntityType::class,[
                 'class' => Category::class,
                 'choice_label' => 'name',
                 'multiple' => true,

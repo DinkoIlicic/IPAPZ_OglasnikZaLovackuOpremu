@@ -223,9 +223,8 @@ class AdminController extends AbstractController
              */
             $message = $category->getName();
             $products[] = $productRepository->findBy([
-                'category' => $category->getId()
-            ], [
-                'name' => 'ASC']);
+                'categories' => $category->getId()
+            ]);
         } else {
             $products[] = $productRepository->findBy([], [
                 'name' => 'ASC'

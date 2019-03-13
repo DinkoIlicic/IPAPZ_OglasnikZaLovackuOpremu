@@ -53,13 +53,13 @@ class Category
     private $visibilityAdmin;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Product", mappedBy="categories")
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductCategory", mappedBy="category", cascade={"persist","remove"})
      */
-    private $products;
+    private $productCategory;
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->productCategory = new ArrayCollection();
     }
 
     /**
@@ -143,10 +143,10 @@ class Category
     }
 
     /**
-     * @return ArrayCollection|Product[]
+     * @return mixed
      */
-    public function getProducts()
+    public function getProductCategory()
     {
-        return $this->products;
+        return $this->productCategory;
     }
 }

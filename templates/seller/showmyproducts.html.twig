@@ -11,7 +11,6 @@
         <thead>
             <tr>
                 <th scope="col">Name</th>
-                <th scope="col">Category</th>
                 <th scope="col">Price</th>
                 <th scope="col">Available quantity</th>
                 <th scope="col">Image</th>
@@ -23,7 +22,6 @@
         {% for product in products %}
             <tr>
                 <td><a href="{{ path('updatemyproductinfo', {'id': product.id}) }}" class="card-link">{{ product.name }}</a></td>
-                <td>{{ product.category.name }}</td>
                 <td>{{ product.price }} Euro</td>
                 <td>{{ product.availablequantity }}</td>
                 <td>

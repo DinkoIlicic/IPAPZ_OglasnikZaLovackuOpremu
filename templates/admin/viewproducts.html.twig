@@ -17,7 +17,6 @@
         <thead>
         <tr>
             <th scope="col">Product Name</th>
-            <th scope="col">Category Name</th>
             <th scope="col">Seller</th>
             <th scope="col">Available Quantity</th>
             <th scope="col">Visibility</th>
@@ -29,7 +28,6 @@
             {% for eachitem in item %}
                 <tr>
                     <td><a class="nav-link" href="{{ path('updateproductinfo', {'id': eachitem.id}) }}">{{ eachitem.name }}</a></td>
-                    <td>{{ eachitem.category.name }}</td>
                     <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname}}</td>
                     <td>{{ eachitem.availableQuantity }}</td>
                     <td>

@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use App\Entity\Category;
+use App\Entity\ProductCategory;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,15 +27,6 @@ class Product
 {
 
     /**
-     * Product constructor.
-     */
-    public function __construct()
-    {
-        $this->comments = new ArrayCollection();
-        $this->categories = new ArrayCollection();
-    }
-
-    /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -48,13 +40,9 @@ class Product
     private $name;
 
     /**
-     * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Category", inversedBy="products")
-     * @ORM\JoinTable(
-     *     name="ab_category_2_product",
-     *     )
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductCategory", mappedBy="product", cascade={"persist","remove"})
      */
-    private $categories;
+    private $productCategory;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
@@ -117,6 +105,15 @@ class Product
     private $comments;
 
     /**
+     * Product constructor.
+     */
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+        $this->productCategory = new ArrayCollection();
+    }
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -165,27 +162,35 @@ class Product
     }
 
     /**
-     * @return ArrayCollection|Category[]
+     * @return ArrayCollection|Product[]
      */
-    public function getCategories()
+    public function getProductCategory()
     {
-        return $this->categories;
+        return $this->productCategory;
     }
 
     /**
-     * @param ArrayCollection $category
+     * @param ArrayCollection|ProductCategory $productCategory
      */
-    public function addCategories(ArrayCollection $category)
+    public function addProductCategory(ArrayCollection $productCategory)
     {
-        $this->categories = $category;
+        $this->productCategory = $productCategory;
     }
 
     /**
-     * @param ArrayCollection $category
+     * @param ArrayCollection|ProductCategory $productCategory
      */
-    public function setCategories(ArrayCollection $category)
+    public function setProductCategory(ArrayCollection $productCategory)
     {
-        $this->categories = $category;
+        foreach ($productCategory as $cat) {
+            /**
+             * @var ProductCategory $pro
+             */
+            $pro = new ProductCategory();
+            $pro->setProduct($this);
+            $pro->setCategory($cat);
+            $this->productCategory[] = $pro;
+        }
     }
 
     /**
