@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 use App\Entity\Category;
+use App\Entity\ProductCategory;
 use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Product;
@@ -16,7 +17,9 @@ use App\Form\ListOfUserBoughtItemsFormType;
 use App\Form\ProductFormType;
 use App\Form\ProductInfoFormType;
 use App\Form\ProductImageFormType;
+use App\Form\ProductQuantityFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\ProductCategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SoldRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -137,6 +140,7 @@ class SellerController extends AbstractController
     /**
      * @Route("/seller/updatemyproductinfo/{id}", name="updatemyproductinfo")
      * @param EntityManagerInterface $entityManager
+     * @param ProductCategoryRepository $productCategoryRepository
      * @param Request $request
      * @param Product $product
      * @return Response
@@ -144,7 +148,8 @@ class SellerController extends AbstractController
     public function updateMyProductInfo(
         Product $product,
         Request $request,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        ProductCategoryRepository $productCategoryRepository)
     {
         if($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('showmyproducts');
@@ -159,12 +164,57 @@ class SellerController extends AbstractController
              */
             $product = $form->getData();
             $product->setImage($productIm);
+            $allProductCategory = $productCategoryRepository->findBy([
+                'product' => $product->getId()
+            ]);
+            foreach($allProductCategory as $oneProductCategory) {
+                /**
+                 * @var ProductCategory $oneProductCategory
+                 */
+                $entityManager->remove($oneProductCategory);
+                $entityManager->flush();
+            }
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
             return $this->redirectToRoute('showmyproducts');
         }
         return $this->render('seller/updatemyproductinfo.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/seller/updatemyproductquantity/{id}", name="updatemyproductquantity")
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param Product $product
+     * @return Response
+     */
+    public function updateMyProductAvailableQuantity(
+        Product $product,
+        Request $request,
+        EntityManagerInterface $entityManager)
+    {
+        if($this->getUser() !== $product->getUser()) {
+            return $this->redirectToRoute('showmyproducts');
+        }
+        $productIm = $product->getImage();
+        $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
+        $form = $this->createForm(ProductQuantityFormType::class, $product);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var Product $product
+             */
+            $product = $form->getData();
+            $product->setImage($productIm);
+            $entityManager->merge($product);
+            $entityManager->flush();
+            $this->addFlash('success', 'Updated the Product Available Quantity!');
+            return $this->redirectToRoute('showmyproducts');
+        }
+        return $this->render('seller/updatemyproductquantity.html.twig', [
             'form' => $form->createView()
         ]);
     }

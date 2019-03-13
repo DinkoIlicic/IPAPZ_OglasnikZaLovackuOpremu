@@ -1,0 +1,16 @@
+{% extends '/seller/header.html.twig' %}
+
+{% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('showmyproducts') }}">Back</a>
+    </div><br />
+    <div>
+        <p>Update my product available quantity</p>
+    </div>
+    <div>
+        {{ form_start(form) }}
+            {{ form_row(form.availableQuantity) }}
+        <button type="submit" class="btn btn-primary" formnovalidate>Update</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

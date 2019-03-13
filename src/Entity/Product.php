@@ -166,15 +166,15 @@ class Product
      */
     public function getProductCategory()
     {
-        return $this->productCategory;
-    }
+        $categories = new ArrayCollection();
+        foreach ($this->productCategory as $prod) {
+            /**
+             * @var ProductCategory $prod
+             */
+            $categories[] = $prod->getCategory();
+        }
 
-    /**
-     * @param ArrayCollection|ProductCategory $productCategory
-     */
-    public function addProductCategory(ArrayCollection $productCategory)
-    {
-        $this->productCategory = $productCategory;
+        return $categories;
     }
 
     /**

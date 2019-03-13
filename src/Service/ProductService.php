@@ -38,11 +38,13 @@ class ProductService
             FROM 
               App\Entity\Product p
             JOIN 
-              p.categories c
+              p.productCategory c
+            JOIN
+              c.category d
             WHERE 
               p.visibility = 1 and
               p.visibilityAdmin = 1 and
-              c.visibilityAdmin = 1
+              d.visibilityAdmin = 1
             ORDER BY
               p.id DESC
             '
@@ -67,12 +69,14 @@ class ProductService
             FROM 
               App\Entity\Product p
             INNER JOIN
-              p.categories c
+              p.productCategory c
+            JOIN
+              c.category d
             WHERE 
-              c.id = :category and
+              d.id = :category and
               p.visibility = 1 and
               p.visibilityAdmin = 1 and
-              c.visibilityAdmin = 1
+              d.visibilityAdmin = 1
             ORDER BY
               p.id DESC
             '

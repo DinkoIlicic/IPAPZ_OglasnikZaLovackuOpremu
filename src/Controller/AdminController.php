@@ -12,6 +12,7 @@ use App\Entity\Seller;
 use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Product;
+use App\Entity\ProductCategory;
 use App\Form\CategoryFormType;
 use App\Form\PasswordFormType;
 use App\Form\ProductInfoFormType;
@@ -19,8 +20,10 @@ use App\Form\ProductImageFormType;
 use App\Form\ListOfUserBoughtItemsFormType;
 use App\Form\AdminListOfBoughtItemsPerProductFormType;
 use App\Form\AdminListOfCategoriesFormType;
+use App\Form\ProductQuantityFormType;
 use App\Form\ProfileFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\ProductCategoryRepository;
 use App\Repository\SellerRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SoldRepository;
@@ -206,12 +209,14 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/products", name="listofproducts")
      * @param ProductRepository $productRepository
+     * @param ProductCategoryRepository $productCategoryRepository
      * @param Request $request
      * @return Response
      */
     public function showAllProducts(
         Request $request,
-        ProductRepository $productRepository)
+        ProductRepository $productRepository,
+        ProductCategoryRepository $productCategoryRepository)
     {
         $products = [];
         $form = $this->createForm(AdminListOfCategoriesFormType::class);
@@ -222,9 +227,15 @@ class AdminController extends AbstractController
              * @var Category $category
              */
             $message = $category->getName();
-            $products[] = $productRepository->findBy([
-                'categories' => $category->getId()
+            $productCategories[] = $productCategoryRepository->findBy([
+                'category' => $category->getId()
             ]);
+            foreach($productCategories as $oneProductCategory) {
+                /**
+                 * @var ProductCategory $oneProductCategory
+                 */
+                $products[] = $oneProductCategory->getProduct();
+            }
         } else {
             $products[] = $productRepository->findBy([], [
                 'name' => 'ASC'
@@ -241,6 +252,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/updateproductinfo/{id}", name="updateproductinfo")
      * @param EntityManagerInterface $entityManager
+     * @param ProductCategoryRepository $productCategoryRepository
      * @param Request $request
      * @param Product $product
      * @return Response
@@ -248,7 +260,8 @@ class AdminController extends AbstractController
     public function updateProductInfo(
         Product $product,
         Request $request,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        ProductCategoryRepository $productCategoryRepository)
     {
         $productIm = $product->getImage();
         $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
@@ -261,12 +274,55 @@ class AdminController extends AbstractController
              */
             $product = $form->getData();
             $product->setImage($productIm);
+            $allProductCategory = $productCategoryRepository->findBy([
+                'product' => $product->getId()
+            ]);
+            foreach($allProductCategory as $oneProductCategory) {
+                /**
+                 * @var ProductCategory $oneProductCategory
+                 */
+                $entityManager->remove($oneProductCategory);
+                $entityManager->flush();
+            }
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
             return $this->redirectToRoute('listofproducts');
         }
         return $this->render('admin/updateproductinfo.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/updateproductquantity/{id}", name="updateproductquantity")
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param Product $product
+     * @return Response
+     */
+    public function updateProductQuantity(
+        Product $product,
+        Request $request,
+        EntityManagerInterface $entityManager)
+    {
+        $productIm = $product->getImage();
+        $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
+
+        $form = $this->createForm(ProductQuantityFormType::class, $product);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var Product $product
+             */
+            $product = $form->getData();
+            $product->setImage($productIm);
+            $entityManager->merge($product);
+            $entityManager->flush();
+            $this->addFlash('success', 'Updated the Product Info!');
+            return $this->redirectToRoute('listofproducts');
+        }
+        return $this->render('admin/updateproductquantity.html.twig', [
             'form' => $form->createView()
         ]);
     }

@@ -19,27 +19,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
-class ProductInfoFormType extends AbstractType
+class ProductQuantityFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class, [
-                'label' => 'Insert Your Product Name here: '
-            ])
-            ->add('price', MoneyType::class, [
-                'label' => 'Insert Your Product Price here: '
-            ])
-            ->add('content', TextareaType::class, [
-                'label' => 'Insert Your Additional Information about Product here: ',
-                'required'  => false,
-                'empty_data' => '',
-            ])
-            ->add('productCategory', EntityType::class,[
-                'class' => Category::class,
-                'choice_label' => 'name',
-                'multiple' => true,
-                'expanded' => true,
+            ->add('availableQuantity', IntegerType::class,[
+                'label' => 'Available Quantity:'
             ]);
     }
 
