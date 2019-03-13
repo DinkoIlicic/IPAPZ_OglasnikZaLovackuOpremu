@@ -48,6 +48,7 @@ class Product
     private $name;
 
     /**
+     * @var ArrayCollection
      * @ORM\ManyToMany(targetEntity="Category", inversedBy="products")
      * @ORM\JoinTable(
      *     name="ab_category_2_product",
@@ -172,19 +173,19 @@ class Product
     }
 
     /**
-     * @param Category $category
+     * @param ArrayCollection $category
      */
-    public function addCategories(Category $category)
+    public function addCategories(ArrayCollection $category)
     {
-        $this->categories[] = $category;
+        $this->categories = $category;
     }
 
     /**
-     * @param Category $category
+     * @param ArrayCollection $category
      */
-    public function setCategories(Category $category)
+    public function setCategories(ArrayCollection $category)
     {
-        $this->categories[] = $category;
+        $this->categories = $category;
     }
 
     /**

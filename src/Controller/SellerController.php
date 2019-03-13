@@ -43,10 +43,9 @@ class SellerController extends AbstractController
      * @Route("/seller/newproduct", name="insertproduct")
      * @param Request $request
      * @param EntityManagerInterface $entityManager
-     * @param CategoryRepository $categoryRepository
      * @return Response
      */
-    public function newProduct(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository)
+    public function newProduct(Request $request, EntityManagerInterface $entityManager)
     {
         $form = $this->createForm(ProductFormType::class);
         $form->handleRequest($request);
