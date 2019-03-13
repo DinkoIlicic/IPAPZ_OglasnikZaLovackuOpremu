@@ -7,6 +7,7 @@
  */
 
 namespace App\Controller;
+use App\Entity\Category;
 use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Product;
@@ -15,6 +16,7 @@ use App\Form\ListOfUserBoughtItemsFormType;
 use App\Form\ProductFormType;
 use App\Form\ProductInfoFormType;
 use App\Form\ProductImageFormType;
+use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SoldRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,9 +43,10 @@ class SellerController extends AbstractController
      * @Route("/seller/newproduct", name="insertproduct")
      * @param Request $request
      * @param EntityManagerInterface $entityManager
+     * @param CategoryRepository $categoryRepository
      * @return Response
      */
-    public function newProduct(Request $request, EntityManagerInterface $entityManager)
+    public function newProduct(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository)
     {
         $form = $this->createForm(ProductFormType::class);
         $form->handleRequest($request);

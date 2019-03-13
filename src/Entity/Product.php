@@ -8,6 +8,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Category;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -47,8 +48,10 @@ class Product
     private $name;
 
     /**
-     * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="App\Entity\Category", mappedBy="products")
+     * @ORM\ManyToMany(targetEntity="Category", inversedBy="products")
+     * @ORM\JoinTable(
+     *     name="ab_category_2_product",
+     *     )
      */
     private $categories;
 
@@ -161,13 +164,24 @@ class Product
     }
 
     /**
-     * @return ArrayCollection
+     * @return ArrayCollection|Category[]
      */
-    public function getCategories(): ArrayCollection
+    public function getCategories()
     {
         return $this->categories;
     }
 
+    /**
+     * @param Category $category
+     */
+    public function addCategories(Category $category)
+    {
+        $this->categories[] = $category;
+    }
+
+    /**
+     * @param Category $category
+     */
     public function setCategories(Category $category)
     {
         $this->categories[] = $category;

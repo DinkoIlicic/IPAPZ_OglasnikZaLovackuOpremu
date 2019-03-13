@@ -33,8 +33,7 @@ TO DO:
   - Dodati mogućnost kreiranja kupon kodova i korištenja kupon kodova od strane kupca
   - Dodati mogućnost pravljenja custom page-eva u adminu npr. Home page, O nama, FAQ, i slično. Ti page-ovi mogu imati custom url i primaju html kao input koji outputaju na frontendu
   - Dodati konfiguraciju shipping metoda u admin. Cijena shippinga po državi da se može manualno i mora se moći importati iz .csv file-a
-  - Sold items - autocomplete kada se krene upisivati ime prodavača
-  - Kada se klikne na ime prodavača, ajaxom napraviti grid update
-  - Dodati wishlist od customera
+  - Sold items - autocomplete kada se krene upisivati ime kupca/naziv proizvoda (autosugest ajax, javascript, on type, nakon 3-5 slova, proizvoljno)
+  - Kada se klikne na ime prodavača, ajaxom napraviti grid update (nakon unosa svakog slova, pritiskom entera ili micanja sa polja odraditi query da privuce prodane proizvode)
   - Vrste plaćanja : po pouzeću, Paypal payment gateway implementacija. Način plaćanja mora biti vidljiv u admin orderima i mora se moći osposobiti/ugasiti u adminu
   - Poželjno je promisliti o implementaciji te modificirati dodatne stvari kako bi korisniku približili aplikaciju. Slobodno dodati nove funkcionalnosti. Postojeće funkcionalnosti ukratko dokumentirati u features/{određeni_entity}.md kako bi aplikacija bila preglednija i lakša za upoznavanje

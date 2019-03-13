@@ -47,7 +47,6 @@ class ProductService
               p.id DESC
             '
         );
-        //$result = $query->execute();
         $pagenator = $container->get('knp_paginator');
         $results = $pagenator->paginate(
             $query,
@@ -67,12 +66,12 @@ class ProductService
               p
             FROM 
               App\Entity\Product p
-            JOIN
-              p.category c
+            INNER JOIN
+              p.categories c
             WHERE 
+              c.id = :category and
               p.visibility = 1 and
               p.visibilityAdmin = 1 and
-              p.category = :category and
               c.visibilityAdmin = 1
             ORDER BY
               p.id DESC

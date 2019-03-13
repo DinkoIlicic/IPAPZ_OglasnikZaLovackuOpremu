@@ -7,6 +7,8 @@
  */
 
 namespace App\Entity;
+
+use App\Entity\Product;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -41,17 +43,6 @@ class Category
     private $user;
 
     /**
-     * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="App\Entity\Product", inversedBy="categories", fetch="EAGER")
-     * @ORM\JoinTable(
-     *     name="ab_category_2_product",
-     *     joinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=false)},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false)}
-     * )
-     */
-    private $products;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $visibility;
@@ -60,6 +51,11 @@ class Category
      * @ORM\Column(type="integer")
      */
     private $visibilityAdmin;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Product", mappedBy="categories")
+     */
+    private $products;
 
     public function __construct()
     {
@@ -115,22 +111,6 @@ class Category
     }
 
     /**
-     * @return ArrayCollection
-     */
-    public function getProducts(): ArrayCollection
-    {
-        return $this->products;
-    }
-
-    /**
-     * @param ArrayCollection $products
-     */
-    public function setProducts(ArrayCollection $products): void
-    {
-        $this->products = $products;
-    }
-
-    /**
      * @return mixed
      */
     public function getVisibility()
@@ -160,5 +140,13 @@ class Category
     public function setVisibilityAdmin($visibilityAdmin): void
     {
         $this->visibilityAdmin = $visibilityAdmin;
+    }
+
+    /**
+     * @return ArrayCollection|Product[]
+     */
+    public function getProducts()
+    {
+        return $this->products;
     }
 }

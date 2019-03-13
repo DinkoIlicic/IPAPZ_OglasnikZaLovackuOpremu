@@ -77,7 +77,7 @@ class AdvertisementController extends AbstractController
         return $this->render('advertisement/categoryproducts.html.twig', [
             'categories' => $categories,
             'products' => $data,
-            'category' => $category
+
         ]);
     }
 
