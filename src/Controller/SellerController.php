@@ -164,14 +164,11 @@ class SellerController extends AbstractController
              */
             $product = $form->getData();
             $product->setImage($productIm);
-            $allProductCategory = $productCategoryRepository->findBy([
+            $allProductsFromProductCategory = $productCategoryRepository->findBy([
                 'product' => $product->getId()
             ]);
-            foreach($allProductCategory as $oneProductCategory) {
-                /**
-                 * @var ProductCategory $oneProductCategory
-                 */
-                $entityManager->remove($oneProductCategory);
+            foreach($allProductsFromProductCategory as $oneProductsFromProductCategory) {
+                $entityManager->remove($oneProductsFromProductCategory);
                 $entityManager->flush();
             }
             $entityManager->merge($product);

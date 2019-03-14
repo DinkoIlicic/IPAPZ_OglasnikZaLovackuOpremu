@@ -259,26 +259,24 @@ class AdvertisementController extends AbstractController
         /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'Product name');
-        $sheet->setCellValue('B1', 'Category name');
-        $sheet->setCellValue('C1', 'Seller');
-        $sheet->setCellValue('D1', 'Email');
-        $sheet->setCellValue('E1', 'Qauntity');
-        $sheet->setCellValue('F1', 'Price');
-        $sheet->setCellValue('G1', 'Total Price');
-        $sheet->setCellValue('H1', 'Bought at');
+        $sheet->setCellValue('B1', 'Seller');
+        $sheet->setCellValue('C1', 'Email');
+        $sheet->setCellValue('D1', 'Qauntity');
+        $sheet->setCellValue('E1', 'Price');
+        $sheet->setCellValue('F1', 'Total Price');
+        $sheet->setCellValue('G1', 'Bought at');
         $i = 2;
         foreach($sold as $item) {
             /**
              * @var Sold $item
              */
             $sheet->setCellValue('A' . $i, $item->getProduct()->getName());
-            $sheet->setCellValue('B' . $i, $item->getProduct()->getCategory()->getName());
-            $sheet->setCellValue('C' . $i, $item->getProduct()->getUser()->getFullName());
-            $sheet->setCellValue('D' . $i, $item->getProduct()->getUser()->getEmail());
-            $sheet->setCellValue('E' . $i, $item->getQuantity());
-            $sheet->setCellValue('F' . $i, $item->getPrice());
-            $sheet->setCellValue('G' . $i, $item->getTotalPrice());
-            $sheet->setCellValue('H' . $i, $item->getBoughtAt());
+            $sheet->setCellValue('B' . $i, $item->getProduct()->getUser()->getFullName());
+            $sheet->setCellValue('C' . $i, $item->getProduct()->getUser()->getEmail());
+            $sheet->setCellValue('D' . $i, $item->getQuantity());
+            $sheet->setCellValue('E' . $i, $item->getPrice());
+            $sheet->setCellValue('F' . $i, $item->getTotalPrice());
+            $sheet->setCellValue('G' . $i, $item->getBoughtAt());
             $i++;
         }
 

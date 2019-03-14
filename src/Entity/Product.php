@@ -162,7 +162,7 @@ class Product
     }
 
     /**
-     * @return ArrayCollection|Product[]
+     * @return ArrayCollection|Category[]
      */
     public function getProductCategory()
     {
@@ -182,14 +182,14 @@ class Product
      */
     public function setProductCategory(ArrayCollection $productCategory)
     {
-        foreach ($productCategory as $cat) {
+        foreach ($productCategory as $category) {
             /**
-             * @var ProductCategory $pro
+             * @var ProductCategory $newProductCategory
              */
-            $pro = new ProductCategory();
-            $pro->setProduct($this);
-            $pro->setCategory($cat);
-            $this->productCategory[] = $pro;
+            $newProductCategory = new ProductCategory();
+            $newProductCategory->setProduct($this);
+            $newProductCategory->setCategory($category);
+            $this->productCategory[] = $newProductCategory;
         }
     }
 

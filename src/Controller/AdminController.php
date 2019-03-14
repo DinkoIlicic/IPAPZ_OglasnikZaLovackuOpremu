@@ -209,14 +209,14 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/products", name="listofproducts")
      * @param ProductRepository $productRepository
-     * @param ProductCategoryRepository $productCategoryRepository
+     * @param EntityManagerInterface $entityManager
      * @param Request $request
      * @return Response
      */
     public function showAllProducts(
         Request $request,
         ProductRepository $productRepository,
-        ProductCategoryRepository $productCategoryRepository)
+        EntityManagerInterface $entityManager)
     {
         $products = [];
         $form = $this->createForm(AdminListOfCategoriesFormType::class);
@@ -226,16 +226,21 @@ class AdminController extends AbstractController
             /**
              * @var Category $category
              */
-            $message = $category->getName();
-            $productCategories[] = $productCategoryRepository->findBy([
-                'category' => $category->getId()
-            ]);
-            foreach($productCategories as $oneProductCategory) {
-                /**
-                 * @var ProductCategory $oneProductCategory
-                 */
-                $products[] = $oneProductCategory->getProduct();
-            }
+            $message = $category->getId()->getName();
+            $queryProductsFromCategory = $entityManager->createQuery(
+                '
+                SELECT 
+                    p
+                FROM 
+                    App\Entity\Product p
+                JOIN 
+                    p.productCategory c
+                WHERE
+                    c.category = :category
+                '
+            );
+            $queryProductsFromCategory->setParameter('category', $category->getId());
+            $products[] = $queryProductsFromCategory->getResult();
         } else {
             $products[] = $productRepository->findBy([], [
                 'name' => 'ASC'
@@ -265,7 +270,6 @@ class AdminController extends AbstractController
     {
         $productIm = $product->getImage();
         $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
-
         $form = $this->createForm(ProductInfoFormType::class, $product);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
@@ -274,14 +278,11 @@ class AdminController extends AbstractController
              */
             $product = $form->getData();
             $product->setImage($productIm);
-            $allProductCategory = $productCategoryRepository->findBy([
+            $allProductsFromProductCategory = $productCategoryRepository->findBy([
                 'product' => $product->getId()
             ]);
-            foreach($allProductCategory as $oneProductCategory) {
-                /**
-                 * @var ProductCategory $oneProductCategory
-                 */
-                $entityManager->remove($oneProductCategory);
+            foreach($allProductsFromProductCategory as $oneProductsFromProductCategory) {
+                $entityManager->remove($oneProductsFromProductCategory);
                 $entityManager->flush();
             }
             $entityManager->merge($product);
