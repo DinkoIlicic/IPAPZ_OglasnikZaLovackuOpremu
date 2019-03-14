@@ -281,7 +281,7 @@ class AdminController extends AbstractController
             if(empty($customUrl)) {
                 $customUrl = $product->getName();
             }
-            $product->setCustomUrl(str_replace(' ', '_', $customUrl));
+            $product->setCustomUrl(str_replace(' ', '-', $customUrl));
             $product->setImage($productIm);
             $allProductsFromProductCategory = $productCategoryRepository->findBy([
                 'product' => $product->getId()

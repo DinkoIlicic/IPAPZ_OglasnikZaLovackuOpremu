@@ -37,3 +37,6 @@ TO DO:
   - Kada se klikne na ime prodavača, ajaxom napraviti grid update (nakon unosa svakog slova, pritiskom entera ili micanja sa polja odraditi query da privuce prodane proizvode)
   - Vrste plaćanja : po pouzeću, Paypal payment gateway implementacija. Način plaćanja mora biti vidljiv u admin orderima i mora se moći osposobiti/ugasiti u adminu
   - Poželjno je promisliti o implementaciji te modificirati dodatne stvari kako bi korisniku približili aplikaciju. Slobodno dodati nove funkcionalnosti. Postojeće funkcionalnosti ukratko dokumentirati u features/{određeni_entity}.md kako bi aplikacija bila preglednija i lakša za upoznavanje
+  
+Extra:
+  - Dugačke funkciji razdvojiti u vise malih

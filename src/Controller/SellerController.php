@@ -71,7 +71,7 @@ class SellerController extends AbstractController
             if(empty($customUrl)) {
                 $customUrl = $product->getName();
             }
-            $product->setCustomUrl(str_replace(' ', '_', $customUrl));
+            $product->setCustomUrl(str_replace(' ', '-', $customUrl));
             $product->setUser($this->getUser());
             $product->setVisibility(1);
             $product->setVisibilityAdmin(1);
@@ -172,7 +172,7 @@ class SellerController extends AbstractController
             if(empty($customUrl)) {
                 $customUrl = $product->getName();
             }
-            $product->setCustomUrl(str_replace(' ', '_', $customUrl));
+            $product->setCustomUrl(str_replace(' ', '-', $customUrl));
             $product->setImage($productIm);
             $allProductsFromProductCategory = $productCategoryRepository->findBy([
                 'product' => $product->getId()

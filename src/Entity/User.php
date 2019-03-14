@@ -62,6 +62,26 @@ class User extends AbstractController implements UserInterface
      */
     private $phoneNumber;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Wishlist", mappedBy="user", cascade={"persist","remove"})
+     */
+    private $wishlist;
+
+    /**
+     * @return mixed
+     */
+    public function getWishlist()
+    {
+        return $this->wishlist;
+    }
+
+    /**
+     * @param mixed $wishlist
+     */
+    public function setWishlist($wishlist): void
+    {
+        $this->wishlist = $wishlist;
+    }
 
     public function getFullName()
     {

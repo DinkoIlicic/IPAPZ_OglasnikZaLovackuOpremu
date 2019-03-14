@@ -15,6 +15,9 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ path('myitems') }}">My Items</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('mywishlist') }}">Wishlist</a>
+        </li>
     {% endif %}
 {% endblock %}
 {% block body %}
@@ -42,6 +45,12 @@
                     {% else %}
                         <p>Not available</p>
                     {% endif %}
+                {% endif %}
+                <br /><br />
+                {% if (is_granted('ROLE_USER') and (productInWishlist is null)) %}
+                    <a class="btn btn-primary" href="{{ path('addtowishlist', {'id': product.id}) }}">Add to wish list</a>
+                {% elseif (is_granted('ROLE_USER') and productInWishlist) %}
+                    <a class="btn btn-danger" href="{{ path('removefromwishlist', {'id': product.id}) }}">Remove from wish list</a>
                 {% endif %}
             </div>
         </div>

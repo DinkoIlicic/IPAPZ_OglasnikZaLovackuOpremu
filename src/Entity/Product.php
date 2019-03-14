@@ -49,6 +49,11 @@ class Product
     private $productCategory;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Wishlist", mappedBy="product", cascade={"persist","remove"})
+     */
+    private $wishlist;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -109,12 +114,11 @@ class Product
     private $comments;
 
     /**
-     * @var string $customUrl
      * @Assert\Regex(
      *     pattern     = "/^[a-zA-Z0-9 _.-]+$/i",
      *     message     = "Only letters, numbers, space, underscore, dot and minus are allowed"
      *     )
-     * @ORM\Column(name="custom_url", type="string", length=255, unique=true)
+     * @ORM\Column(name="custom_url", type="string", length=255)
      */
     private $customUrl;
 
@@ -125,6 +129,7 @@ class Product
     {
         $this->comments = new ArrayCollection();
         $this->productCategory = new ArrayCollection();
+        $this->wishlist = new ArrayCollection();
     }
 
     /**
@@ -205,6 +210,22 @@ class Product
             $newProductCategory->setCategory($category);
             $this->productCategory[] = $newProductCategory;
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWishlist()
+    {
+        return $this->wishlist;
+    }
+
+    /**
+     * @param mixed $wishlist
+     */
+    public function setWishlist($wishlist): void
+    {
+        $this->wishlist = $wishlist;
     }
 
     /**
@@ -348,9 +369,9 @@ class Product
     }
 
     /**
-     * @param string $customUrl
+     * @param $customUrl
      */
-    public function setCustomUrl(string $customUrl)
+    public function setCustomUrl($customUrl)
     {
         $this->customUrl = $customUrl;
     }

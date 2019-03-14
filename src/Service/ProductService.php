@@ -82,7 +82,6 @@ class ProductService
             '
         );
         $query->setParameter('category', $category);
-        //$result = $query->execute();
         $pagenator = $container->get('knp_paginator');
         $results = $pagenator->paginate(
             $query,
@@ -109,7 +108,30 @@ class ProductService
             '
         );
         $query->setParameter('user', $user);
-        //$result = $query->execute();
+        $pagenator = $container->get('knp_paginator');
+        $results = $pagenator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+        return $results;
+    }
+
+    public function returnDataMyWishlist($request, $user)
+    {
+        $em = $this->em;
+        $container = $this->container;
+        $query = $em->createQuery(
+            '
+            SELECT 
+              p
+            FROM 
+              App\Entity\Wishlist p
+            WHERE 
+              p.user = :user
+            '
+        );
+        $query->setParameter('user', $user);
         $pagenator = $container->get('knp_paginator');
         $results = $pagenator->paginate(
             $query,

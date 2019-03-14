@@ -13,12 +13,13 @@ use App\Entity\ProductCategory;
 use App\Entity\Sold;
 use App\Entity\Seller;
 use App\Entity\Comment;
+use App\Entity\Wishlist;
 use App\Form\CommentFormType;
 use App\Form\ContactFormType;
 use App\Form\SellerFormType;
 use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
-use App\Repository\ProductRepository;
+use App\Repository\WishlistRepository;
 use App\Repository\SellerRepository;
 use App\Repository\SoldRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -129,7 +130,7 @@ class AdvertisementController extends AbstractController
      * @param CategoryRepository $categoryRepository
      * @param SellerRepository $sellerRepository
      * @param EntityManagerInterface $entityManager
-     * @param ProductRepository $productRepository
+     * @param WishlistRepository $wishlistRepository
      * @param Request $request
      * @param Product $product
      * @return Response
@@ -140,11 +141,18 @@ class AdvertisementController extends AbstractController
         EntityManagerInterface $entityManager,
         CategoryRepository $categoryRepository,
         SellerRepository $sellerRepository,
+        WishlistRepository $wishlistRepository,
         Product $product)
     {
         $categories = $categoryRepository->findBy([
             'visibilityAdmin' => 1
         ]);
+
+        $productInWishlist = $wishlistRepository->findOneBy([
+            'product' => $product,
+            'user' => $this->getUser(),
+        ]);
+
         $seller = $sellerRepository->findOneBy([
             'user' => $product->getUser()
         ]);
@@ -216,10 +224,13 @@ class AdvertisementController extends AbstractController
                 'pageName' => $product->getCustomUrl()]);
         }
 
+
+
         return $this->render('advertisement/productpage.html.twig', [
             'categories' => $categories,
             'product' => $product,
             'seller' => $seller,
+            'productInWishlist' => $productInWishlist,
             'form' => $form->createView(),
             'commentForm' => $formComment->createView(),
             'emailForm' => $formMail->createView()
@@ -246,6 +257,88 @@ class AdvertisementController extends AbstractController
             'categories' => $categories,
             'myitems' => $data
         ]);
+    }
+
+    /**
+     * @Route("/wishlist", name="mywishlist")
+     * @param CategoryRepository $categoryRepository
+     * @param ProductService $productService
+     * @param Request $request
+     * @return Response
+     */
+    public function myWishList(
+        CategoryRepository $categoryRepository,
+        ProductService $productService,
+        Request $request)
+    {
+        $categories = $categoryRepository->findBy([
+            'visibilityAdmin' => 1
+        ]);
+        $data = $productService->returnDataMyWishlist($request, $this->getUser()->getId());
+        return $this->render('advertisement/mywishlist.html.twig', [
+            'categories' => $categories,
+            'mywishlist' => $data
+        ]);
+    }
+
+    /**
+     * @Route("/add_to_wishlist/{id}", name="addtowishlist")
+     * @param Product $product
+     * @param EntityManagerInterface $entityManager
+     * @param WishlistRepository $wishlistRepository
+     * @return Response
+     */
+    public function addProductToWishList(
+        Product $product,
+        EntityManagerInterface $entityManager,
+        WishlistRepository $wishlistRepository)
+    {
+        $wishlist = new Wishlist();
+        $wishlist->setProduct($product);
+        $wishlist->setUser($this->getUser());
+        $wishlist->setNotify(0);
+        $itemAlreadyExists = $wishlistRepository->findOneBy([
+            'product' => $product,
+            'user' => $this->getUser(),
+        ]);
+        if($itemAlreadyExists) {
+            $this->addFlash('warning', 'Product already added to wishlist!');
+            return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+                'pageName' => $product->getCustomUrl()]);
+        }
+        $entityManager->persist($wishlist);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Added to wishlist!');
+        return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+            'pageName' => $product->getCustomUrl()]);
+    }
+
+    /**
+     * @Route("/remove_from_wishlist/{id}", name="removefromwishlist")
+     * @param Product $product
+     * @param EntityManagerInterface $entityManager
+     * @param WishlistRepository $wishlistRepository
+     * @return Response
+     */
+    public function removeProductToWishList(
+        Product $product,
+        EntityManagerInterface $entityManager,
+        WishlistRepository $wishlistRepository)
+    {
+        /**
+         * @var Wishlist $removeProductFromWishlist
+         */
+        $removeProductFromWishlist = $wishlistRepository->findOneBy([
+            'product' => $product,
+            'user' => $this->getUser(),
+        ]);
+        $entityManager->remove($removeProductFromWishlist);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Removed from wishlist!');
+        return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+            'pageName' => $product->getCustomUrl()]);
     }
 
     /**
