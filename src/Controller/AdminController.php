@@ -277,6 +277,11 @@ class AdminController extends AbstractController
              * @var Product $product
              */
             $product = $form->getData();
+            $customUrl = $product->getCustomUrl();
+            if(empty($customUrl)) {
+                $customUrl = $product->getName();
+            }
+            $product->setCustomUrl(str_replace(' ', '_', $customUrl));
             $product->setImage($productIm);
             $allProductsFromProductCategory = $productCategoryRepository->findBy([
                 'product' => $product->getId()

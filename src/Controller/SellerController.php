@@ -67,6 +67,11 @@ class SellerController extends AbstractController
             } catch (FileException $e) {
                 // ... handle exception if something happens during file upload
             }
+            $customUrl = $product->getCustomUrl();
+            if(empty($customUrl)) {
+                $customUrl = $product->getName();
+            }
+            $product->setCustomUrl(str_replace(' ', '_', $customUrl));
             $product->setUser($this->getUser());
             $product->setVisibility(1);
             $product->setVisibilityAdmin(1);
@@ -163,6 +168,11 @@ class SellerController extends AbstractController
              * @var Product $product
              */
             $product = $form->getData();
+            $customUrl = $product->getCustomUrl();
+            if(empty($customUrl)) {
+                $customUrl = $product->getName();
+            }
+            $product->setCustomUrl(str_replace(' ', '_', $customUrl));
             $product->setImage($productIm);
             $allProductsFromProductCategory = $productCategoryRepository->findBy([
                 'product' => $product->getId()

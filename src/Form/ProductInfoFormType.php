@@ -18,6 +18,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Validator\Constraints\Count;
+use Symfony\Component\Validator\Constraints\Length;
 
 class ProductInfoFormType extends AbstractType
 {
@@ -40,7 +42,23 @@ class ProductInfoFormType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => true,
                 'expanded' => true,
+                'constraints' => array(
+                    new Count(array(
+                        'min' => 1,
+                        'minMessage' => "Please, choose one or more categories"
+                    ))
+                )
+            ])
+            ->add('customUrl', TextType::class, [
+                'label' => 'Page name:',
+                'constraints' => [
+                    new Length([
+                        'max' => 255,
+                        'maxMessage' => 'Page name can not be longer than 255 characters'
+                    ])
+                ]
             ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

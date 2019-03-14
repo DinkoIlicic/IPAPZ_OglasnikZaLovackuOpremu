@@ -9,6 +9,7 @@
 namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Entity\ProductCategory;
 use App\Entity\Sold;
 use App\Entity\Seller;
 use App\Entity\Comment;
@@ -17,10 +18,12 @@ use App\Form\ContactFormType;
 use App\Form\SellerFormType;
 use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
 use App\Repository\SoldRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Handler\SwiftMailerHandler;
+use PhpParser\Node\Expr\Variable;
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -122,20 +125,22 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/checkproduct/{id}", name="checkproduct")
+     * @Route("/checkproduct/{id}/{pageName}", name="checkproduct")
      * @param CategoryRepository $categoryRepository
      * @param SellerRepository $sellerRepository
      * @param EntityManagerInterface $entityManager
-     * @param Product $product
+     * @param ProductRepository $productRepository
      * @param Request $request
+     * @param Product $product
      * @return Response
+     * @var $pageName
      */
     public function checkProduct(
         Request $request,
-        Product $product,
         EntityManagerInterface $entityManager,
         CategoryRepository $categoryRepository,
-        SellerRepository $sellerRepository)
+        SellerRepository $sellerRepository,
+        Product $product)
     {
         $categories = $categoryRepository->findBy([
             'visibilityAdmin' => 1
@@ -151,11 +156,13 @@ class AdvertisementController extends AbstractController
             $quan = $sold->getQuantity();
             if($quan === null ) {
                 $this->addFlash('warning', 'Please insert correct number in field Quantity!');
-                return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
+                return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+                    'pageName' => $product->getCustomUrl()]);
             }
             if($sold->getQuantity() > $product->getAvailableQuantity()) {
                 $this->addFlash('warning', 'Not enough available quantity!');
-                return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
+                return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+                    'pageName' => $product->getCustomUrl()]);
             } else {
                 $sold->setUser($this->getUser());
                 $sold->setProduct($product);
@@ -166,7 +173,8 @@ class AdvertisementController extends AbstractController
                 $entityManager->persist($sold);
                 $entityManager->flush();
                 $this->addFlash('success', 'Bought the product!');
-                return $this->redirectToRoute('checkproduct', ['id' => $product->getId()]);
+                return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+                    'pageName' => $product->getCustomUrl()]);
             }
         }
 
@@ -180,20 +188,17 @@ class AdvertisementController extends AbstractController
             $to = $product->getUser()->getEmail();
             if(empty($name) || empty($from) || empty($message)) {
                 $this->addFlash('warning', 'Please fill out all fields to send mail!');
-                return $this->redirectToRoute('checkproduct', [
-                    'id' => $product->getId()
-                ]);
+                return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+                    'pageName' => $product->getCustomUrl()]);
             } elseif(filter_var($from, FILTER_VALIDATE_EMAIL)){
                 $this->addFlash('success', 'Mail sent. Name: ' . $name . ', from: ' . $from . ', to: '
                     . $to . ', message: ' . $message);
-                return $this->redirectToRoute('checkproduct', [
-                    'id' => $product->getId()
-                ]);
+                return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+                    'pageName' => $product->getCustomUrl()]);
             } else {
                 $this->addFlash('warning', 'Your email is not valid!');
-                return $this->redirectToRoute('checkproduct', [
-                    'id' => $product->getId()
-                ]);
+                return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+                    'pageName' => $product->getCustomUrl()]);
             }
         }
 
@@ -207,9 +212,8 @@ class AdvertisementController extends AbstractController
             $product->addComment($comment);
             $entityManager->flush();
             $this->addFlash('success', 'Comment added!');
-            return $this->redirectToRoute('checkproduct', [
-                'id' => $product->getId()
-            ]);
+            return $this->redirectToRoute('checkproduct', ['id' => $product->getId(),
+                'pageName' => $product->getCustomUrl()]);
         }
 
         return $this->render('advertisement/productpage.html.twig', [

@@ -12,7 +12,9 @@ use App\Entity\Category;
 use App\Entity\Product;
 use App\Entity\ProductCategory;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -21,6 +23,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Validator\Constraints\Count;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ProductFormType extends AbstractType
 {
@@ -46,10 +51,25 @@ class ProductFormType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => true,
                 'expanded' => true,
+                'constraints' => array(
+                    new Count(array(
+                        'min' => 1,
+                        'minMessage' => "Please, choose one or more categories"
+                    ))
+                )
             ])
             ->add('availableQuantity', IntegerType::class,[
                 'label' => 'Available Quantity:',
                 'data' => 1
+            ])
+            ->add('customUrl', TextType::class, [
+                'label' => 'Page name:',
+                'constraints' => [
+                    new Length([
+                        'max' => 255,
+                        'maxMessage' => 'Page name can not be longer than 255 characters'
+                    ])
+                ]
             ]);
     }
 

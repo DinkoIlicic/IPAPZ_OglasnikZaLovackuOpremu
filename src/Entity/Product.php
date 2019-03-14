@@ -36,6 +36,10 @@ class Product
     /**
      * @Assert\NotBlank(message="Please, insert product name.")
      * @ORM\Column(type="string")
+     * @Assert\Regex(
+     *     pattern     = "/^[a-zA-Z0-9 _.-]+$/i",
+     *     message     = "Only letters, numbers, space, underscore, dot and minus are allowed"
+     *)
      */
     private $name;
 
@@ -103,6 +107,16 @@ class Product
      * @ORM\OrderBy({"createdAt"="DESC"})
      */
     private $comments;
+
+    /**
+     * @var string $customUrl
+     * @Assert\Regex(
+     *     pattern     = "/^[a-zA-Z0-9 _.-]+$/i",
+     *     message     = "Only letters, numbers, space, underscore, dot and minus are allowed"
+     *     )
+     * @ORM\Column(name="custom_url", type="string", length=255, unique=true)
+     */
+    private $customUrl;
 
     /**
      * Product constructor.
@@ -296,5 +310,48 @@ class Product
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * @param Comment $comment
+     * @return $this
+     */
+    public function addComment(Comment $comment)
+    {
+        if (!$this->comments->contains($comment)) {
+            $comment->setProduct($this);
+            $this->comments[] = $comment;
+        }
+        return $this;
+    }
+    /**
+     * @param Comment $comment
+     * @return $this
+     */
+    public function removeComment(Comment $comment)
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            if ($comment->getProduct() === $this) {
+                $comment->setProduct(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomUrl()
+    {
+        return $this->customUrl;
+    }
+
+    /**
+     * @param string $customUrl
+     */
+    public function setCustomUrl(string $customUrl)
+    {
+        $this->customUrl = $customUrl;
     }
 }
