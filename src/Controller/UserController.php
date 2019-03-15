@@ -72,6 +72,7 @@ class UserController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+            $user->setFullName($user->getFirstName() . ' ' . $user->getLastName());
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -106,6 +107,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
+            $user->setFullName($user->getFirstName() . ' ' . $user->getLastName());
             $entityManager->persist($user);
             $entityManager->flush();
         }

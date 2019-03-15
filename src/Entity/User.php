@@ -68,6 +68,11 @@ class User extends AbstractController implements UserInterface
     private $wishlist;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $fullName;
+
+    /**
      * @return mixed
      */
     public function getWishlist()
@@ -81,11 +86,6 @@ class User extends AbstractController implements UserInterface
     public function setWishlist($wishlist): void
     {
         $this->wishlist = $wishlist;
-    }
-
-    public function getFullName()
-    {
-        return $this->getFirstName() . ' ' . $this->getLastName();
     }
 
     /**
@@ -215,5 +215,21 @@ class User extends AbstractController implements UserInterface
     public function setPhoneNumber($phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
+    }
+
+    /**
+     * @param mixed $fullName
+     */
+    public function setFullName($fullName): void
+    {
+        $this->fullName = $fullName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFullName()
+    {
+        return $this->fullName;
     }
 }

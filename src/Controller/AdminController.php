@@ -32,12 +32,18 @@ use App\Repository\UserRepository;
 use App\Repository\WishlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class AdminController extends AbstractController
 {
@@ -451,7 +457,7 @@ class AdminController extends AbstractController
         $form = $this->createForm(ProfileFormType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
+            $user->setFullName($user->getFirstName() . ' ' . $user->getLastName());
             $entityManager->persist($user);
             $entityManager->flush();
             $this->addFlash('success', 'User info updated!');
@@ -496,32 +502,99 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/itemsoldperuser", name="viewpeopleitemsperperson")
-     * @param Request $request
+     * @return Response
+     */
+    public function searchBar()
+    {
+        $form = $this->createFormBuilder(null)
+            ->setAction($this->generateUrl('handle_search'))
+            ->add("query", TextType::class, [
+                'attr' => [
+                    'placeholder'   => 'Enter user name'
+                ],
+                'label' => 'User'
+            ])
+            ->getForm()
+        ;
+        return $this->render('advertisement/search.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/handleSearch/{_query?}", name="handle_search", methods={"POST", "GET"})
+     * @var $_query
+     * @return JsonResponse
+     */
+    public function handleSearchRequest($_query)
+    {
+        $em = $this->getDoctrine()->getManager();
+        if ($_query)
+        {
+            $data = $em->getRepository(User::class)->findByName($_query);
+        } else {
+            $data = $em->getRepository(User::class)->findAll();
+        }
+
+        // setting up the serializer
+        $normalizers = [
+            new ObjectNormalizer()
+        ];
+        $encoders =  [
+            new JsonEncoder()
+        ];
+        $serializer = new Serializer($normalizers, $encoders);
+        $jsonObject = $serializer->serialize($data, 'json', [
+            'circular_reference_handler' => function ($user) {
+                /**
+                 * @var $user User
+                 */
+                return $user->getId();
+            }
+        ]);
+
+        return new JsonResponse($jsonObject, 200, [], true);
+    }
+
+    /**
+     * @Route("/admin/user/{id?}", name="user_page", methods={"GET"})
+     * @param $request Request
+     * @return Response
+     */
+    public function userSingle(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = null;
+
+        if ($id) {
+            $user = $em->getRepository(User::class)->findOneBy(['id' => $id]);
+        }
+        return $this->render('/admin/user.html.twig', [
+            'user'  => $user
+        ]);
+    }
+
+    /**
+     * @Route("/admin/itemsoldperuser/{id?}", name="viewpeopleitemsperperson")
      * @param SoldRepository $soldRepository
      * @param ProductRepository $productRepository
+     * @param User $id
      * @return Response
      */
     public function listOfPeopleThatBoughtMyProduct(
-        Request $request,
         SoldRepository $soldRepository,
-        ProductRepository $productRepository)
+        ProductRepository $productRepository,
+        User $id = null)
     {
         $products = $productRepository->findAll();
         $soldperuser = [];
-        $form = $this->createForm(ListOfUserBoughtItemsFormType::class);
-        $form->handleRequest($request);
-        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted()) {
-            $userid = $form->getData()->getUser();
-            /**
-             * @var User $userid
-             */
-            $message = $userid->getFirstName() .' '. $userid->getLastName();
+        if ($id) {
+            $message = $id->getFullName();
             /**
              * @var Product $product
              */
             $soldperuser[] = $soldRepository->findBy([
-                'user' => $userid,
+                'user' => $id,
                 'product' => $products
             ], [
                 'boughtAt' => 'DESC'
@@ -538,9 +611,9 @@ class AdminController extends AbstractController
             ]);
         }
         return $this->render('admin/viewpeopleitemsperperson.html.twig', [
-            'form' => $form->createView(),
             'solditems' => $soldperuser,
-            'message' => $message
+            'message' => $message,
+            'controller_name' => 'HomeController',
         ]);
     }
 

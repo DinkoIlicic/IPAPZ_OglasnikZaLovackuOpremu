@@ -1,14 +1,18 @@
 {% extends '/admin/header.html.twig' %}
-
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/search.css') }}">
+{% endblock %}
 {% block body %}
     <div>
         <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
     </div><br />
     <div>
-        {{ form_start(form) }}
-            {{ form_row(form.user) }}
-            <button type="submit" class="btn btn-primary" formnovalidate>Show</button>
-        {{ form_end(form) }}
+        {{
+            render(
+                controller('App\\Controller\\AdminController::searchBar')
+            )
+        }}
         <br/><br />
         <p><a class="btn btn-primary" href="{{ path('viewpeopleitemsperperson') }}">Show all</a></p>
     </div><hr />
@@ -52,4 +56,62 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/bloodhound.jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/typeahead.jquery.js') }}"></script>
+    <script>
+        $(document).ready(function ()
+        {
+            var users = new Bloodhound(
+                {
+                    datumTokenizer: Bloodhound.tokenizers.whitespace,
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    remote: {
+                        url: "{{ path('handle_search') }}/%QUERY%",
+                        wildcard: '%QUERY%',
+                        filter: function (users)
+                        {
+                            return $.map(users, function (user)
+                            {
+                                return {
+                                    user_id: user.id,
+                                    user_fullName: user.fullName
+                                }
+                            })
+                        }
+                    }
+                })
+            users.initialize();
+            $('#form_query').typeahead(
+                {
+                    hint: true,
+                    highlight: true,
+                    minLength: 3,
+
+                },
+                {
+                    name: 'users',
+                    limit: 10,
+                    source: users.ttAdapter(),
+                    display: 'user_fullName',
+                    templates: {
+                        suggestion: function (data)
+                        {
+                            return `
+                                <a href='{{ path('viewpeopleitemsperperson') }}/`+data.user_id+`'>
+                                    <span>`+data.user_fullName+`</span>
+                                </div>
+                            `
+                        },
+                        footer: function (query)
+                        {
+                            return '<div class="text-center">More results about: '+ query.query +'</div>'
+                        }
+                    }
+            })
+        })
+    </script>
 {% endblock %}
