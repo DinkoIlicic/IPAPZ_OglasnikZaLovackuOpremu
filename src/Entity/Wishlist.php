@@ -40,6 +40,11 @@ class Wishlist
     private $notify;
 
     /**
+     * @ORM\Column(type="smallint")
+     */
+    private $notified;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -93,5 +98,21 @@ class Wishlist
     public function setNotify($notify): void
     {
         $this->notify = $notify;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNotified()
+    {
+        return $this->notified;
+    }
+
+    /**
+     * @param mixed $notified
+     */
+    public function setNotified($notified): void
+    {
+        $this->notified = $notified;
     }
 }

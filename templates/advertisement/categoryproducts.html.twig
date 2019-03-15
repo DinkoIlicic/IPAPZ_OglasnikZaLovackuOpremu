@@ -29,7 +29,7 @@
             <div class="row" style="margin-top: 50px">
                 {% for product in products %}
                     <div class="col-sm" align="center" style="margin-bottom: 50px; margin-right: 10px;">
-                        <a href="{{ path('checkproduct', {'id': product.id, 'pageName': product.customUrl}) }}">
+                        <a href="{{ path('checkproduct', {'pageName': product.customUrl}) }}">
                             <img width="300" height="300" src="../../../../../uploads/image/{{ product.image }}" alt="">
                             <p style="color: black"><strong>{{ product.name }}</strong></p>
                             <p style="color: black"><strong>€{{ product.price }}</strong></p>

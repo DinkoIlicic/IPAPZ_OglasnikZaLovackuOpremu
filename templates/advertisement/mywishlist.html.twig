@@ -29,10 +29,10 @@
             <div class="row" style="margin-top: 50px">
                 {% for item in mywishlist %}
                     <div class="col-sm" align="center" style="margin-bottom: 50px; margin-right: 10px;">
-                        {% if item.notify == 1 %}
+                        {% if item.notified == 1 %}
                             <p>Available again</p>
                         {% endif %}
-                        <a href="{{ path('checkproduct', {'id': item.product.id, 'pageName': item.product.customUrl}) }}">
+                        <a href="{{ path('checkproduct', {'pageName': item.product.customUrl}) }}">
                             <img width="300" height="300" src="../../../../../uploads/image/{{ item.product.image }}" alt="">
                             <p style="color: black"><strong>Product name: {{ item.product.name }}</strong></p>
                             <p style="color: black"><strong>Available Quantity: {{ item.product.availableQuantity }}</strong></p>

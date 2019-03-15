@@ -13,6 +13,7 @@ use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Product;
 use App\Entity\ProductCategory;
+use App\Entity\Wishlist;
 use App\Form\CategoryFormType;
 use App\Form\PasswordFormType;
 use App\Form\ProductInfoFormType;
@@ -28,6 +29,7 @@ use App\Repository\SellerRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SoldRepository;
 use App\Repository\UserRepository;
+use App\Repository\WishlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -269,6 +271,9 @@ class AdminController extends AbstractController
         ProductCategoryRepository $productCategoryRepository)
     {
         $productIm = $product->getImage();
+        $productUrlNum = substr($product->getCustomUrl(), -9);
+        $productUrl = substr($product->getCustomUrl(), 0, -9);
+        $product->setCustomUrl($productUrl);
         $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
         $form = $this->createForm(ProductInfoFormType::class, $product);
         $form->handleRequest($request);
@@ -280,8 +285,10 @@ class AdminController extends AbstractController
             $customUrl = $product->getCustomUrl();
             if(empty($customUrl)) {
                 $customUrl = $product->getName();
+                $productUrlNum = '-' . rand(10000000,99999999);
             }
-            $product->setCustomUrl(str_replace(' ', '-', $customUrl));
+            $pageName = $customUrl . $productUrlNum;
+            $product->setCustomUrl(str_replace(' ', '-', $pageName));
             $product->setImage($productIm);
             $allProductsFromProductCategory = $productCategoryRepository->findBy([
                 'product' => $product->getId()
@@ -303,6 +310,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/updateproductquantity/{id}", name="updateproductquantity")
      * @param EntityManagerInterface $entityManager
+     * @param WishlistRepository $wishlistRepository
      * @param Request $request
      * @param Product $product
      * @return Response
@@ -310,9 +318,11 @@ class AdminController extends AbstractController
     public function updateProductQuantity(
         Product $product,
         Request $request,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        WishlistRepository $wishlistRepository)
     {
         $productIm = $product->getImage();
+        $productBeforeQuantity = $product->getAvailableQuantity();
         $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
 
         $form = $this->createForm(ProductQuantityFormType::class, $product);
@@ -323,6 +333,17 @@ class AdminController extends AbstractController
              */
             $product = $form->getData();
             $product->setImage($productIm);
+            if($productBeforeQuantity === 0 && $product->getAvailableQuantity() > 0) {
+                $wishlistProducts = $wishlistRepository->findBy([
+                    'product' => $product->getId()]);
+                foreach($wishlistProducts as $wishlistProduct) {
+                    /**
+                     * @var $wishlistProduct Wishlist
+                     */
+                    $wishlistProduct->setNotify(1);
+                    $entityManager->persist($wishlistProduct);
+                }
+            }
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
@@ -563,25 +584,37 @@ class AdminController extends AbstractController
      * @Route("/seller/deletesolditemperpersonadmin/{id}", name="deletesolditemperpersonadmin")
      * @param ProductRepository $productRepository
      * @param EntityManagerInterface $entityManager
+     * @param WishlistRepository $wishlistRepository
      * @param Sold $sold
      * @return Response
      */
     public function deleteSoldItemPerUser(
         Sold $sold,
         EntityManagerInterface $entityManager,
-        ProductRepository $productRepository)
+        ProductRepository $productRepository,
+        WishlistRepository $wishlistRepository)
     {
-        if(is_object($sold)) {
-            /**
-             * @var Product $productold
-             */
-            $productold = $productRepository->findOneBy([
-                'id' => $sold->getProduct()->getId()
-            ]);
-            $productold->setAvailableQuantity($productold->getAvailableQuantity() + $sold->getQuantity());
-            $entityManager->remove($sold);
-            $entityManager->flush();
+        /**
+         * @var Product $productold
+         */
+        $productold = $productRepository->findOneBy([
+            'id' => $sold->getProduct()->getId()
+        ]);
+        if($productold->getAvailableQuantity() === 0) {
+            $wishlistProducts = $wishlistRepository->findBy([
+                'product' => $productold->getId()]);
+            foreach($wishlistProducts as $wishlistProduct) {
+                /**
+                 * @var $wishlistProduct Wishlist
+                 */
+                $wishlistProduct->setNotify(1);
+                $entityManager->persist($wishlistProduct);
+            }
         }
+        $productold->setAvailableQuantity($productold->getAvailableQuantity() + $sold->getQuantity());
+        $entityManager->remove($sold);
+        $entityManager->flush();
+
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute('viewpeopleitemsperperson', [
             'id' => $this->getUser()->getId()
