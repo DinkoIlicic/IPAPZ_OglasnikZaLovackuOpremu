@@ -25,7 +25,6 @@ $(document).ready(function ()
             hint: true,
             highlight: true,
             minLength: 3,
-
         },
         {
             name: 'users',
@@ -46,7 +45,9 @@ $(document).ready(function ()
                     return '<div class="text-center">More results about: '+ query.query +'</div>'
                 }
             }
+        }).on('typeahead:autocomplete', function(event, data) {
+            location.href = "/admin/itemsoldperuser/"+data.user_id;
         }).on('typeahead:selected', function(event, data) {
-        location.href = "/admin/itemsoldperuser/"+data.user_id;
+            location.href = "/admin/itemsoldperuser/"+data.user_id;
     });
 })

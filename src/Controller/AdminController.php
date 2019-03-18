@@ -475,7 +475,6 @@ class AdminController extends AbstractController
     public function searchBar()
     {
         $form = $this->createFormBuilder(null)
-            ->setAction($this->generateUrl('handle_search'))
             ->add("query", TextType::class, [
                 'attr' => [
                     'placeholder'   => 'Enter user name'
