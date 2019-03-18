@@ -7,8 +7,6 @@
  */
 
 namespace App\Controller;
-use App\Entity\Category;
-use App\Entity\ProductCategory;
 use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Product;
@@ -19,7 +17,6 @@ use App\Form\ProductFormType;
 use App\Form\ProductInfoFormType;
 use App\Form\ProductImageFormType;
 use App\Form\ProductQuantityFormType;
-use App\Repository\CategoryRepository;
 use App\Repository\ProductCategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SoldRepository;
@@ -70,7 +67,7 @@ class SellerController extends AbstractController
                 // ... handle exception if something happens during file upload
             }
             $customUrl = $product->getCustomUrl();
-            if(empty($customUrl)) {
+            if (empty($customUrl)) {
                 $customUrl = $product->getName();
             }
             $productUrlNum = '-' . rand(10000000,99999999);
@@ -112,12 +109,23 @@ class SellerController extends AbstractController
      */
     public function showMyProducts(ProductRepository $productRepository)
     {
-        $products = $productRepository->findBy([
-            'user' => $this->getUser()->getId()
-        ]);
+        $products = $this->getMyProducts($productRepository);
         return $this->render('seller/showmyproducts.html.twig', [
             'products' => $products
         ]);
+    }
+
+    /**
+     * @param ProductRepository $productRepository
+     * @return array
+     */
+    public function getMyProducts(ProductRepository $productRepository)
+    {
+        $products = $productRepository->findBy([
+            'user' => $this->getUser()->getId()
+        ]);
+
+        return $products;
     }
 
     /**
@@ -130,12 +138,12 @@ class SellerController extends AbstractController
         Product $product,
         EntityManagerInterface $entityManager)
     {
-        if($product->getVisibility() === 0) {
+        if ($product->getVisibility() === 0) {
             $product->setVisibility(1);
             $entityManager->flush();
             $this->addFlash('success', 'Product made visible!');
             return $this->redirectToRoute('showmyproducts');
-        } elseif($product->getVisibility() === 1) {
+        } elseif ($product->getVisibility() === 1) {
             $product->setVisibility(0);
             $entityManager->flush();
             $this->addFlash('success', 'Product hidden!');
@@ -160,7 +168,7 @@ class SellerController extends AbstractController
         EntityManagerInterface $entityManager,
         ProductCategoryRepository $productCategoryRepository)
     {
-        if($this->getUser() !== $product->getUser()) {
+        if ($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('showmyproducts');
         }
         $productIm = $product->getImage();
@@ -176,7 +184,7 @@ class SellerController extends AbstractController
              */
             $product = $form->getData();
             $customUrl = $product->getCustomUrl();
-            if(empty($customUrl)) {
+            if (empty($customUrl)) {
                 $customUrl = $product->getName();
                 $productUrlNum = '-' . rand(10000000,99999999);
             }
@@ -186,7 +194,7 @@ class SellerController extends AbstractController
             $allProductsFromProductCategory = $productCategoryRepository->findBy([
                 'product' => $product->getId()
             ]);
-            foreach($allProductsFromProductCategory as $oneProductsFromProductCategory) {
+            foreach ($allProductsFromProductCategory as $oneProductsFromProductCategory) {
                 $entityManager->remove($oneProductsFromProductCategory);
                 $entityManager->flush();
             }
@@ -214,7 +222,7 @@ class SellerController extends AbstractController
         EntityManagerInterface $entityManager,
         WishlistRepository $wishlistRepository)
     {
-        if($this->getUser() !== $product->getUser()) {
+        if ($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('showmyproducts');
         }
         $productIm = $product->getImage();
@@ -228,10 +236,10 @@ class SellerController extends AbstractController
              */
             $product = $form->getData();
             $product->setImage($productIm);
-            if($productBeforeQuantity === 0 && $product->getAvailableQuantity() > 0) {
+            if ($productBeforeQuantity === 0 && $product->getAvailableQuantity() > 0) {
                 $wishlistProducts = $wishlistRepository->findBy([
                     'product' => $product->getId()]);
-                foreach($wishlistProducts as $wishlistProduct) {
+                foreach ($wishlistProducts as $wishlistProduct) {
                     /**
                      * @var $wishlistProduct Wishlist
                      */
@@ -261,7 +269,7 @@ class SellerController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager)
     {
-        if($this->getUser() !== $product->getUser()) {
+        if ($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('showmyproducts');
         }
         $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
@@ -313,7 +321,7 @@ class SellerController extends AbstractController
             /**
              * @var User $userid
              */
-            $message = $userid->getFirstName() .' '. $userid->getLastName();
+            $message = $userid->getFullName();
             /**
              * @var Product $product
              */
@@ -353,36 +361,20 @@ class SellerController extends AbstractController
         Sold $sold,
         EntityManagerInterface $entityManager)
     {
-        if($this->getUser() !== $sold->getProduct()->getUser()) {
+        if ($this->getUser() !== $sold->getProduct()->getUser()) {
             return $this->redirectToRoute('peoplethatboughtmyproduct');
         }
-        $sold->setConfirmed(1);
-        $entityManager->flush();
-        $this->addFlash('success', 'Buy confirmed!');
-        return $this->redirectToRoute('peoplethatboughtmyproduct', [
-            'id' => $this->getUser()->getId()
-        ]);
-    }
 
-    /**
-     * @Route("/seller/unconfirmbuyperperson/{id}", name="unconfirmbuyperperson")
-     * @param EntityManagerInterface $entityManager
-     * @param Sold $sold
-     * @return Response
-     */
-    public function unConfirmBuyPerPerson(
-        Sold $sold,
-        EntityManagerInterface $entityManager)
-    {
-        if($this->getUser() !== $sold->getProduct()->getUser()) {
-            return $this->redirectToRoute('peoplethatboughtmyproduct');
+        if ($sold->getConfirmed() === 0) {
+            $sold->setConfirmed(1);
+            $entityManager->flush();
+            $this->addFlash('success', 'Buy confirmed!');
+        } elseif ($sold->getConfirmed() === 1) {
+            $sold->setConfirmed(0);
+            $entityManager->flush();
+            $this->addFlash('success', 'Buy unconfirmed!');
         }
-        $sold->setConfirmed(0);
-        $entityManager->flush();
-        $this->addFlash('success', 'Buy unconfirmed!');
-        return $this->redirectToRoute('peoplethatboughtmyproduct', [
-            'id' => $this->getUser()->getId()
-        ]);
+        return $this->redirectToRoute('peoplethatboughtmyproduct');
     }
 
     /**
@@ -399,7 +391,7 @@ class SellerController extends AbstractController
         ProductRepository $productRepository,
         WishlistRepository $wishlistRepository)
     {
-        if($this->getUser() !== $sold->getProduct()->getUser()) {
+        if ($this->getUser() !== $sold->getProduct()->getUser()) {
             return $this->redirectToRoute('peoplethatboughtmyproduct');
         }
 
@@ -409,10 +401,10 @@ class SellerController extends AbstractController
         $productold = $productRepository->findOneBy([
             'id' => $sold->getProduct()->getId()
         ]);
-        if($productold->getAvailableQuantity() === 0) {
+        if ($productold->getAvailableQuantity() === 0) {
             $wishlistProducts = $wishlistRepository->findBy([
                 'product' => $productold->getId()]);
-            foreach($wishlistProducts as $wishlistProduct) {
+            foreach ($wishlistProducts as $wishlistProduct) {
                 /**
                  * @var $wishlistProduct Wishlist
                  */
@@ -425,9 +417,7 @@ class SellerController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Item deleted!');
-        return $this->redirectToRoute('peoplethatboughtmyproduct', [
-            'id' => $this->getUser()->getId()
-        ]);
+        return $this->redirectToRoute('peoplethatboughtmyproduct');
     }
 
     /**
@@ -485,33 +475,19 @@ class SellerController extends AbstractController
         Sold $sold,
         EntityManagerInterface $entityManager)
     {
-        if($this->getUser() !== $sold->getProduct()->getUser()) {
+        if ($this->getUser() !== $sold->getProduct()->getUser()) {
             return $this->redirectToRoute('listofsolditemsperproduct');
         }
-        $sold->setConfirmed(1);
-        $entityManager->flush();
-        $this->addFlash('success', 'Buy confirmed!');
-        return $this->redirectToRoute('listofsolditemsperproduct', [
-            'id' => $this->getUser()->getId()
-        ]);
-    }
 
-    /**
-     * @Route("/seller/unconfirmbuyperproduct/{id}", name="unconfirmbuyperproduct")
-     * @param EntityManagerInterface $entityManager
-     * @param Sold $sold
-     * @return Response
-     */
-    public function unConfirmBuyPerProduct(
-        Sold $sold,
-        EntityManagerInterface $entityManager)
-    {
-        if($this->getUser() !== $sold->getProduct()->getUser()) {
-            return $this->redirectToRoute('listofsolditemsperproduct');
+        if ($sold->getConfirmed() === 0) {
+            $sold->setConfirmed(1);
+            $entityManager->flush();
+            $this->addFlash('success', 'Buy confirmed!');
+        } elseif ($sold->getConfirmed() === 1) {
+            $sold->setConfirmed(0);
+            $entityManager->flush();
+            $this->addFlash('success', 'Buy unconfirmed!');
         }
-        $sold->setConfirmed(0);
-        $entityManager->flush();
-        $this->addFlash('success', 'Buy unconfirmed!');
         return $this->redirectToRoute('listofsolditemsperproduct', [
             'id' => $this->getUser()->getId()
         ]);
@@ -529,20 +505,20 @@ class SellerController extends AbstractController
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository)
     {
-        if($this->getUser() !== $sold->getProduct()->getUser()) {
+        if ($this->getUser() !== $sold->getProduct()->getUser()) {
             return $this->redirectToRoute('listofsolditemsperproduct');
         }
-        if(is_object($sold)) {
-            /**
-             * @var Product $productold
-             */
-            $productold = $productRepository->findOneBy([
-                'id' => $sold->getProduct()->getId()
-            ]);
-            $productold->setAvailableQuantity($productold->getAvailableQuantity() + $sold->getQuantity());
-            $entityManager->remove($sold);
-            $entityManager->flush();
-        }
+
+        /**
+         * @var Product $productOld
+         */
+        $productOld = $productRepository->findOneBy([
+            'id' => $sold->getProduct()->getId()
+        ]);
+        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
+        $entityManager->remove($sold);
+        $entityManager->flush();
+
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute('listofsolditemsperproduct', [
             'id' => $this->getUser()->getId()

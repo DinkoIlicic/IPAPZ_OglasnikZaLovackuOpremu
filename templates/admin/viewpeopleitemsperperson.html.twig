@@ -43,7 +43,7 @@
                         {% if(eachitem.confirmed == 0) %}
                             <a class="btn btn-primary" href="{{ path('confirmbuyperpersonadmin', {'id': eachitem.id}) }}">Confirm</a>
                         {% else %}
-                            <a class="btn btn-primary" href="{{ path('unconfirmbuyperpersonadmin', {'id': eachitem.id}) }}">Confirmed</a>
+                            <a class="btn btn-primary" href="{{ path('confirmbuyperpersonadmin', {'id': eachitem.id}) }}">Confirmed</a>
                         {% endif %}
                     </td>
                     {% if(eachitem.confirmed == 0) %}

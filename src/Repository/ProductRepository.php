@@ -18,4 +18,15 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
+
+    public function getProductsFromCategory($category)
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin( 'p.productCategory', 'c')
+            ->andWhere('c.category = :category')
+            ->setParameter('category', $category)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

@@ -9,7 +9,6 @@
 namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Product;
-use App\Entity\ProductCategory;
 use App\Entity\Sold;
 use App\Entity\Seller;
 use App\Entity\Comment;
@@ -24,9 +23,6 @@ use App\Repository\WishlistRepository;
 use App\Repository\SellerRepository;
 use App\Repository\SoldRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Monolog\Handler\SwiftMailerHandler;
-use PhpParser\Node\Expr\Variable;
-use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,14 +47,24 @@ class AdvertisementController extends AbstractController
         Request $request
     )
     {
-        $categories = $categoryRepository->findBy([
-            'visibilityAdmin' => 1
-        ]);
-        $data = $productService->returnData($request);
+        $categories = $this->getAllVisibleCategories($categoryRepository);
+        $data = $productService->returnAllProducts($request);
         return $this->render('advertisement/index.html.twig', [
             'categories' => $categories,
             'products' => $data
         ]);
+    }
+
+    /**
+     * @param CategoryRepository $categoryRepository
+     * @return array
+     */
+    public function getAllVisibleCategories(CategoryRepository $categoryRepository)
+    {
+        $categories = $categoryRepository->findBy([
+            'visibilityAdmin' => 1
+        ]);
+        return $categories;
     }
 
     /**
@@ -75,9 +81,7 @@ class AdvertisementController extends AbstractController
         ProductService $productService,
         Request $request)
     {
-        $categories = $categoryRepository->findBy([
-            'visibilityAdmin' => 1
-        ]);
+        $categories = $this->getAllVisibleCategories($categoryRepository);
         $data = $productService->returnDataPerCategory($request, $category);
         return $this->render('advertisement/categoryproducts.html.twig', [
             'categories' => $categories,
@@ -100,7 +104,7 @@ class AdvertisementController extends AbstractController
         $applied = $sellerRepository->findOneBy([
             'user' => $this->getUser()
         ]);
-        if($applied !== null) {
+        if ($applied !== null) {
             return $this->render('advertisement/applyforseller.html.twig', [
                 'message' => 'Applied',
                 'applied' => $applied
@@ -149,26 +153,25 @@ class AdvertisementController extends AbstractController
         $product = $productRepository->findOneBy([
             'customUrl' => $pageName
         ]);
-        $categories = $categoryRepository->findBy([
-            'visibilityAdmin' => 1
-        ]);
+        $categories = $this->getAllVisibleCategories($categoryRepository);
+
         $productInWishlist = $wishlistRepository->findOneBy([
             'product' => $product,
             'user' => $this->getUser(),
         ]);
-        $seller = $product->getUser();
+
         $form = $this->createForm(SoldFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
             /** @var Sold $sold */
             $sold = $form->getData();
             $quan = $sold->getQuantity();
-            if($quan === null ) {
+            if ($quan === null ) {
                 $this->addFlash('warning', 'Please insert correct number in field Quantity!');
                 return $this->redirectToRoute('checkproduct', [
                     'pageName' => $product->getCustomUrl()]);
             }
-            if($sold->getQuantity() > $product->getAvailableQuantity()) {
+            if ($sold->getQuantity() > $product->getAvailableQuantity()) {
                 $this->addFlash('warning', 'Not enough available quantity!');
                 return $this->redirectToRoute('checkproduct', [
                     'pageName' => $product->getCustomUrl()]);
@@ -195,11 +198,11 @@ class AdvertisementController extends AbstractController
             $from = $formMailData['from'];
             $message = $formMailData['message'];
             $to = $product->getUser()->getEmail();
-            if(empty($name) || empty($from) || empty($message)) {
+            if (empty($name) || empty($from) || empty($message)) {
                 $this->addFlash('warning', 'Please fill out all fields to send mail!');
                 return $this->redirectToRoute('checkproduct', [
                     'pageName' => $product->getCustomUrl()]);
-            } elseif(filter_var($from, FILTER_VALIDATE_EMAIL)){
+            } elseif (filter_var($from, FILTER_VALIDATE_EMAIL)){
                 $this->addFlash('success', 'Mail sent. Name: ' . $name . ', from: ' . $from . ', to: '
                     . $to . ', message: ' . $message);
                 return $this->redirectToRoute('checkproduct', [
@@ -225,12 +228,10 @@ class AdvertisementController extends AbstractController
                 'pageName' => $product->getCustomUrl()]);
         }
 
-
-
         return $this->render('advertisement/productpage.html.twig', [
             'categories' => $categories,
             'product' => $product,
-            'seller' => $seller,
+            'seller' => $product->getUser(),
             'productInWishlist' => $productInWishlist,
             'form' => $form->createView(),
             'commentForm' => $formComment->createView(),
@@ -250,9 +251,7 @@ class AdvertisementController extends AbstractController
         ProductService $productService,
         Request $request)
     {
-        $categories = $categoryRepository->findBy([
-            'visibilityAdmin' => 1
-        ]);
+        $categories =  $this->getAllVisibleCategories($categoryRepository);
         $data = $productService->returnDataMyItems($request, $this->getUser()->getId());
         return $this->render('advertisement/myitems.html.twig', [
             'categories' => $categories,
@@ -274,18 +273,16 @@ class AdvertisementController extends AbstractController
         EntityManagerInterface $entityManager,
         Request $request)
     {
-        $categories = $categoryRepository->findBy([
-            'visibilityAdmin' => 1
-        ]);
+        $categories = $this->getAllVisibleCategories($categoryRepository);
         $wishlist = $productService->returnDataMyWishlist($request, $this->getUser()->getId());
         foreach($wishlist as $wishlistProduct){
             /**
              * @var Wishlist $wishlistProduct
              */
-            if($wishlistProduct->getNotify() === 0 && $wishlistProduct->getNotified() === 0) {
+            if ($wishlistProduct->getNotify() === 0 && $wishlistProduct->getNotified() === 0) {
                 continue;
             }
-            if($wishlistProduct->getNotify() === 0 && $wishlistProduct->getNotified() === 1) {
+            if ($wishlistProduct->getNotify() === 0 && $wishlistProduct->getNotified() === 1) {
                 $wishlistProduct->setNotified(0);
                 $entityManager->persist($wishlistProduct);
                 continue;
@@ -294,7 +291,7 @@ class AdvertisementController extends AbstractController
              * @var Product $productCheck
              */
             $productCheck = $wishlistProduct->getProduct();
-            if($wishlistProduct->getNotify() === 1 && $productCheck->getAvailableQuantity() > 0) {
+            if ($wishlistProduct->getNotify() === 1 && $productCheck->getAvailableQuantity() > 0) {
                 $wishlistProduct->setNotify(0);
                 $wishlistProduct->setNotified(1);
                 $entityManager->persist($wishlistProduct);
@@ -319,20 +316,20 @@ class AdvertisementController extends AbstractController
         EntityManagerInterface $entityManager,
         WishlistRepository $wishlistRepository)
     {
+        $itemAlreadyExists = $wishlistRepository->findOneBy([
+            'product' => $product,
+            'user' => $this->getUser(),
+        ]);
+        if ($itemAlreadyExists) {
+            $this->addFlash('warning', 'Product already added to wishlist!');
+            return $this->redirectToRoute('checkproduct', [
+                'pageName' => $product->getCustomUrl()]);
+        }
         $wishlist = new Wishlist();
         $wishlist->setProduct($product);
         $wishlist->setUser($this->getUser());
         $wishlist->setNotify(0);
         $wishlist->setNotified(0);
-        $itemAlreadyExists = $wishlistRepository->findOneBy([
-            'product' => $product,
-            'user' => $this->getUser(),
-        ]);
-        if($itemAlreadyExists) {
-            $this->addFlash('warning', 'Product already added to wishlist!');
-            return $this->redirectToRoute('checkproduct', [
-                'pageName' => $product->getCustomUrl()]);
-        }
         $entityManager->persist($wishlist);
         $entityManager->flush();
 
@@ -390,7 +387,7 @@ class AdvertisementController extends AbstractController
         $sheet->setCellValue('F1', 'Total Price');
         $sheet->setCellValue('G1', 'Bought at');
         $i = 2;
-        foreach($sold as $item) {
+        foreach ($sold as $item) {
             /**
              * @var Sold $item
              */

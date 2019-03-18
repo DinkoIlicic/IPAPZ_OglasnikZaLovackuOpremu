@@ -10,8 +10,6 @@ namespace App\Service;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Product;
-use App\Entity\Sold;
 
 class ProductService
 {
@@ -27,7 +25,7 @@ class ProductService
         $this->container = $container;
     }
 
-    public function returnData($request)
+    public function returnAllProducts($request)
     {
         $em = $this->em;
         $container = $this->container;
@@ -49,8 +47,8 @@ class ProductService
               p.id DESC
             '
         );
-        $pagenator = $container->get('knp_paginator');
-        $results = $pagenator->paginate(
+        $paginator = $container->get('knp_paginator');
+        $results = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             $request->query->getInt('limit', 9)
@@ -82,8 +80,8 @@ class ProductService
             '
         );
         $query->setParameter('category', $category);
-        $pagenator = $container->get('knp_paginator');
-        $results = $pagenator->paginate(
+        $paginator = $container->get('knp_paginator');
+        $results = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             $request->query->getInt('limit', 9)
@@ -108,8 +106,8 @@ class ProductService
             '
         );
         $query->setParameter('user', $user);
-        $pagenator = $container->get('knp_paginator');
-        $results = $pagenator->paginate(
+        $paginator = $container->get('knp_paginator');
+        $results = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             $request->query->getInt('limit', 9)
@@ -132,8 +130,8 @@ class ProductService
             '
         );
         $query->setParameter('user', $user);
-        $pagenator = $container->get('knp_paginator');
-        $results = $pagenator->paginate(
+        $paginator = $container->get('knp_paginator');
+        $results = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             $request->query->getInt('limit', 9)

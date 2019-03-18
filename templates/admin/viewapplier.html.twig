@@ -17,7 +17,7 @@
         {% if verified == 0 %}
             <a class="btn btn-primary" href="{{ path('verifyapplier', {'id': seller.id}) }}">Verify seller</a>
         {% elseif verified == 1 %}
-            <a class="btn btn-primary" href="{{ path('unverifyapplier', {'id': seller.id}) }}">Undo verify seller</a>
+            <a class="btn btn-primary" href="{{ path('verifyapplier', {'id': seller.id}) }}">Undo verify seller</a>
         {% endif %}
     </div>
 {% endblock %}
