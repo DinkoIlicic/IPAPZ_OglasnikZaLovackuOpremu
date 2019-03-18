@@ -26,8 +26,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for item in solditems %}
-            {% for eachitem in item %}
+            {% for eachitem in solditems %}
                 <tr>
                     <td><a href="{{ path('viewsoldproductinfo', {'id': eachitem.id}) }}" class="card-link">{{ eachitem.product.name }}</a></td>
                     <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname }}</td>
@@ -48,7 +47,6 @@
                     {% endif %}
                 </tr>
             {% endfor %}
-        {% endfor %}
         </tbody>
     </table>
 {% endblock %}

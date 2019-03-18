@@ -29,9 +29,8 @@
             <th scope="col">Status</th>
         </tr>
         </thead>
-        <tbody>
-        {% for item in solditems %}
-            {% for eachitem in item %}
+        <tbody id="ajaxUpdate">
+            {% for eachitem in solditems %}
                 <tr>
                     <td><a href="{{ path('viewsoldproductinfoadmin', {'id': eachitem.id}) }}" class="card-link">{{ eachitem.product.name }}</a></td>
                     <td>{{ eachitem.product.user.firstName }} {{ eachitem.product.user.lastName }}</td>
@@ -53,7 +52,6 @@
                     {% endif %}
                 </tr>
             {% endfor %}
-        {% endfor %}
         </tbody>
     </table>
 {% endblock %}

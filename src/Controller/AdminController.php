@@ -524,6 +524,44 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/ajaxpersonsold/{id?}", name="ajaxpersonsold")
+     * @param SoldRepository $soldRepository
+     * @param ProductRepository $productRepository
+     * @param User $id
+     * @return Response
+     */
+    public function ajaxListPerson(
+        SoldRepository $soldRepository,
+        ProductRepository $productRepository,
+        User $id = null)
+    {
+        $products = $productRepository->findAll();
+        $soldPerUser = [];
+        if ($id) {
+            $message = $id->getFullName();
+            /**
+             * @var Product $product
+             */
+            $soldPerUser = $soldRepository->getSoldProductPerUser($id, $products);
+        } else {
+            $message = "All users";
+            /**
+             * @var Product $product
+             */
+            $soldPerUser[] = $soldRepository->findBy([
+                'product' => $products
+            ], [
+                'boughtAt' => 'DESC'
+            ]);
+        }
+
+        return new JsonResponse([
+            'solditems' => $soldPerUser,
+            'message' => $message,
+        ]);
+    }
+
+    /**
      * @Route("/admin/itemsoldperuser/{id?}", name="viewpeopleitemsperperson")
      * @param SoldRepository $soldRepository
      * @param ProductRepository $productRepository
@@ -536,13 +574,12 @@ class AdminController extends AbstractController
         User $id = null)
     {
         $products = $productRepository->findAll();
-        $soldPerUser = [];
         if ($id) {
             $message = $id->getFullName();
             /**
              * @var Product $product
              */
-            $soldPerUser[] = $soldRepository->findBy([
+            $soldPerUser = $soldRepository->findBy([
                 'user' => $id,
                 'product' => $products
             ], [
@@ -553,7 +590,7 @@ class AdminController extends AbstractController
             /**
              * @var Product $product
              */
-            $soldPerUser[] = $soldRepository->findBy([
+            $soldPerUser = $soldRepository->findBy([
                 'product' => $products
             ], [
                 'boughtAt' => 'DESC'
@@ -703,7 +740,6 @@ class AdminController extends AbstractController
         ProductRepository $productRepository)
     {
         $products = $productRepository->findAll();
-        $listOfSoldItems = [];
         $form = $this->createForm(AdminListOfBoughtItemsPerProductFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
@@ -712,14 +748,14 @@ class AdminController extends AbstractController
              */
             $product = $form->getData()->getProduct();
             $message = $product->getName();
-            $listOfSoldItems[] = $soldRepository->findBy([
+            $listOfSoldItems = $soldRepository->findBy([
                 'product' => $product->getId()
             ], [
                 'boughtAt' => 'DESC'
             ]);
         } else {
             $message = "All products";
-            $listOfSoldItems[] = $soldRepository->findBy([
+            $listOfSoldItems = $soldRepository->findBy([
                 'product' => $products
             ], [
                 'boughtAt' => 'DESC'

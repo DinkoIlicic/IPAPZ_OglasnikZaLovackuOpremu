@@ -18,4 +18,32 @@ class SoldRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Sold::class);
     }
+
+    public function getOneSoldProduct()
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.id', 's.quantity', 's.price', 's.totalPrice', 's.confirmed', 's.boughtAt', 'pr.name', 'u.fullName', 'se.fullName')
+            ->innerJoin('s.product', 'pr')
+            ->innerJoin('pr.user', 'se')
+            ->innerJoin('s.user', 'u')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function getSoldProductPerUser($id, $products)
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.id', 's.quantity', 's.price', 's.totalPrice', 's.confirmed', 's.boughtAt', 'pr.name', 'u.fullName', 'se.fullName')
+            ->innerJoin('s.product', 'pr')
+            ->innerJoin('pr.user', 'se')
+            ->innerJoin('s.user', 'u')
+            ->andWhere('s.product in (:products)', 's.user = :id')
+            ->setParameter('products', $products)
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

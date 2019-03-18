@@ -18,7 +18,7 @@ $(document).ready(function ()
                     })
                 }
             }
-        })
+        });
     users.initialize();
     $('#form_query').typeahead(
         {
@@ -46,8 +46,38 @@ $(document).ready(function ()
                 }
             }
         }).on('typeahead:autocomplete', function(event, data) {
-            location.href = "/admin/itemsoldperuser/"+data.user_id;
+            event.preventDefault();
+            $.ajax({
+                method: 'POST',
+                url: "/admin/ajaxpersonsold/"+data.user_id
+            }).done(function (data) {
+                console.log(data);
+            })
         }).on('typeahead:selected', function(event, data) {
-            location.href = "/admin/itemsoldperuser/"+data.user_id;
+            event.preventDefault();
+            $.ajax({
+                method: 'POST',
+                url: "/admin/ajaxpersonsold/"+data.user_id
+            }).done(function (data) {
+                console.log(data);
+            })
     });
-})
+});
+
+$(document).ready(function () {
+    $(document).on('change','.js-status-change', function (e) {
+        e.preventDefault();
+        let link = $(this).find(':selected').data('change_status');
+        $.ajax({
+            method: 'POST',
+            url: link
+        }).done(function (data) {
+            console.log(data);
+
+            var rowHtml =  $('#task-'+data.taskID).prop('outerHTML');
+            $('#task-'+data.taskID).remove();
+            $('#js-table-status-'+data.newStatusID ).append(rowHtml);
+            $('#js-table-status-'+data.newStatusID+' option[value='+data.newStatusID+']' ).prop('selected', 'selected');
+        })
+    });
+});

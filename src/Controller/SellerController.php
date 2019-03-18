@@ -313,7 +313,6 @@ class SellerController extends AbstractController
         $products = $productRepository->findBy([
             'user' => $this->getUser()->getId()
         ]);
-        $soldperuser = [];
         $form = $this->createForm(ListOfUserBoughtItemsFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_SELLER') && $form->isSubmitted() && $form->isValid()) {
@@ -325,7 +324,7 @@ class SellerController extends AbstractController
             /**
              * @var Product $product
              */
-            $soldperuser[] = $soldRepository->findBy([
+            $soldperuser = $soldRepository->findBy([
                 'user' => $userid,
                 'product' => $products
             ], [
@@ -336,7 +335,7 @@ class SellerController extends AbstractController
             /**
              * @var Product $product
              */
-            $soldperuser[] = $soldRepository->findBy([
+            $soldperuser = $soldRepository->findBy([
                 'product' => $products
             ], [
                 'boughtAt' => 'DESC'
@@ -435,7 +434,6 @@ class SellerController extends AbstractController
         $products = $productRepository->findBy([
             'user' => $this->getUser()->getId()
         ]);
-        $listforproduct = [];
         $sold = new Sold();
         $form = $this->createForm(ListOfBoughtItemsPerProductFormType::class, $sold, array("user" => $this->getUser()));
         $form->handleRequest($request);
@@ -445,14 +443,14 @@ class SellerController extends AbstractController
              */
             $product = $form->getData()->getProduct();
             $message = $product->getName();
-            $listforproduct[] = $soldRepository->findBy([
+            $listforproduct = $soldRepository->findBy([
                 'product' => $product->getId()
             ], [
                 'boughtAt' => 'DESC'
             ]);
         } else {
             $message = "All products";
-            $listforproduct[] = $soldRepository->findBy([
+            $listforproduct = $soldRepository->findBy([
                 'product' => $products
             ], [
                 'boughtAt' => 'DESC'
