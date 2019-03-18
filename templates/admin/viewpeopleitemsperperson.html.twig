@@ -59,59 +59,7 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('js/jquery.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/bloodhound.jquery.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/typeahead.jquery.js') }}"></script>
-    <script>
-        $(document).ready(function ()
-        {
-            var users = new Bloodhound(
-                {
-                    datumTokenizer: Bloodhound.tokenizers.whitespace,
-                    queryTokenizer: Bloodhound.tokenizers.whitespace,
-                    remote: {
-                        url: "{{ path('handle_search') }}/%QUERY%",
-                        wildcard: '%QUERY%',
-                        filter: function (users)
-                        {
-                            return $.map(users, function (user)
-                            {
-                                return {
-                                    user_id: user.id,
-                                    user_fullName: user.fullName
-                                }
-                            })
-                        }
-                    }
-                })
-            users.initialize();
-            $('#form_query').typeahead(
-                {
-                    hint: true,
-                    highlight: true,
-                    minLength: 3,
-
-                },
-                {
-                    name: 'users',
-                    limit: 10,
-                    source: users.ttAdapter(),
-                    display: 'user_fullName',
-                    templates: {
-                        suggestion: function (data)
-                        {
-                            return `
-                                <a href='{{ path('viewpeopleitemsperperson') }}/`+data.user_id+`'>
-                                    <span>`+data.user_fullName+`</span>
-                                </div>
-                            `
-                        },
-                        footer: function (query)
-                        {
-                            return '<div class="text-center">More results about: '+ query.query +'</div>'
-                        }
-                    }
-            })
-        })
-    </script>
+    <script type="text/javascript" src="{{ asset('js/mytypeahead.js') }}"></script>
 {% endblock %}

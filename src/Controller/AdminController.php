@@ -557,24 +557,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/user/{id?}", name="user_page", methods={"GET"})
-     * @param $request Request
-     * @return Response
-     */
-    public function userSingle(Request $request, $id)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $user = null;
-
-        if ($id) {
-            $user = $em->getRepository(User::class)->findOneBy(['id' => $id]);
-        }
-        return $this->render('/admin/user.html.twig', [
-            'user'  => $user
-        ]);
-    }
-
-    /**
      * @Route("/admin/itemsoldperuser/{id?}", name="viewpeopleitemsperperson")
      * @param SoldRepository $soldRepository
      * @param ProductRepository $productRepository
