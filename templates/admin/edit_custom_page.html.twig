@@ -1,0 +1,17 @@
+{% extends '/admin/header.html.twig' %}
+
+{% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
+    </div><br />
+    <div>
+        <p>Edit page</p>
+    </div>
+    <div>
+        {{ form_start(form) }}
+            {{ form_row(form.pageName) }}
+            {{ form_row(form.content) }}
+            <button type="submit" class="btn btn-primary" formnovalidate>Edit</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

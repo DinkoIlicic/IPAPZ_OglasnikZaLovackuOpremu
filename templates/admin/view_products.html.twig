@@ -24,29 +24,27 @@
         </tr>
         </thead>
         <tbody>
-        {% for item in products %}
-            {% for eachitem in item %}
+            {% for eachItem in products %}
                 <tr>
-                    <td><a class="nav-link" href="{{ path('update_product_info', {'id': eachitem.id}) }}">{{ eachitem.name }}</a></td>
+                    <td><a class="nav-link" href="{{ path('update_product_info', {'id': eachItem.id}) }}">{{ eachItem.name }}</a></td>
                     <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname}}</td>
-                    <td><a class="nav-link" href="{{ path('update_product_quantity', {'id': eachitem.id}) }}">{{ eachitem.availableQuantity }}</a></td>
+                    <td><a class="nav-link" href="{{ path('update_product_quantity', {'id': eachItem.id}) }}">{{ eachItem.availableQuantity }}</a></td>
                     <td>
-                            <a class="nav-link" href="{{ path('update_product_visibility_admin', {'id': eachitem.id}) }}">
-                                {% if(eachitem.visibilityAdmin == 1) %}
-                                    Visible
-                                {% elseif(eachitem.visibilityAdmin == 0) %}
-                                    Not Visible
-                                {% endif %}
-                            </a>
+                        <a class="nav-link" href="{{ path('update_product_visibility_admin', {'id': eachItem.id}) }}">
+                            {% if(eachitem.visibilityAdmin == 1) %}
+                                Visible
+                            {% elseif(eachitem.visibilityAdmin == 0) %}
+                                Not Visible
+                            {% endif %}
+                        </a>
                     </td>
                     <td>
-                        <a href="{{ path('update_product_image', {'id': eachitem.id}) }}" class="card-link">
-                            <img width="40" height="40" src="../../../../../uploads/image/{{ eachitem.image }}" alt="">
+                        <a href="{{ path('update_product_image', {'id': eachItem.id}) }}" class="card-link">
+                            <img width="40" height="40" src="../../../../../uploads/image/{{ eachItem.image }}" alt="">
                         </a>
                     </td>
                 </tr>
             {% endfor %}
-        {% endfor %}
         </tbody>
     </table>
 {% endblock %}

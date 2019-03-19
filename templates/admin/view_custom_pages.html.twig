@@ -1,0 +1,31 @@
+{% extends '/admin/header.html.twig' %}
+
+{% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
+    </div><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Page Name</th>
+            <th scope="col">Visibility</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for customPage in allCustomPages %}
+                <tr>
+                    <td><a class="nav-link" href="{{ path('edit_custom_page_admin', {'id': customPage.id}) }}">{{ customPage.pageName }}</a></td>
+                    <td><a class="nav-link" href="{{ path('visibility_custom_page_admin', {'id': customPage.id}) }}">
+                        {% if customPage.visibilityAdmin == 0 %}
+                            Make Visible
+                        {% elseif customPage.visibilityAdmin == 1 %}
+                            Visible
+                        {% endif %}
+                    </a></td>
+                    <td><a class="btn btn-danger" href="{{ path('delete_custom_page_admin', {'id': customPage.id}) }}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

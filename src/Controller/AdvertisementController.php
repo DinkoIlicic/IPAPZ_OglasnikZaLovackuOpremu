@@ -18,6 +18,7 @@ use App\Form\ContactFormType;
 use App\Form\SellerFormType;
 use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\CustomPageRepository;
 use App\Repository\ProductRepository;
 use App\Repository\WishlistRepository;
 use App\Repository\SellerRepository;
@@ -39,18 +40,22 @@ class AdvertisementController extends AbstractController
      * @param CategoryRepository $categoryRepository
      * @param ProductService $productService
      * @param Request $request
+     * @param CustomPageRepository $customPageRepository
      * @return Response
      */
     public function index(
         CategoryRepository $categoryRepository,
         ProductService $productService,
-        Request $request
+        Request $request,
+        CustomPageRepository $customPageRepository
     )
     {
+        $allCustomPages = $customPageRepository->findAll();
         $categories = $this->getAllVisibleCategories($categoryRepository);
         $data = $productService->returnAllProducts($request);
         return $this->render('advertisement/index.html.twig', [
             'categories' => $categories,
+            'pages' => $allCustomPages,
             'products' => $data
         ]);
     }
@@ -73,18 +78,22 @@ class AdvertisementController extends AbstractController
      * @param ProductService $productService
      * @param Request $request
      * @param Category $category
+     * @param CustomPageRepository $customPageRepository
      * @return Response
      */
     public function showProductsPerCategory(
         Category $category,
         CategoryRepository $categoryRepository,
         ProductService $productService,
-        Request $request)
+        Request $request,
+        CustomPageRepository $customPageRepository)
     {
         $categories = $this->getAllVisibleCategories($categoryRepository);
+        $allCustomPages = $customPageRepository->findAll();
         $data = $productService->returnDataPerCategory($request, $category);
         return $this->render('/advertisement/category_products.html.twig', [
             'categories' => $categories,
+            'pages' => $allCustomPages,
             'products' => $data,
         ]);
     }
@@ -94,20 +103,29 @@ class AdvertisementController extends AbstractController
      * @return Response
      * @param EntityManagerInterface $entityManager
      * @param SellerRepository $sellerRepository
+     * @param CategoryRepository $categoryRepository
+     * @param CustomPageRepository $customPageRepository
      * @param Request $request
      */
     public function applyForSeller(
         Request $request,
         EntityManagerInterface $entityManager,
-        SellerRepository $sellerRepository)
+        SellerRepository $sellerRepository,
+        CustomPageRepository $customPageRepository,
+        CategoryRepository $categoryRepository)
     {
+
+        $categories = $this->getAllVisibleCategories($categoryRepository);
+        $allCustomPages = $customPageRepository->findAll();
         $applied = $sellerRepository->findOneBy([
             'user' => $this->getUser()
         ]);
         if ($applied !== null) {
             return $this->render('/advertisement/apply_for_seller.html.twig', [
                 'message' => 'Applied',
-                'applied' => $applied
+                'applied' => $applied,
+                'categories' => $categories,
+                'page' => $allCustomPages,
             ]);
         } else {
             $form = $this->createForm(SellerFormType::class);
@@ -124,6 +142,8 @@ class AdvertisementController extends AbstractController
             }
             return $this->render('/advertisement/apply_for_seller.html.twig', [
                 'form' => $form->createView(),
+                'categories' => $categories,
+                'pages' => $allCustomPages,
                 'message' => ''
             ]);
         }
@@ -135,6 +155,7 @@ class AdvertisementController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
      * @param ProductRepository $productRepository
+     * @param CustomPageRepository $customPageRepository
      * @param Request $request
      * @return Response
      * @var $pageName
@@ -145,6 +166,7 @@ class AdvertisementController extends AbstractController
         CategoryRepository $categoryRepository,
         WishlistRepository $wishlistRepository,
         ProductRepository $productRepository,
+        CustomPageRepository $customPageRepository,
         $pageName)
     {
         /**
@@ -154,7 +176,7 @@ class AdvertisementController extends AbstractController
             'customUrl' => $pageName
         ]);
         $categories = $this->getAllVisibleCategories($categoryRepository);
-
+        $allCustomPages = $customPageRepository->findAll();
         $productInWishlist = $wishlistRepository->findOneBy([
             'product' => $product,
             'user' => $this->getUser(),
@@ -231,6 +253,7 @@ class AdvertisementController extends AbstractController
         return $this->render('/advertisement/product_page.html.twig', [
             'categories' => $categories,
             'product' => $product,
+            'pages' => $allCustomPages,
             'seller' => $product->getUser(),
             'productInWishlist' => $productInWishlist,
             'form' => $form->createView(),
@@ -243,18 +266,22 @@ class AdvertisementController extends AbstractController
      * @Route("/items", name="my_items")
      * @param CategoryRepository $categoryRepository
      * @param ProductService $productService
+     * @param CustomPageRepository $customPageRepository
      * @param Request $request
      * @return Response
      */
     public function myItems(
         CategoryRepository $categoryRepository,
         ProductService $productService,
+        CustomPageRepository $customPageRepository,
         Request $request)
     {
         $categories =  $this->getAllVisibleCategories($categoryRepository);
+        $allCustomPages = $customPageRepository->findAll();
         $data = $productService->returnDataMyItems($request, $this->getUser()->getId());
         return $this->render('/advertisement/my_items.html.twig', [
             'categories' => $categories,
+            'pages' => $allCustomPages,
             'myitems' => $data
         ]);
     }
@@ -264,6 +291,7 @@ class AdvertisementController extends AbstractController
      * @param CategoryRepository $categoryRepository
      * @param ProductService $productService
      * @param EntityManagerInterface $entityManager
+     * @param CustomPageRepository $customPageRepository
      * @param Request $request
      * @return Response
      */
@@ -271,9 +299,11 @@ class AdvertisementController extends AbstractController
         CategoryRepository $categoryRepository,
         ProductService $productService,
         EntityManagerInterface $entityManager,
+        CustomPageRepository $customPageRepository,
         Request $request)
     {
         $categories = $this->getAllVisibleCategories($categoryRepository);
+        $allCustomPages = $customPageRepository->findAll();
         $wishlist = $productService->returnDataMyWishlist($request, $this->getUser()->getId());
         foreach($wishlist as $wishlistProduct){
             /**
@@ -300,6 +330,7 @@ class AdvertisementController extends AbstractController
         $entityManager->flush();
         return $this->render('/advertisement/my_wish_list.html.twig', [
             'categories' => $categories,
+            'pages' => $allCustomPages,
             'mywishlist' => $wishlist
         ]);
     }
@@ -415,5 +446,24 @@ class AdvertisementController extends AbstractController
 
         // Return the excel file as an attachment
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+    /**
+     * @Route("/test/{pageName}", name="render_custom_page")
+     * @param CustomPageRepository $customPageRepository
+     * @param CategoryRepository $categoryRepository
+     * @var $pageName
+     * @return Response
+     */
+    public function renderCustomPage(CategoryRepository $categoryRepository, CustomPageRepository $customPageRepository, $pageName)
+    {
+        $categories = $this->getAllVisibleCategories($categoryRepository);
+        $allCustomPages = $customPageRepository->findAll();
+        $customPage = $customPageRepository->findOneBy(['pageName' => $pageName]);
+        return $this->render('/advertisement/custom_page_layout.html.twig', [
+            'categories' => $categories,
+            'pages' => $allCustomPages,
+            'customPage' => $customPage,
+        ]);
     }
 }

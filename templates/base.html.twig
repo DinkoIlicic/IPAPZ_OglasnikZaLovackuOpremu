@@ -28,7 +28,7 @@
             {% if is_granted('ROLE_USER') %}
                 {% if is_granted('ROLE_USER') and not is_granted('ROLE_SELLER') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('applyforseller_index') }}">Apply For Seller</a>
+                        <a class="nav-link" href="{{ path('apply_for_seller') }}">Apply For Seller</a>
                     </li>
                 {% endif %}
                 {% if is_granted('ROLE_SELLER') %}

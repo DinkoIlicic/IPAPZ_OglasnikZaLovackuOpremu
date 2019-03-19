@@ -8,12 +8,14 @@
 
 namespace App\Controller;
 use App\Entity\Category;
+use App\Entity\CustomPage;
 use App\Entity\Seller;
 use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Product;
 use App\Entity\Wishlist;
 use App\Form\CategoryFormType;
+use App\Form\CustomPageFormType;
 use App\Form\PasswordFormType;
 use App\Form\ProductInfoFormType;
 use App\Form\ProductImageFormType;
@@ -22,6 +24,7 @@ use App\Form\AdminListOfCategoriesFormType;
 use App\Form\ProductQuantityFormType;
 use App\Form\ProfileFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\CustomPageRepository;
 use App\Repository\ProductCategoryRepository;
 use App\Repository\SellerRepository;
 use App\Repository\ProductRepository;
@@ -207,7 +210,6 @@ class AdminController extends AbstractController
         Request $request,
         ProductRepository $productRepository)
     {
-        $products = [];
         $form = $this->createForm(AdminListOfCategoriesFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
@@ -216,9 +218,9 @@ class AdminController extends AbstractController
              * @var Category $category
              */
             $message = $category->getId()->getName();
-            $products[] = $productRepository->getProductsFromCategory($category->getId());
+            $products = $productRepository->getProductsFromCategory($category->getId());
         } else {
-            $products[] = $productRepository->findBy([], [
+            $products = $productRepository->findBy([], [
                 'name' => 'ASC'
             ]);
             $message = "All categories";
@@ -778,6 +780,109 @@ class AdminController extends AbstractController
         return $this->render('/admin/view_sold_item.html.twig', [
             'sold' => $sold
         ]);
+    }
+
+    /**
+     * @Route("/admin/add-page", name="add_custom_page_admin")
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function addCustomPage(Request $request, EntityManagerInterface $entityManager)
+    {
+        $form = $this->createForm(CustomPageFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var $customPage CustomPage
+             */
+           $customPage = $form->getData();
+           $customPage->setPageName(str_replace(' ', '-', $customPage->getPageName()));
+           $customPage->setVisibilityAdmin(1);
+           $entityManager->persist($customPage);
+           $entityManager->flush();
+        }
+        return $this->render('/admin/add_custom_page.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/view-pages", name="view_custom_pages_admin")
+     * @param CustomPageRepository $customPageRepository
+     * @return Response
+     */
+    public function viewCustomPages(CustomPageRepository $customPageRepository)
+    {
+        $allCustomPages = $customPageRepository->findBy([],['id' => 'DESC']);
+        return $this->render('/admin/view_custom_pages.html.twig', [
+            'allCustomPages' => $allCustomPages,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/delete-page/{id}", name="delete_custom_page_admin")
+     * @param CustomPage $customPage
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function deleteCustomPage(EntityManagerInterface $entityManager, CustomPage $customPage)
+    {
+        $entityManager->remove($customPage);
+        $entityManager->flush();
+        $this->addFlash('success', 'Page deleted!');
+        return $this->redirectToRoute('view_custom_pages_admin');
+    }
+
+    /**
+     * @Route("/admin/edit-page/{id}", name="edit_custom_page_admin")
+     * @param CustomPage $customPage
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @return Response
+     */
+    public function editCustomPage(CustomPage $customPage, EntityManagerInterface $entityManager, Request $request)
+    {
+        $form = $this->createForm(CustomPageFormType::class, $customPage);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var $customPage CustomPage
+             */
+            $customPage = $form->getData();
+            $customPage->setPageName(str_replace(' ', '-', $customPage->getPageName()));
+            $entityManager->persist($customPage);
+            $entityManager->flush();
+            $this->addFlash('success', 'Page edited!');
+            return $this->redirectToRoute('view_custom_pages_admin');
+        }
+        return $this->render('/admin/edit_custom_page.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/visibility-page/{id}", name="visibility_custom_page_admin")
+     * @param EntityManagerInterface $entityManager
+     * @param CustomPage $customPage
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function updateVisibilityCustomPage(EntityManagerInterface $entityManager, CustomPage $customPage)
+    {
+        if ($customPage->getVisibilityAdmin() === 0) {
+            $customPage->setVisibilityAdmin(1);
+            $entityManager->flush();
+            $this->addFlash('success', 'Page made visible!');
+            return $this->redirectToRoute('view_custom_pages_admin');
+        } elseif ($customPage->getVisibilityAdmin() === 1) {
+            $customPage->setVisibilityAdmin(0);
+            $entityManager->flush();
+            $this->addFlash('success', 'Page hidden!');
+            return $this->redirectToRoute('view_custom_pages_admin');
+        } else {
+            $this->addFlash('warning', 'Something went wrong');
+            return $this->redirectToRoute('view_custom_pages_admin');
+        }
     }
 
     private function generateUniqueFileName()

@@ -25,6 +25,7 @@
         "symfony/twig-bundle": "4.2.*",
         "symfony/validator": "4.2.*",
         "symfony/yaml": "4.2.*",
+        "tinymce/tinymce": "4",
         "ext-json": "*"
     },
     "config": {

@@ -34,4 +34,13 @@
             <a class="dropdown-item" href="{{ path('view_sold_items_per_product') }}">Per product</a>
         </div>
     </div>
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Pages
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('add_custom_page_admin') }}">Add page</a>
+            <a class="dropdown-item" href="{{ path('view_custom_pages_admin') }}">Page list</a>
+        </div>
+    </div>
 {% endblock %}

@@ -383,6 +383,9 @@
     "symfony/yaml": {
         "version": "v4.2.3"
     },
+    "tinymce/tinymce": {
+        "version": "4.0.0"
+    },
     "twig/twig": {
         "version": "v2.6.2"
     },
