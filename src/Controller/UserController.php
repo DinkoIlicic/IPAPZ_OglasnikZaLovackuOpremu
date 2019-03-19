@@ -144,7 +144,7 @@ class UserController extends AbstractController
             $this->addFlash('success', 'Password Updated!');
             return $this->redirectToRoute('app_profile');
         }
-        return $this->render('security/newpassword.html.twig', [
+        return $this->render('/security/new_password.html.twig', [
             'profileForm' => $form->createView(),
         ]);
     }

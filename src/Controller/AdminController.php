@@ -65,7 +65,7 @@ class AdminController extends AbstractController
             'id' => 'DESC'
         ]);
         $message = "List of all appliers: ";
-        return $this->render('admin/listofallappliers.html.twig', [
+        return $this->render('/admin/list_of_all_appliers.html.twig', [
             'message' => $message,
             'sellers' => $sellers
         ]);
@@ -80,7 +80,7 @@ class AdminController extends AbstractController
     public function listOneApplierForSeller(Seller $seller, SellerRepository $sellerRepository)
     {
         $sell = $sellerRepository->findOneBy(['id' => $seller->getId()]);
-        return $this->render('admin/viewapplier.html.twig', [
+        return $this->render('/admin/view_applier.html.twig', [
             'seller' => $sell,
             'verified' => $sell->getVerified()
         ]);
@@ -138,7 +138,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Inserted new category!');
             return $this->redirectToRoute('listofcategories');
         }
-        return $this->render('admin/categorylist.html.twig', [
+        return $this->render('/admin/category_list.html.twig', [
             'form' => $form->createView(),
             'message' => '',
             'categories' => $allCategories
@@ -165,7 +165,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Updated category!');
             return $this->redirectToRoute('listofcategories');
         }
-        return $this->render('admin/viewcategory.html.twig', [
+        return $this->render('/admin/view_category.html.twig', [
             'form' => $form->createView(),
             'category' => $category,
         ]);
@@ -223,7 +223,7 @@ class AdminController extends AbstractController
             ]);
             $message = "All categories";
         }
-        return $this->render('admin/viewproducts.html.twig', [
+        return $this->render('/admin/view_products.html.twig', [
             'form' => $form->createView(),
             'products' => $products,
             'message' => $message
@@ -276,7 +276,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Updated the Product Info!');
             return $this->redirectToRoute('listofproducts');
         }
-        return $this->render('admin/updateproductinfo.html.twig', [
+        return $this->render('/admin/update_product_info.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -323,7 +323,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Updated the Product Info!');
             return $this->redirectToRoute('listofproducts');
         }
-        return $this->render('admin/updateproductquantity.html.twig', [
+        return $this->render('/admin/update_product_quantity.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -364,7 +364,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Updated the Product Image!!');
             return $this->redirectToRoute('listofproducts');
         }
-        return $this->render('admin/updateproductimage.html.twig', [
+        return $this->render('/admin/update_product_image.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -405,7 +405,7 @@ class AdminController extends AbstractController
         $listOfUsers = $userRepository->findBy([], [
             'fullName' => 'ASC'
         ]);
-        return $this->render('admin/viewusers.html.twig', [
+        return $this->render('/admin/view_users.html.twig', [
             'users' => $listOfUsers
         ]);
     }
@@ -431,7 +431,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'User info updated!');
             return $this->redirectToRoute('listofusers');
         }
-        return $this->render('admin/updateuserinfo.html.twig', [
+        return $this->render('/admin/update_user_info.html.twig', [
             'profileForm' => $form->createView(),
         ]);
     }
@@ -464,7 +464,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Password updated!');
             return $this->redirectToRoute('listofusers');
         }
-        return $this->render('admin/updateuserpassword.html.twig', [
+        return $this->render('/admin/update_user_password.html.twig', [
             'profileForm' => $form->createView(),
         ]);
     }
@@ -596,7 +596,7 @@ class AdminController extends AbstractController
                 'boughtAt' => 'DESC'
             ]);
         }
-        return $this->render('admin/viewpeopleitemsperperson.html.twig', [
+        return $this->render('/admin/view_people_items_per_person.html.twig', [
             'soldItems' => $soldPerUser,
             'userName' => $userName,
             'controller_name' => 'HomeController',
@@ -699,7 +699,7 @@ class AdminController extends AbstractController
                 'boughtAt' => 'DESC'
             ]);
         }
-        return $this->render('admin/viewpeopleitemsperproduct.html.twig', [
+        return $this->render('/admin/view_people_items_per_product.html.twig', [
             'form' => $form->createView(),
             'solditems' => $listOfSoldItems,
             'message' => $message
@@ -775,7 +775,7 @@ class AdminController extends AbstractController
      */
     public function viewSoldProductInfo(Sold $sold)
     {
-        return $this->render('admin/viewsolditem.html.twig', [
+        return $this->render('/admin/view_sold_item.html.twig', [
             'sold' => $sold
         ]);
     }

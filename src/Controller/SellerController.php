@@ -82,7 +82,7 @@ class SellerController extends AbstractController
             $this->addFlash('success', 'Inserted new product!');
             return $this->redirectToRoute('insertproduct');
         }
-        return $this->render('seller/newproduct.html.twig', [
+        return $this->render('/seller/new_product.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -97,7 +97,7 @@ class SellerController extends AbstractController
         $products = $productRepository->findBy([],[
             'name' => 'ASC'
         ]);
-        return $this->render('seller/showallproducts.html.twig', [
+        return $this->render('/seller/show_all_products.html.twig', [
             'products' => $products
         ]);
     }
@@ -110,7 +110,7 @@ class SellerController extends AbstractController
     public function showMyProducts(ProductRepository $productRepository)
     {
         $products = $this->getMyProducts($productRepository);
-        return $this->render('seller/showmyproducts.html.twig', [
+        return $this->render('/seller/show_my_products.html.twig', [
             'products' => $products
         ]);
     }
@@ -203,7 +203,7 @@ class SellerController extends AbstractController
             $this->addFlash('success', 'Updated the Product Info!');
             return $this->redirectToRoute('showmyproducts');
         }
-        return $this->render('seller/updatemyproductinfo.html.twig', [
+        return $this->render('/seller/update_my_product_info.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -252,7 +252,7 @@ class SellerController extends AbstractController
             $this->addFlash('success', 'Updated the Product Available Quantity!');
             return $this->redirectToRoute('showmyproducts');
         }
-        return $this->render('seller/updatemyproductquantity.html.twig', [
+        return $this->render('/seller/update_my_product_quantity.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -296,7 +296,7 @@ class SellerController extends AbstractController
             $this->addFlash('success', 'Updated the Product Image!');
             return $this->redirectToRoute('showmyproducts');
         }
-        return $this->render('seller/updatemyproductimage.html.twig', [
+        return $this->render('/seller/update_my_product_image.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -342,7 +342,7 @@ class SellerController extends AbstractController
             ]);
         }
 
-        return $this->render('seller/peoplethatboughtmyproduct.html.twig', [
+        return $this->render('/seller/people_that_bought_my_product.html.twig', [
             'form' => $form->createView(),
             'solditems' => $soldperuser,
             'message' => $message
@@ -456,7 +456,7 @@ class SellerController extends AbstractController
                 'boughtAt' => 'DESC'
             ]);
         }
-        return $this->render('seller/listofsolditemsperproduct.html.twig', [
+        return $this->render('/seller/list_of_sold_items_per_product.html.twig', [
             'form' => $form->createView(),
             'solditems' => $listforproduct,
             'message' => $message
@@ -530,7 +530,7 @@ class SellerController extends AbstractController
      */
     public function viewSoldProductInfo(Sold $sold)
     {
-        return $this->render('seller/viewsolditem.html.twig', [
+        return $this->render('/seller/view_sold_item.html.twig', [
             'sold' => $sold
         ]);
     }

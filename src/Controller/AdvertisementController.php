@@ -83,7 +83,7 @@ class AdvertisementController extends AbstractController
     {
         $categories = $this->getAllVisibleCategories($categoryRepository);
         $data = $productService->returnDataPerCategory($request, $category);
-        return $this->render('advertisement/categoryproducts.html.twig', [
+        return $this->render('/advertisement/category_products.html.twig', [
             'categories' => $categories,
             'products' => $data,
         ]);
@@ -105,7 +105,7 @@ class AdvertisementController extends AbstractController
             'user' => $this->getUser()
         ]);
         if ($applied !== null) {
-            return $this->render('advertisement/applyforseller.html.twig', [
+            return $this->render('/advertisement/apply_for_seller.html.twig', [
                 'message' => 'Applied',
                 'applied' => $applied
             ]);
@@ -122,7 +122,7 @@ class AdvertisementController extends AbstractController
                 $this->addFlash('success', 'Applied for seller position!');
                 return $this->redirectToRoute('advertisement_index');
             }
-            return $this->render('advertisement/applyforseller.html.twig', [
+            return $this->render('/advertisement/apply_for_seller.html.twig', [
                 'form' => $form->createView(),
                 'message' => ''
             ]);
@@ -228,7 +228,7 @@ class AdvertisementController extends AbstractController
                 'pageName' => $product->getCustomUrl()]);
         }
 
-        return $this->render('advertisement/productpage.html.twig', [
+        return $this->render('/advertisement/product_page.html.twig', [
             'categories' => $categories,
             'product' => $product,
             'seller' => $product->getUser(),
@@ -253,7 +253,7 @@ class AdvertisementController extends AbstractController
     {
         $categories =  $this->getAllVisibleCategories($categoryRepository);
         $data = $productService->returnDataMyItems($request, $this->getUser()->getId());
-        return $this->render('advertisement/myitems.html.twig', [
+        return $this->render('/advertisement/my_items.html.twig', [
             'categories' => $categories,
             'myitems' => $data
         ]);
@@ -298,7 +298,7 @@ class AdvertisementController extends AbstractController
             }
         }
         $entityManager->flush();
-        return $this->render('advertisement/mywishlist.html.twig', [
+        return $this->render('/advertisement/my_wish_list.html.twig', [
             'categories' => $categories,
             'mywishlist' => $wishlist
         ]);
