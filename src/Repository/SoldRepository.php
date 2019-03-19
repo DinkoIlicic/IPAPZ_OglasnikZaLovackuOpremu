@@ -35,13 +35,14 @@ class SoldRepository extends ServiceEntityRepository
     public function getSoldProductPerUser($id, $products)
     {
         return $this->createQueryBuilder('s')
-            ->select('s.id', 's.quantity', 's.price', 's.totalPrice', 's.confirmed', 's.boughtAt', 'pr.name', 'u.fullName', 'se.fullName')
+            ->select('s.id', 's.quantity', 's.price', 's.totalPrice', 's.confirmed', 's.boughtAt', 'pr.name', '(u.fullName) as buyerName', '(se.fullName) as sellerName')
             ->innerJoin('s.product', 'pr')
             ->innerJoin('pr.user', 'se')
             ->innerJoin('s.user', 'u')
             ->andWhere('s.product in (:products)', 's.user = :id')
             ->setParameter('products', $products)
             ->setParameter('id', $id)
+            ->orderBy('s.boughtAt', 'DESC')
             ->getQuery()
             ->getResult()
             ;

@@ -538,13 +538,13 @@ class AdminController extends AbstractController
         $products = $productRepository->findAll();
         $soldPerUser = [];
         if ($id) {
-            $message = $id->getFullName();
+            $userName = $id->getFullName();
             /**
              * @var Product $product
              */
             $soldPerUser = $soldRepository->getSoldProductPerUser($id, $products);
         } else {
-            $message = "All users";
+            $userName = "All users";
             /**
              * @var Product $product
              */
@@ -556,8 +556,8 @@ class AdminController extends AbstractController
         }
 
         return new JsonResponse([
-            'solditems' => $soldPerUser,
-            'message' => $message,
+            'soldItems' => $soldPerUser,
+            'userName' => $userName,
         ]);
     }
 
@@ -575,7 +575,7 @@ class AdminController extends AbstractController
     {
         $products = $productRepository->findAll();
         if ($id) {
-            $message = $id->getFullName();
+            $userName = $id->getFullName();
             /**
              * @var Product $product
              */
@@ -586,7 +586,7 @@ class AdminController extends AbstractController
                 'boughtAt' => 'DESC'
             ]);
         } else {
-            $message = "All users";
+            $userName = "All users";
             /**
              * @var Product $product
              */
@@ -597,8 +597,8 @@ class AdminController extends AbstractController
             ]);
         }
         return $this->render('admin/viewpeopleitemsperperson.html.twig', [
-            'solditems' => $soldPerUser,
-            'message' => $message,
+            'soldItems' => $soldPerUser,
+            'userName' => $userName,
             'controller_name' => 'HomeController',
         ]);
     }
@@ -627,30 +627,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/confirmbuyperproductadmin/{id}", name="confirmbuyperproductadmin")
-     * @param EntityManagerInterface $entityManager
-     * @param Sold $sold
-     * @return Response
-     */
-    public function confirmBuyPerProductAdmin(
-        Sold $sold,
-        EntityManagerInterface $entityManager)
-    {
-        if ($sold->getConfirmed() === 0) {
-            $sold->setConfirmed(1);
-            $entityManager->flush();
-            $this->addFlash('success', 'Buy confirmed!');
-        } elseif ($sold->getConfirmed() === 1) {
-            $sold->setConfirmed(0);
-            $entityManager->flush();
-            $this->addFlash('success', 'Buy unconfirmed!');
-        }
-
-        return $this->redirectToRoute('viewpeopleitemsperproduct');
-    }
-
-    /**
-     * @Route("/seller/deletesolditemperpersonadmin/{id}", name="deletesolditemperpersonadmin")
+     * @Route("/admin/deletesolditemperpersonadmin/{id}", name="deletesolditemperpersonadmin")
      * @param ProductRepository $productRepository
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
@@ -686,45 +663,6 @@ class AdminController extends AbstractController
 
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute('viewpeopleitemsperperson');
-    }
-
-    /**
-     * @Route("/seller/deletesolditemperproductadmin/{id}", name="deletesolditemperproductadmin")
-     * @param ProductRepository $productRepository
-     * @param EntityManagerInterface $entityManager
-     * @param WishlistRepository $wishlistRepository
-     * @param Sold $sold
-     * @return Response
-     */
-    public function deleteSoldItemPerProduct(
-        Sold $sold,
-        EntityManagerInterface $entityManager,
-        ProductRepository $productRepository,
-        WishlistRepository $wishlistRepository)
-    {
-        /**
-         * @var Product $productOld
-         */
-        $productOld = $productRepository->findOneBy([
-            'id' => $sold->getProduct()->getId()
-        ]);
-        if ($productOld->getAvailableQuantity() === 0) {
-            $wishlistProducts = $wishlistRepository->findBy([
-                'product' => $productOld->getId()]);
-            foreach ($wishlistProducts as $wishlistProduct) {
-                /**
-                 * @var $wishlistProduct Wishlist
-                 */
-                $wishlistProduct->setNotify(1);
-                $entityManager->persist($wishlistProduct);
-            }
-        }
-        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
-        $entityManager->remove($sold);
-        $entityManager->flush();
-
-        $this->addFlash('success', 'Item deleted!');
-        return $this->redirectToRoute('viewpeopleitemsperproduct');
     }
 
     /**
@@ -766,6 +704,68 @@ class AdminController extends AbstractController
             'solditems' => $listOfSoldItems,
             'message' => $message
         ]);
+    }
+
+    /**
+     * @Route("/admin/confirmbuyperproductadmin/{id}", name="confirmbuyperproductadmin")
+     * @param EntityManagerInterface $entityManager
+     * @param Sold $sold
+     * @return Response
+     */
+    public function confirmBuyPerProductAdmin(
+        Sold $sold,
+        EntityManagerInterface $entityManager)
+    {
+        if ($sold->getConfirmed() === 0) {
+            $sold->setConfirmed(1);
+            $entityManager->flush();
+            $this->addFlash('success', 'Buy confirmed!');
+        } elseif ($sold->getConfirmed() === 1) {
+            $sold->setConfirmed(0);
+            $entityManager->flush();
+            $this->addFlash('success', 'Buy unconfirmed!');
+        }
+
+        return $this->redirectToRoute('viewpeopleitemsperproduct');
+    }
+
+    /**
+     * @Route("/seller/deletesolditemperproductadmin/{id}", name="deletesolditemperproductadmin")
+     * @param ProductRepository $productRepository
+     * @param EntityManagerInterface $entityManager
+     * @param WishlistRepository $wishlistRepository
+     * @param Sold $sold
+     * @return Response
+     */
+    public function deleteSoldItemPerProduct(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        ProductRepository $productRepository,
+        WishlistRepository $wishlistRepository)
+    {
+        /**
+         * @var Product $productOld
+         */
+        $productOld = $productRepository->findOneBy([
+            'id' => $sold->getProduct()->getId()
+        ]);
+        if ($productOld->getAvailableQuantity() === 0) {
+            $wishlistProducts = $wishlistRepository->findBy([
+                'product' => $productOld->getId()]);
+            foreach ($wishlistProducts as $wishlistProduct) {
+                /**
+                 * @var $wishlistProduct Wishlist
+                 */
+                $wishlistProduct->setNotify(1);
+                $entityManager->persist($wishlistProduct);
+            }
+        }
+        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
+        $entityManager->remove($sold);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Item deleted!');
+        return $this->redirectToRoute('viewpeopleitemsperproduct');
     }
 
     /**
