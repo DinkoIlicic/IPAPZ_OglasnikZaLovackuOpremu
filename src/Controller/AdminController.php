@@ -55,7 +55,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/appliers", name="checkapplyforseller")
+     * @Route("/admin/appliers", name="check_apply_for_seller")
      * @param SellerRepository $sellerRepository
      * @return Response
      */
@@ -72,7 +72,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/applier/{id}", name="checkoneapplierforseller")
+     * @Route("/admin/applier/{id}", name="check_one_applier_for_seller")
      * @param SellerRepository $sellerRepository
      * @param Seller $seller
      * @return Response
@@ -87,7 +87,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/verifyapplier/{id}", name="verifyapplier")
+     * @Route("/admin/verify-applier/{id}", name="verify_applier")
      * @param Seller $seller
      * @param EntityManagerInterface $entityManager
      * @return Response
@@ -105,13 +105,13 @@ class AdminController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Applier unverified!');
         }
-        return $this->redirectToRoute('checkoneapplierforseller', [
+        return $this->redirectToRoute('check_one_applier_for_seller', [
             'id' => $seller->getId()
         ]);
     }
 
     /**
-     * @Route("/admin/categories", name="listofcategories")
+     * @Route("/admin/categories", name="list_of_categories")
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param CategoryRepository $categoryRepository
@@ -136,7 +136,7 @@ class AdminController extends AbstractController
             $entityManager->persist($category);
             $entityManager->flush();
             $this->addFlash('success', 'Inserted new category!');
-            return $this->redirectToRoute('listofcategories');
+            return $this->redirectToRoute('list_of_categories');
         }
         return $this->render('/admin/category_list.html.twig', [
             'form' => $form->createView(),
@@ -146,7 +146,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/updatecategory/{id}", name="checkonecategory")
+     * @Route("/admin/update-category/{id}", name="check_one_category")
      * @param EntityManagerInterface $entityManager
      * @param Request $request
      * @param Category $category
@@ -163,7 +163,7 @@ class AdminController extends AbstractController
             $entityManager->persist($category);
             $entityManager->flush();
             $this->addFlash('success', 'Updated category!');
-            return $this->redirectToRoute('listofcategories');
+            return $this->redirectToRoute('list_of_categories');
         }
         return $this->render('/admin/view_category.html.twig', [
             'form' => $form->createView(),
@@ -172,7 +172,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/catvisibility/{id}", name="categoryvisibilityadmin")
+     * @Route("/admin/cat-visibility/{id}", name="category_visibility_admin")
      * @param EntityManagerInterface $entityManager
      * @param Category $category
      * @return Response
@@ -185,20 +185,20 @@ class AdminController extends AbstractController
             $category->setVisibilityAdmin(1);
             $entityManager->flush();
             $this->addFlash('success', 'Category made visible!');
-            return $this->redirectToRoute('listofcategories');
+            return $this->redirectToRoute('list_of_categories');
         } elseif ($category->getVisibilityAdmin() === 1) {
             $category->setVisibilityAdmin(0);
             $entityManager->flush();
             $this->addFlash('success', 'Category hidden!');
-            return $this->redirectToRoute('listofcategories');
+            return $this->redirectToRoute('list_of_categories');
         } else {
             $this->addFlash('warning', 'Something went wrong!');
-            return $this->redirectToRoute('listofcategories');
+            return $this->redirectToRoute('list_of_categories');
         }
     }
 
     /**
-     * @Route("/admin/products", name="listofproducts")
+     * @Route("/admin/products", name="list_of_products")
      * @param ProductRepository $productRepository
      * @param Request $request
      * @return Response
@@ -231,7 +231,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/updateproductinfo/{id}", name="updateproductinfo")
+     * @Route("/admin/update-product-info/{id}", name="update_product_info")
      * @param EntityManagerInterface $entityManager
      * @param ProductCategoryRepository $productCategoryRepository
      * @param Request $request
@@ -274,7 +274,7 @@ class AdminController extends AbstractController
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
-            return $this->redirectToRoute('listofproducts');
+            return $this->redirectToRoute('list_of_products');
         }
         return $this->render('/admin/update_product_info.html.twig', [
             'form' => $form->createView()
@@ -282,7 +282,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/updateproductquantity/{id}", name="updateproductquantity")
+     * @Route("/admin/update-product-quantity/{id}", name="update_product_quantity")
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
      * @param Request $request
@@ -321,7 +321,7 @@ class AdminController extends AbstractController
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
-            return $this->redirectToRoute('listofproducts');
+            return $this->redirectToRoute('list_of_products');
         }
         return $this->render('/admin/update_product_quantity.html.twig', [
             'form' => $form->createView()
@@ -329,7 +329,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/updateproductimage/{id}", name="updateproductimage")
+     * @Route("/admin/update-product-image/{id}", name="update_product_image")
      * @param EntityManagerInterface $entityManager
      * @param Request $request
      * @param Product $product
@@ -362,7 +362,7 @@ class AdminController extends AbstractController
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Image!!');
-            return $this->redirectToRoute('listofproducts');
+            return $this->redirectToRoute('list_of_products');
         }
         return $this->render('/admin/update_product_image.html.twig', [
             'form' => $form->createView()
@@ -370,7 +370,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/prodvisibility/{id}", name="updateproductvisibilityadmin")
+     * @Route("/admin/prod-visibility/{id}", name="update_product_visibility_admin")
      * @param EntityManagerInterface $entityManager
      * @param Product $product
      * @return Response
@@ -383,20 +383,20 @@ class AdminController extends AbstractController
             $product->setVisibilityAdmin(1);
             $entityManager->flush();
             $this->addFlash('success', 'Product made visible!');
-            return $this->redirectToRoute('listofproducts');
+            return $this->redirectToRoute('list_of_products');
         } elseif ($product->getVisibilityAdmin() === 1) {
             $product->setVisibilityAdmin(0);
             $entityManager->flush();
             $this->addFlash('success', 'Product hidden!');
-            return $this->redirectToRoute('listofproducts');
+            return $this->redirectToRoute('list_of_products');
         } else {
             $this->addFlash('warning', 'Something went wrong');
-            return $this->redirectToRoute('listofproducts');
+            return $this->redirectToRoute('list_of_products');
         }
     }
 
     /**
-     * @Route("/admin/users", name="listofusers")
+     * @Route("/admin/users", name="list_of_users")
      * @param UserRepository $userRepository
      * @return Response
      */
@@ -411,7 +411,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/userinfo/{id}", name="newuserinfoadmin")
+     * @Route("/admin/user-info/{id}", name="new_user_info_admin")
      * @param EntityManagerInterface $entityManager
      * @param Request $request
      * @param User $user
@@ -429,7 +429,7 @@ class AdminController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
             $this->addFlash('success', 'User info updated!');
-            return $this->redirectToRoute('listofusers');
+            return $this->redirectToRoute('list_of_users');
         }
         return $this->render('/admin/update_user_info.html.twig', [
             'profileForm' => $form->createView(),
@@ -437,7 +437,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/usernewpassword/{id}", name="newpasswordadmin")
+     * @Route("/admin/user-new-password/{id}", name="new_password_admin")
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param EntityManagerInterface $entityManager
      * @param Request $request
@@ -462,7 +462,7 @@ class AdminController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
             $this->addFlash('success', 'Password updated!');
-            return $this->redirectToRoute('listofusers');
+            return $this->redirectToRoute('list_of_users');
         }
         return $this->render('/admin/update_user_password.html.twig', [
             'profileForm' => $form->createView(),
@@ -489,7 +489,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/handleSearch/{_query?}", name="handle_search", methods={"POST", "GET"})
+     * @Route("/admin/handle-search/{_query?}", name="handle_search", methods={"POST", "GET"})
      * @var $_query
      * @return JsonResponse
      */
@@ -524,7 +524,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/ajaxpersonsold/{id?}", name="ajaxpersonsold")
+     * @Route("/admin/ajax-person-sold/{id?}", name="ajax_person_sold")
      * @param SoldRepository $soldRepository
      * @param ProductRepository $productRepository
      * @param User $id
@@ -562,7 +562,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/itemsoldperuser/{id?}", name="viewpeopleitemsperperson")
+     * @Route("/admin/item-sold-per-user/{id?}", name="view_sold_items_per_person")
      * @param SoldRepository $soldRepository
      * @param ProductRepository $productRepository
      * @param User $id
@@ -596,7 +596,7 @@ class AdminController extends AbstractController
                 'boughtAt' => 'DESC'
             ]);
         }
-        return $this->render('/admin/view_people_items_per_person.html.twig', [
+        return $this->render('/admin/view_sold_items_per_person.html.twig', [
             'soldItems' => $soldPerUser,
             'userName' => $userName,
             'controller_name' => 'HomeController',
@@ -604,7 +604,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/confirmbuyperpersonadmin/{id}", name="confirmbuyperpersonadmin")
+     * @Route("/admin/confirm-buy-per-person-admin/{id}", name="confirm_buy_per_person_admin")
      * @param EntityManagerInterface $entityManager
      * @param Sold $sold
      * @return Response
@@ -623,11 +623,11 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Buy unconfirmed!');
         }
 
-        return $this->redirectToRoute('viewpeopleitemsperperson');
+        return $this->redirectToRoute('view_sold_items_per_person');
     }
 
     /**
-     * @Route("/admin/deletesolditemperpersonadmin/{id}", name="deletesolditemperpersonadmin")
+     * @Route("/admin/delete-sold-item-per-person-admin/{id}", name="delete_sold_item_per_person_admin")
      * @param ProductRepository $productRepository
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
@@ -662,11 +662,11 @@ class AdminController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Item deleted!');
-        return $this->redirectToRoute('viewpeopleitemsperperson');
+        return $this->redirectToRoute('view_sold_items_per_person');
     }
 
     /**
-     * @Route("/admin/itemsoldperproduct", name="viewpeopleitemsperproduct")
+     * @Route("/admin/item-sold-per-product", name="view_sold_items_per_product")
      * @param Request $request
      * @param SoldRepository $soldRepository
      * @param ProductRepository $productRepository
@@ -699,7 +699,7 @@ class AdminController extends AbstractController
                 'boughtAt' => 'DESC'
             ]);
         }
-        return $this->render('/admin/view_people_items_per_product.html.twig', [
+        return $this->render('/admin/view_sold_items_per_product.html.twig', [
             'form' => $form->createView(),
             'solditems' => $listOfSoldItems,
             'message' => $message
@@ -707,7 +707,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/confirmbuyperproductadmin/{id}", name="confirmbuyperproductadmin")
+     * @Route("/admin/confirm-buy-per-product-admin/{id}", name="confirm_buy_per_product_admin")
      * @param EntityManagerInterface $entityManager
      * @param Sold $sold
      * @return Response
@@ -726,11 +726,11 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Buy unconfirmed!');
         }
 
-        return $this->redirectToRoute('viewpeopleitemsperproduct');
+        return $this->redirectToRoute('view_sold_items_per_product');
     }
 
     /**
-     * @Route("/seller/deletesolditemperproductadmin/{id}", name="deletesolditemperproductadmin")
+     * @Route("/seller/delete-sold-item-per-product-admin/{id}", name="delete_sold_item_per_product_admin")
      * @param ProductRepository $productRepository
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
@@ -765,11 +765,11 @@ class AdminController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Item deleted!');
-        return $this->redirectToRoute('viewpeopleitemsperproduct');
+        return $this->redirectToRoute('view_sold_items_per_product');
     }
 
     /**
-     * @Route("/admin/soldproduct/{id}", name="viewsoldproductinfoadmin")
+     * @Route("/admin/sold-product/{id}", name="view_sold_product_info_admin")
      * @param Sold $sold
      * @return Response
      */

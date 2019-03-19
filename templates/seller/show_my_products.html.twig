@@ -21,16 +21,16 @@
         <tbody>
         {% for product in products %}
             <tr>
-                <td><a href="{{ path('updatemyproductinfo', {'id': product.id}) }}" class="card-link">{{ product.name }}</a></td>
+                <td><a href="{{ path('update_my_product_info', {'id': product.id}) }}" class="card-link">{{ product.name }}</a></td>
                 <td>{{ product.price }} Euro</td>
-                <td><a href="{{ path('updatemyproductquantity', {'id': product.id}) }}" class="card-link">{{ product.availablequantity }}</a></td>
+                <td><a href="{{ path('update_my_product_quantity', {'id': product.id}) }}" class="card-link">{{ product.availablequantity }}</a></td>
                 <td>
-                    <a href="{{ path('updatemyproductimage', {'id': product.id}) }}" class="card-link">
+                    <a href="{{ path('update_my_product_image', {'id': product.id}) }}" class="card-link">
                         <img width="40" height="40" src="../../../../../uploads/image/{{ product.image }}" alt="">
                     </a>
                 </td>
                 <td>
-                    <a class="nav-link" href="{{ path('updateproductvisibilityseller', {'id': product.id}) }}">
+                    <a class="nav-link" href="{{ path('update_product_visibility_seller', {'id': product.id}) }}">
                         {% if(product.visibility == 1) %}
                             Visible
                         {% elseif(product.visibility == 0) %}

@@ -5,7 +5,7 @@ $(document).ready(function ()
             datumTokenizer: Bloodhound.tokenizers.whitespace,
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                url: "/admin/handleSearch/%QUERY%",
+                url: "/admin/handle-search/%QUERY%",
                 wildcard: '%QUERY%',
                 filter: function (users)
                 {
@@ -50,7 +50,7 @@ $(document).ready(function ()
             event.preventDefault();
             $.ajax({
                 method: 'POST',
-                url: "/admin/ajaxpersonsold/"+data.user_id
+                url: "/admin/ajax-person-sold/"+data.user_id
             }).done(function (data)
             {
                 prepareSoldProducts(data);
@@ -59,7 +59,7 @@ $(document).ready(function ()
             event.preventDefault();
             $.ajax({
                 method: 'POST',
-                url: "/admin/ajaxpersonsold/"+data.user_id
+                url: "/admin/ajax-person-sold/"+data.user_id
             }).done(function (data) {
                 prepareSoldProducts(data);
             })
@@ -68,7 +68,7 @@ $(document).ready(function ()
             event.preventDefault();
             $.ajax({
                 method: 'POST',
-                url: "/admin/ajaxpersonsold/"+data.user_id
+                url: "/admin/ajax-person-sold/"+data.user_id
             }).done(function (data) {
                 prepareSoldProducts(data);
             })
@@ -98,7 +98,7 @@ function renderSoldProducts(item, index)
     var cell6 = row.insertCell(5);
     var cell7 = row.insertCell(6);
     var cell8 = row.insertCell(7);
-    cell1.innerHTML = "<a href='/admin/soldproduct/"+item.id+"' class='card-link'>"+item.name+"</a>";
+    cell1.innerHTML = "<a href='/admin/sold-product/"+item.id+"' class='card-link'>"+item.name+"</a>";
     cell2.innerHTML = item.sellerName;
     cell3.innerHTML = item.buyerName;
     cell4.innerHTML = item.quantity;
@@ -106,10 +106,10 @@ function renderSoldProducts(item, index)
     var date1 = new Date(item.boughtAt.date);
     cell6.innerHTML = date1.toLocaleDateString("hr-HR", options);
     if (item.confirmed === 0) {
-        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirmbuyperpersonadmin/"+item.id+"'>Confirm</a>";
-        cell8.innerHTML = "<a class='btn btn-danger' href='/admin/deletesolditemperpersonadmin/"+item.id+"'>Delete</a>";
+        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirm-buy-per-person-admin/"+item.id+"'>Confirm</a>";
+        cell8.innerHTML = "<a class='btn btn-danger' href='/admin/delete-sold-item-per-person-admin/"+item.id+"'>Delete</a>";
     }
     if(item.confirmed === 1) {
-        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirmbuyperpersonadmin/"+item.id+"'>Confirmed</a>";
+        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirm-buy-per-person-admin/"+item.id+"'>Confirmed</a>";
     }
 }

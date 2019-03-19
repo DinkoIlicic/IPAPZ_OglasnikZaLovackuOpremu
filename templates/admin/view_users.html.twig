@@ -20,10 +20,10 @@
             <tbody>
                 {% for user in users %}
                     <tr>
-                        <td><a class="card-link" href="{{ path('newuserinfoadmin', {'id': user.id}) }}">{{ user.firstName }} {{ user.lastName }}</a></td>
+                        <td><a class="card-link" href="{{ path('new_user_info_admin', {'id': user.id}) }}">{{ user.firstName }} {{ user.lastName }}</a></td>
                         <td>{{ user.email }}</td>
                         <td>{{ user.phoneNumber }}</td>
-                        <td><a class="card-link" href="{{ path('newpasswordadmin', {'id': user.id}) }}">Change password</a></td>
+                        <td><a class="card-link" href="{{ path('new_password_admin', {'id': user.id}) }}">Change password</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

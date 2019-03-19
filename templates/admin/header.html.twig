@@ -5,7 +5,7 @@
             Appliers
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('checkapplyforseller') }}">List of appliers for Seller</a>
+            <a class="dropdown-item" href="{{ path('check_apply_for_seller') }}">List of appliers for Seller</a>
         </div>
     </div>
     <div class="dropdown show">
@@ -13,8 +13,8 @@
             Categories
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('listofcategories') }}">List of categories</a>
-            <a class="dropdown-item" href="{{ path('listofproducts') }}">List of products</a>
+            <a class="dropdown-item" href="{{ path('list_of_categories') }}">List of categories</a>
+            <a class="dropdown-item" href="{{ path('list_of_products') }}">List of products</a>
         </div>
     </div>
     <div class="dropdown show">
@@ -22,7 +22,7 @@
             Users
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('listofusers') }}">List of users</a>
+            <a class="dropdown-item" href="{{ path('list_of_users') }}">List of users</a>
         </div>
     </div>
     <div class="dropdown show">
@@ -30,8 +30,8 @@
             Sold items
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('viewpeopleitemsperperson') }}">Per person</a>
-            <a class="dropdown-item" href="{{ path('viewpeopleitemsperproduct') }}">Per product</a>
+            <a class="dropdown-item" href="{{ path('view_sold_items_per_person') }}">Per person</a>
+            <a class="dropdown-item" href="{{ path('view_sold_items_per_product') }}">Per product</a>
         </div>
     </div>
 {% endblock %}

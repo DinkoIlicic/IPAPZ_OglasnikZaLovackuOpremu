@@ -42,7 +42,7 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/newproduct", name="insertproduct")
+     * @Route("/seller/new-product", name="insert_product")
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @return Response
@@ -80,7 +80,7 @@ class SellerController extends AbstractController
             $entityManager->persist($product);
             $entityManager->flush();
             $this->addFlash('success', 'Inserted new product!');
-            return $this->redirectToRoute('insertproduct');
+            return $this->redirectToRoute('insert_product');
         }
         return $this->render('/seller/new_product.html.twig', [
             'form' => $form->createView()
@@ -88,7 +88,7 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/allproducts", name="showproducts")
+     * @Route("/seller/all-products", name="show_products")
      * @param ProductRepository $productRepository
      * @return Response
      */
@@ -103,7 +103,7 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/myproducts", name="showmyproducts")
+     * @Route("/seller/my-products", name="show_my_products")
      * @param ProductRepository $productRepository
      * @return Response
      */
@@ -129,7 +129,7 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/productvisibility/{id}", name="updateproductvisibilityseller")
+     * @Route("/seller/product-visibility/{id}", name="update_product_visibility_seller")
      * @param EntityManagerInterface $entityManager
      * @param Product $product
      * @return Response
@@ -142,20 +142,20 @@ class SellerController extends AbstractController
             $product->setVisibility(1);
             $entityManager->flush();
             $this->addFlash('success', 'Product made visible!');
-            return $this->redirectToRoute('showmyproducts');
+            return $this->redirectToRoute('show_my_products');
         } elseif ($product->getVisibility() === 1) {
             $product->setVisibility(0);
             $entityManager->flush();
             $this->addFlash('success', 'Product hidden!');
-            return $this->redirectToRoute('showmyproducts');
+            return $this->redirectToRoute('show_my_products');
         } else {
             $this->addFlash('warning', 'Something went wrong');
-            return $this->redirectToRoute('showmyproducts');
+            return $this->redirectToRoute('show_my_products');
         }
     }
 
     /**
-     * @Route("/seller/updatemyproductinfo/{id}", name="updatemyproductinfo")
+     * @Route("/seller/update-product-info/{id}", name="update_my_product_info")
      * @param EntityManagerInterface $entityManager
      * @param ProductCategoryRepository $productCategoryRepository
      * @param Request $request
@@ -169,7 +169,7 @@ class SellerController extends AbstractController
         ProductCategoryRepository $productCategoryRepository)
     {
         if ($this->getUser() !== $product->getUser()) {
-            return $this->redirectToRoute('showmyproducts');
+            return $this->redirectToRoute('show_my_products');
         }
         $productIm = $product->getImage();
         $productUrlNum = substr($product->getCustomUrl(), -9);
@@ -201,7 +201,7 @@ class SellerController extends AbstractController
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
-            return $this->redirectToRoute('showmyproducts');
+            return $this->redirectToRoute('show_my_products');
         }
         return $this->render('/seller/update_my_product_info.html.twig', [
             'form' => $form->createView()
@@ -209,7 +209,7 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/updatemyproductquantity/{id}", name="updatemyproductquantity")
+     * @Route("/seller/update-product-quantity/{id}", name="update_my_product_quantity")
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
      * @param Request $request
@@ -223,7 +223,7 @@ class SellerController extends AbstractController
         WishlistRepository $wishlistRepository)
     {
         if ($this->getUser() !== $product->getUser()) {
-            return $this->redirectToRoute('showmyproducts');
+            return $this->redirectToRoute('show_my_products');
         }
         $productIm = $product->getImage();
         $productBeforeQuantity = $product->getAvailableQuantity();
@@ -250,7 +250,7 @@ class SellerController extends AbstractController
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Available Quantity!');
-            return $this->redirectToRoute('showmyproducts');
+            return $this->redirectToRoute('show_my_products');
         }
         return $this->render('/seller/update_my_product_quantity.html.twig', [
             'form' => $form->createView()
@@ -258,7 +258,7 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/updatemyproductimage/{id}", name="updatemyproductimage")
+     * @Route("/seller/update-product-image/{id}", name="update_my_product_image")
      * @param EntityManagerInterface $entityManager
      * @param Request $request
      * @param Product $product
@@ -270,7 +270,7 @@ class SellerController extends AbstractController
         EntityManagerInterface $entityManager)
     {
         if ($this->getUser() !== $product->getUser()) {
-            return $this->redirectToRoute('showmyproducts');
+            return $this->redirectToRoute('show_my_products');
         }
         $product->setImage(new File($this->getParameter('image_directory').'/'.$product->getImage()));
         $form = $this->createForm(ProductImageFormType::class, $product);
@@ -294,7 +294,7 @@ class SellerController extends AbstractController
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Image!');
-            return $this->redirectToRoute('showmyproducts');
+            return $this->redirectToRoute('show_my_products');
         }
         return $this->render('/seller/update_my_product_image.html.twig', [
             'form' => $form->createView()
@@ -302,7 +302,7 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/solditemsperuser", name="peoplethatboughtmyproduct")
+     * @Route("/seller/sold-items-per-user", name="sold_items_per_user")
      * @param Request $request
      * @param SoldRepository $soldRepository
      * @param ProductRepository $productRepository
@@ -342,7 +342,7 @@ class SellerController extends AbstractController
             ]);
         }
 
-        return $this->render('/seller/people_that_bought_my_product.html.twig', [
+        return $this->render('/seller/list_of_sold_items_per_user.html.twig', [
             'form' => $form->createView(),
             'solditems' => $soldperuser,
             'message' => $message
@@ -351,7 +351,7 @@ class SellerController extends AbstractController
 
 
     /**
-     * @Route("/seller/confirmbuyperperson/{id}", name="confirmbuyperperson")
+     * @Route("/seller/confirm-buy-per-person/{id}", name="confirm_buy_per_person")
      * @param EntityManagerInterface $entityManager
      * @param Sold $sold
      * @return Response
@@ -361,7 +361,7 @@ class SellerController extends AbstractController
         EntityManagerInterface $entityManager)
     {
         if ($this->getUser() !== $sold->getProduct()->getUser()) {
-            return $this->redirectToRoute('peoplethatboughtmyproduct');
+            return $this->redirectToRoute('sold_items_per_user');
         }
 
         if ($sold->getConfirmed() === 0) {
@@ -373,11 +373,11 @@ class SellerController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Buy unconfirmed!');
         }
-        return $this->redirectToRoute('peoplethatboughtmyproduct');
+        return $this->redirectToRoute('sold_items_per_user');
     }
 
     /**
-     * @Route("/seller/deletesolditemperuser/{id}", name="deletesolditemperuser")
+     * @Route("/seller/delete-sold-item-per-user/{id}", name="delete_sold_item_per_user")
      * @param ProductRepository $productRepository
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
@@ -391,7 +391,7 @@ class SellerController extends AbstractController
         WishlistRepository $wishlistRepository)
     {
         if ($this->getUser() !== $sold->getProduct()->getUser()) {
-            return $this->redirectToRoute('peoplethatboughtmyproduct');
+            return $this->redirectToRoute('sold_items_per_user');
         }
 
         /**
@@ -416,11 +416,11 @@ class SellerController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Item deleted!');
-        return $this->redirectToRoute('peoplethatboughtmyproduct');
+        return $this->redirectToRoute('sold_items_per_user');
     }
 
     /**
-     * @Route("/seller/solditemsperproduct", name="listofsolditemsperproduct")
+     * @Route("/seller/sold-items-per-product", name="list_of_sold_items_per_product")
      * @param Request $request
      * @param SoldRepository $soldRepository
      * @param ProductRepository $productRepository
@@ -464,7 +464,7 @@ class SellerController extends AbstractController
     }
 
     /**
-     * @Route("/seller/confirmbuyperproduct/{id}", name="confirmbuyperproduct")
+     * @Route("/seller/confirm-buy-per-product/{id}", name="confirm_buy_per_product")
      * @param EntityManagerInterface $entityManager
      * @param Sold $sold
      * @return Response
@@ -474,7 +474,7 @@ class SellerController extends AbstractController
         EntityManagerInterface $entityManager)
     {
         if ($this->getUser() !== $sold->getProduct()->getUser()) {
-            return $this->redirectToRoute('listofsolditemsperproduct');
+            return $this->redirectToRoute('list_of_sold_items_per_product');
         }
 
         if ($sold->getConfirmed() === 0) {
@@ -486,13 +486,13 @@ class SellerController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Buy unconfirmed!');
         }
-        return $this->redirectToRoute('listofsolditemsperproduct', [
+        return $this->redirectToRoute('list_of_sold_items_per_product', [
             'id' => $this->getUser()->getId()
         ]);
     }
 
     /**
-     * @Route("/seller/deletesolditemperproduct/{id}", name="deletesolditemperproduct")
+     * @Route("/seller/delete-sold-item-per-product/{id}", name="delete_sold_item_per_product")
      * @param ProductRepository $productRepository
      * @param EntityManagerInterface $entityManager
      * @param Sold $sold
@@ -504,7 +504,7 @@ class SellerController extends AbstractController
         ProductRepository $productRepository)
     {
         if ($this->getUser() !== $sold->getProduct()->getUser()) {
-            return $this->redirectToRoute('listofsolditemsperproduct');
+            return $this->redirectToRoute('list_of_sold_items_per_product');
         }
 
         /**
@@ -518,13 +518,13 @@ class SellerController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Item deleted!');
-        return $this->redirectToRoute('listofsolditemsperproduct', [
+        return $this->redirectToRoute('list_of_sold_items_per_product', [
             'id' => $this->getUser()->getId()
         ]);
     }
 
     /**
-     * @Route("/seller/soldproduct/{id}", name="viewsoldproductinfo")
+     * @Route("/seller/sold-product/{id}", name="view_sold_product_info")
      * @param Sold $sold
      * @return Response
      */

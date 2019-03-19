@@ -68,7 +68,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/showcategories/{id}", name="showcategories")
+     * @Route("/show-categories/{id}", name="show_categories")
      * @param CategoryRepository $categoryRepository
      * @param ProductService $productService
      * @param Request $request
@@ -90,7 +90,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/applyforseller", name="applyforseller_index")
+     * @Route("/apply-for-seller", name="apply_for_seller")
      * @return Response
      * @param EntityManagerInterface $entityManager
      * @param SellerRepository $sellerRepository
@@ -130,7 +130,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/checkproduct/{pageName}", name="checkproduct")
+     * @Route("/check-product/{pageName}", name="check_product")
      * @param CategoryRepository $categoryRepository
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
@@ -168,12 +168,12 @@ class AdvertisementController extends AbstractController
             $quan = $sold->getQuantity();
             if ($quan === null ) {
                 $this->addFlash('warning', 'Please insert correct number in field Quantity!');
-                return $this->redirectToRoute('checkproduct', [
+                return $this->redirectToRoute('check_product', [
                     'pageName' => $product->getCustomUrl()]);
             }
             if ($sold->getQuantity() > $product->getAvailableQuantity()) {
                 $this->addFlash('warning', 'Not enough available quantity!');
-                return $this->redirectToRoute('checkproduct', [
+                return $this->redirectToRoute('check_product', [
                     'pageName' => $product->getCustomUrl()]);
             } else {
                 $sold->setUser($this->getUser());
@@ -185,7 +185,7 @@ class AdvertisementController extends AbstractController
                 $entityManager->persist($sold);
                 $entityManager->flush();
                 $this->addFlash('success', 'Bought the product!');
-                return $this->redirectToRoute('checkproduct', [
+                return $this->redirectToRoute('check_product', [
                     'pageName' => $product->getCustomUrl()]);
             }
         }
@@ -200,16 +200,16 @@ class AdvertisementController extends AbstractController
             $to = $product->getUser()->getEmail();
             if (empty($name) || empty($from) || empty($message)) {
                 $this->addFlash('warning', 'Please fill out all fields to send mail!');
-                return $this->redirectToRoute('checkproduct', [
+                return $this->redirectToRoute('check_product', [
                     'pageName' => $product->getCustomUrl()]);
             } elseif (filter_var($from, FILTER_VALIDATE_EMAIL)){
                 $this->addFlash('success', 'Mail sent. Name: ' . $name . ', from: ' . $from . ', to: '
                     . $to . ', message: ' . $message);
-                return $this->redirectToRoute('checkproduct', [
+                return $this->redirectToRoute('check_product', [
                     'pageName' => $product->getCustomUrl()]);
             } else {
                 $this->addFlash('warning', 'Your email is not valid!');
-                return $this->redirectToRoute('checkproduct', [
+                return $this->redirectToRoute('check_product', [
                     'pageName' => $product->getCustomUrl()]);
             }
         }
@@ -224,7 +224,7 @@ class AdvertisementController extends AbstractController
             $product->addComment($comment);
             $entityManager->flush();
             $this->addFlash('success', 'Comment added!');
-            return $this->redirectToRoute('checkproduct', [
+            return $this->redirectToRoute('check_product', [
                 'pageName' => $product->getCustomUrl()]);
         }
 
@@ -240,7 +240,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/myitems", name="myitems")
+     * @Route("/items", name="my_items")
      * @param CategoryRepository $categoryRepository
      * @param ProductService $productService
      * @param Request $request
@@ -260,7 +260,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/wishlist", name="mywishlist")
+     * @Route("/wishlist", name="my_wishlist")
      * @param CategoryRepository $categoryRepository
      * @param ProductService $productService
      * @param EntityManagerInterface $entityManager
@@ -305,7 +305,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/add_to_wishlist/{id}", name="addtowishlist")
+     * @Route("/add-to-wishlist/{id}", name="add_to_wishlist")
      * @param Product $product
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
@@ -322,7 +322,7 @@ class AdvertisementController extends AbstractController
         ]);
         if ($itemAlreadyExists) {
             $this->addFlash('warning', 'Product already added to wishlist!');
-            return $this->redirectToRoute('checkproduct', [
+            return $this->redirectToRoute('check_product', [
                 'pageName' => $product->getCustomUrl()]);
         }
         $wishlist = new Wishlist();
@@ -334,12 +334,12 @@ class AdvertisementController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Added to wishlist!');
-        return $this->redirectToRoute('checkproduct', [
+        return $this->redirectToRoute('check_product', [
             'pageName' => $product->getCustomUrl()]);
     }
 
     /**
-     * @Route("/remove_from_wishlist/{id}", name="removefromwishlist")
+     * @Route("/remove-from-wishlist/{id}", name="remove_from_wishlist")
      * @param Product $product
      * @param EntityManagerInterface $entityManager
      * @param WishlistRepository $wishlistRepository
@@ -361,7 +361,7 @@ class AdvertisementController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Removed from wishlist!');
-        return $this->redirectToRoute('checkproduct', [
+        return $this->redirectToRoute('check_product', [
             'pageName' => $product->getCustomUrl()]);
     }
 

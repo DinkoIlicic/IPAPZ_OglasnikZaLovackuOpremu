@@ -7,16 +7,16 @@
 
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             {% for category in categories %}
-                <a class="dropdown-item" href="{{ path('showcategories', {'id': category.id}) }}">{{ category.name }} </a>
+                <a class="dropdown-item" href="{{ path('show_categories', {'id': category.id}) }}">{{ category.name }} </a>
             {% endfor %}
         </div>
     </div>
     {% if is_granted('ROLE_USER') %}
         <li class="nav-item">
-            <a class="nav-link" href="{{ path('myitems') }}">My Items</a>
+            <a class="nav-link" href="{{ path('my_items') }}">My Items</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ path('mywishlist') }}">Wishlist</a>
+            <a class="nav-link" href="{{ path('my_wishlist') }}">Wishlist</a>
         </li>
     {% endif %}
 {% endblock %}
@@ -32,7 +32,7 @@
                         {% if item.notified == 1 %}
                             <p>Available again</p>
                         {% endif %}
-                        <a href="{{ path('checkproduct', {'pageName': item.product.customUrl}) }}">
+                        <a href="{{ path('check_product', {'pageName': item.product.customUrl}) }}">
                             <img width="300" height="300" src="../../../../../uploads/image/{{ item.product.image }}" alt="">
                             <p style="color: black"><strong>Product name: {{ item.product.name }}</strong></p>
                             <p style="color: black"><strong>Available Quantity: {{ item.product.availableQuantity }}</strong></p>

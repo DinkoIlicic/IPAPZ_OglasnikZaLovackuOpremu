@@ -15,7 +15,7 @@
         <tbody>
             {% for seller in sellers %}
                 <tr>
-                    <td><a href="{{ path('checkoneapplierforseller', {'id': seller.id}) }}" class="card-link">{{ seller.user.firstname }} {{ seller.user.lastname }}</a></td>
+                    <td><a href="{{ path('check_one_applier_for_seller', {'id': seller.id}) }}" class="card-link">{{ seller.user.firstname }} {{ seller.user.lastname }}</a></td>
                     <td>{% if(seller.verified == 1) %}
                             Verified
                         {% else %}

@@ -5,9 +5,9 @@
             Products
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('insertproduct') }}">New Product</a>
-            <a class="dropdown-item" href="{{ path('showproducts') }}">All Products</a>
-            <a class="dropdown-item" href="{{ path('showmyproducts') }}">My Products</a>
+            <a class="dropdown-item" href="{{ path('insert_product') }}">New Product</a>
+            <a class="dropdown-item" href="{{ path('show_products') }}">All Products</a>
+            <a class="dropdown-item" href="{{ path('show_my_products') }}">My Products</a>
         </div>
     </div>
     <div class="dropdown show">
@@ -15,8 +15,8 @@
             Sold items
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('peoplethatboughtmyproduct') }}">Per person</a>
-            <a class="dropdown-item" href="{{ path('listofsolditemsperproduct') }}">Per product</a>
+            <a class="dropdown-item" href="{{ path('list_of_sold_items_per_product') }}">Per person</a>
+            <a class="dropdown-item" href="{{ path('list_of_sold_items_per_product') }}">Per product</a>
         </div>
     </div>
 {% endblock %}

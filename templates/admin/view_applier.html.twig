@@ -2,7 +2,7 @@
 
 {% block body %}
     <div>
-        <a class="btn btn-primary" href="{{ path('checkapplyforseller') }}">Back</a>
+        <a class="btn btn-primary" href="{{ path('check_apply_for_seller') }}">Back</a>
     </div><br />
     <div>
         <p>Applying for seller position</p>
@@ -15,9 +15,9 @@
 
     <div>
         {% if verified == 0 %}
-            <a class="btn btn-primary" href="{{ path('verifyapplier', {'id': seller.id}) }}">Verify seller</a>
+            <a class="btn btn-primary" href="{{ path('verify_applier', {'id': seller.id}) }}">Verify seller</a>
         {% elseif verified == 1 %}
-            <a class="btn btn-primary" href="{{ path('verifyapplier', {'id': seller.id}) }}">Undo verify seller</a>
+            <a class="btn btn-primary" href="{{ path('verify_applier', {'id': seller.id}) }}">Undo verify seller</a>
         {% endif %}
     </div>
 {% endblock %}
