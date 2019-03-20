@@ -625,7 +625,8 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Buy unconfirmed!');
         }
 
-        return $this->redirectToRoute('view_sold_items_per_person');
+        return $this->redirectToRoute('view_sold_items_per_person', [
+            'id' => $sold->getUser()->getId()]);
     }
 
     /**
@@ -664,7 +665,8 @@ class AdminController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Item deleted!');
-        return $this->redirectToRoute('view_sold_items_per_person');
+        return $this->redirectToRoute('view_sold_items_per_person', [
+            'id' => $sold->getUser()->getId()]);
     }
 
     /**
