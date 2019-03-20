@@ -8,33 +8,22 @@
 
 namespace App\Form;
 
-use App\Entity\Category;
 use App\Entity\Coupon;
-use App\Entity\Product;
-use App\Entity\ProductCategory;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping\UniqueConstraint;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Validator\Constraints\Count;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CouponFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('codeGroupName', TextType::class, [
+                'label' => 'Insert Your Group Code Name here: '
+            ])
             ->add('discount', TextType::class, [
-                'label' => 'Insert Your Product Name here: '
+                'label' => 'Insert Your discount here: '
             ]);
     }
 

@@ -8,6 +8,9 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Class Coupon
  * @ORM\Entity(repositoryClass="App\Repository\CouponRepository")
@@ -25,51 +28,16 @@ class Coupon
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      */
-    private $uniqueCode;
+    private $codeGroupName;
 
     /**
      * @ORM\Column(type="string")
+     * @Assert\Regex(
+     *     pattern     = "/^[0-9.%]+$/i",
+     *     message     = "Only numbers, dot and percentage are allowed"
+     *)
      */
     private $discount;
-
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $products = [];
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $startDate;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $expireDate;
-
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProducts()
-    {
-        return $this->products;
-    }
-
-    /**
-     * @param mixed $products
-     */
-    public function setProducts($products): void
-    {
-        $this->products = $products;
-    }
 
     /**
      * @return mixed
@@ -90,48 +58,24 @@ class Coupon
     /**
      * @return mixed
      */
-    public function getExpireDate()
+    public function getId()
     {
-        return $this->expireDate;
+        return $this->id;
     }
 
     /**
-     * @param mixed $expireDate
+     * @param mixed $codeGroupName
      */
-    public function setExpireDate($expireDate): void
+    public function setCodeGroupName($codeGroupName): void
     {
-        $this->expireDate = $expireDate;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStartDate()
-    {
-        return $this->startDate;
-    }
-
-    /**
-     * @param mixed $startDate
-     */
-    public function setStartDate($startDate): void
-    {
-        $this->startDate = $startDate;
+        $this->codeGroupName = $codeGroupName;
     }
 
     /**
      * @return mixed
      */
-    public function getUniqueCode()
+    public function getCodeGroupName()
     {
-        return $this->uniqueCode;
-    }
-
-    /**
-     * @param mixed $uniqueCode
-     */
-    public function setUniqueCode($uniqueCode): void
-    {
-        $this->uniqueCode = $uniqueCode;
+        return $this->codeGroupName;
     }
 }
