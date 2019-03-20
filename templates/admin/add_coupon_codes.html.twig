@@ -1,0 +1,22 @@
+{% extends '/admin/header.html.twig' %}
+
+{% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('show_coupons') }}">Back</a>
+    </div><br />
+    <div>
+        <p>Create coupon codes</p>
+    </div>
+    <div>
+        {{ form_start(form) }}
+            {{ form_row(form.amount) }}
+            {{ form_row(form.all) }}
+            {{ form_row(form.category) }}
+            {{ form_row(form.product) }}
+            {{ form_row(form.dateEnabled) }}
+            {{ form_row(form.startDate)  }}
+            {{ form_row(form.expireDate) }}
+            <button type="submit" class="btn btn-primary" formnovalidate>Create</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

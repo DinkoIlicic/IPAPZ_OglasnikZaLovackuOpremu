@@ -26,7 +26,8 @@
         "symfony/validator": "4.2.*",
         "symfony/yaml": "4.2.*",
         "tinymce/tinymce": "4",
-        "ext-json": "*"
+        "ext-json": "*",
+      "ext-openssl": "*"
     },
     "config": {
         "preferred-install": {

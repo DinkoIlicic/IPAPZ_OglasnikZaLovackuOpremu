@@ -1,0 +1,17 @@
+{% extends '/admin/header.html.twig' %}
+
+{% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('show_coupons') }}">Back</a>
+    </div><br />
+    <div>
+        <p>Insert new coupon group</p>
+    </div>
+    <div>
+        {{ form_start(form) }}
+            {{ form_row(form.codeGroupName) }}
+            {{ form_row(form.discount) }}
+            <button type="submit" class="btn btn-primary" formnovalidate>Insert</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

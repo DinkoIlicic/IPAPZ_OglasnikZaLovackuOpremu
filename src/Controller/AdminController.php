@@ -8,13 +8,18 @@
 
 namespace App\Controller;
 use App\Entity\Category;
+use App\Entity\Coupon;
 use App\Entity\CustomPage;
 use App\Entity\Seller;
 use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Product;
 use App\Entity\Wishlist;
+use App\Entity\RandomCodeGenerator;
+use App\Entity\CouponCodes;
 use App\Form\CategoryFormType;
+use App\Form\CouponCodesFormType;
+use App\Form\CouponFormType;
 use App\Form\CustomPageFormType;
 use App\Form\PasswordFormType;
 use App\Form\ProductInfoFormType;
@@ -24,6 +29,7 @@ use App\Form\AdminListOfCategoriesFormType;
 use App\Form\ProductQuantityFormType;
 use App\Form\ProfileFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\CouponRepository;
 use App\Repository\CustomPageRepository;
 use App\Repository\ProductCategoryRepository;
 use App\Repository\SellerRepository;
@@ -888,6 +894,134 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('view_custom_pages_admin');
         }
     }
+    /**
+     * @Route("/admin/coupons/", name="show_coupons")
+     * @param CouponRepository $couponRepository
+     * @return Response
+     */
+    public function showCouponGroup(CouponRepository $couponRepository)
+    {
+        $coupons = $couponRepository->findAll();
+
+        return $this->render('/admin/coupons.html.twig', [
+            'coupons' => $coupons,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/add-coupon/", name="add_coupon_group")
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function addCouponGroup(Request $request, EntityManagerInterface $entityManager)
+    {
+        $form = $this->createForm(CouponFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            $couponGroup = $form->getData();
+            $entityManager->persist($couponGroup);
+            $entityManager->flush();
+            $this->addFlash('success', 'Coupon group added!');
+            return $this->redirectToRoute('show_coupons');
+        };
+        return $this->render('/admin/add_coupon_group.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/add-coupon-codes/{id}", name="add_coupon_codes")
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @param Coupon $coupon
+     * @return Response
+     */
+    public function addCouponCodes(Request $request, EntityManagerInterface $entityManager, Coupon $coupon)
+    {
+        $form = $this->createForm(CouponCodesFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            $codesAmount= $form->get('amount')->getData();
+            if (!($codesAmount >= 1) || !($codesAmount <= 10000)) {
+                $this->addFlash('warning', 'Amount must be between 1 and 10000!');
+                return $this->redirectToRoute('add_coupon_codes', [
+                    'id' => $coupon->getId()]);
+            }
+            $codesDateEnabled = $form->get('dateEnabled')->getData();
+            if($codesDateEnabled) {
+                $codesStartDate= $form->get('startDate')->getData();
+                $codesExpireDate= $form->get('expireDate')->getData();
+                if($codesStartDate === null || $codesExpireDate === null) {
+                    $this->addFlash('warning', 'Please fill out the start date and expire date if You choose date option!');
+                    return $this->redirectToRoute('add_coupon_codes', [
+                        'id' => $coupon->getId()]);
+                }
+            }
+            $codesAll = $form->get('all')->getData();
+            $codesCategory = $form->get('category')->getData();
+            $codesProduct = $form->get('product')->getData();
+            if(!$codesAll && $codesCategory === null && $codesProduct === null) {
+                $this->addFlash('warning', 'Please choose at least one of the 3 given options (All products, category or product)!');
+                return $this->redirectToRoute('add_coupon_codes', [
+                    'id' => $coupon->getId()]);
+            }
+
+            $codesNames = new RandomCodeGenerator();
+            $codesArrayNames = $codesNames->generate($codesAmount);
+            for($i = 0; $i < $codesAmount; $i++) {
+                $code = new CouponCodes();
+                $code->setCodeGroup($coupon);
+                $code->setCodeName($codesArrayNames[$i]);
+                if($codesAll) {
+                    $code->setAll(1);
+                    $code->setProduct(0);
+                    $code->setCategory(0);
+                } elseif ($codesCategory !== null) {
+                    $code->setCategory($codesCategory->getId());
+                    $code->setAll(0);
+                    $code->setProduct(0);
+                } elseif ($codesProduct !== null) {
+                    $code->setProduct($codesProduct->getId());
+                    $code->setAll(0);
+                    $code->setCategory(0);
+                }
+                if($codesDateEnabled) {
+                    $code->setDateEnabled(1);
+                    $code->setStartDate($codesStartDate);
+                    $code->setExpireData($codesExpireDate);
+                }
+                $code->setDiscount($coupon->getDiscount());
+                $entityManager->persist($code);
+                $entityManager->flush();
+                $i++;
+            }
+        };
+        return $this->render('/admin/add_coupon_codes.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/delete-coupon-codes/{id}", name="delete_coupon_codes")
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function deleteCouponCodes(Request $request, EntityManagerInterface $entityManager)
+    {
+        $form = $this->createForm(CouponCodesFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            $codesArray = $form->get('amount')->getData();
+            echo $codesArray;
+        };
+        return $this->render('/admin/add_coupon_codes.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+
 
     private function generateUniqueFileName()
     {

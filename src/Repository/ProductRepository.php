@@ -29,4 +29,13 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult()
             ;
     }
+
+    public function findOnlyIds()
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.id')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

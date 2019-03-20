@@ -43,4 +43,13 @@
             <a class="dropdown-item" href="{{ path('view_custom_pages_admin') }}">Page list</a>
         </div>
     </div>
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Coupons
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('add_coupon_group') }}">Add Coupon</a>
+            <a class="dropdown-item" href="{{ path('show_coupons') }}">Coupon list</a>
+        </div>
+    </div>
 {% endblock %}

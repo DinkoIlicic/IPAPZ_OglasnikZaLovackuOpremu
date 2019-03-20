@@ -1,0 +1,27 @@
+{% extends '/admin/header.html.twig' %}
+
+{% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
+    </div><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Coupon Name</th>
+            <th scope="col">Discount</th>
+            <th scope="col">Create codes</th>
+            <th scope="col">Delete codes</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for coupon in coupons %}
+            <tr>
+                <td>{{ coupon.codeGroupName }}</td>
+                <td>{{ coupon.discount }}</td>
+                <td><a class="btn btn-primary" href="{{ path('add_coupon_codes', {'id':  coupon.id }) }}">Create</a></td>
+                <td><a class="btn btn-primary" href="{{ path('delete_coupon_codes', {'id':  coupon.id }) }}">Delete</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
