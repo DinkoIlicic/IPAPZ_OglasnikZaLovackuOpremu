@@ -10,7 +10,7 @@
     <div>
         {{ form_start(form) }}
             {{ form_row(form.pageName) }}
-            {{ form_row(form.content) }}
+            {{ form_row(form.content, {'attr':{class: 'contentedittool'}}) }}
             <button type="submit" class="btn btn-primary" formnovalidate>Edit</button>
         {{ form_end(form) }}
     </div>

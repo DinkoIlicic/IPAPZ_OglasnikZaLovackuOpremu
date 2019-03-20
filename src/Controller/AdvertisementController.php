@@ -449,7 +449,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/test/{pageName}", name="render_custom_page")
+     * @Route("/custom-page/{pageName}", name="render_custom_page")
      * @param CustomPageRepository $customPageRepository
      * @param CategoryRepository $categoryRepository
      * @var $pageName

@@ -35,7 +35,11 @@ class CustomPage
     private $pageName;
 
     /**
-     * @ORM\Column(type="string")
+     * @Assert\Length(
+     *      max = 2000,
+     *      maxMessage = "Content cannot be longer than {{ limit }} characters"
+     * )
+     * @ORM\Column(type="string", length=2000)
      */
     private $content;
 

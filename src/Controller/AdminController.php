@@ -801,6 +801,8 @@ class AdminController extends AbstractController
            $customPage->setVisibilityAdmin(1);
            $entityManager->persist($customPage);
            $entityManager->flush();
+            $this->addFlash('success', 'Page added!');
+            return $this->redirectToRoute('view_custom_pages_admin');
         }
         return $this->render('/admin/add_custom_page.html.twig', [
             'form' => $form->createView()

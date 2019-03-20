@@ -27,6 +27,7 @@ class CustomPageFormType extends AbstractType
             ->add('content', TextareaType::class, [
                 'label' => 'Insert Your Content here: ',
                 'attr' => array('rows' => '15'),
+                'required' => false,
             ]);
     }
 
