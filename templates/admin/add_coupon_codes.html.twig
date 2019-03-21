@@ -10,12 +10,9 @@
     <div>
         {{ form_start(form) }}
             {{ form_row(form.amount) }}
-            {{ form_row(form.all) }}
+            {{ form_row(form.allProducts) }}
             {{ form_row(form.category) }}
             {{ form_row(form.product) }}
-            {{ form_row(form.dateEnabled) }}
-            {{ form_row(form.startDate)  }}
-            {{ form_row(form.expireDate) }}
             <button type="submit" class="btn btn-primary" formnovalidate>Create</button>
         {{ form_end(form) }}
     </div>

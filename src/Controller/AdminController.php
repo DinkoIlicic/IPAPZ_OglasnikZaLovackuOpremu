@@ -948,17 +948,8 @@ class AdminController extends AbstractController
                 return $this->redirectToRoute('add_coupon_codes', [
                     'id' => $coupon->getId()]);
             }
-            $codesDateEnabled = $form->get('dateEnabled')->getData();
-            if($codesDateEnabled) {
-                $codesStartDate= $form->get('startDate')->getData();
-                $codesExpireDate= $form->get('expireDate')->getData();
-                if($codesStartDate === null || $codesExpireDate === null) {
-                    $this->addFlash('warning', 'Please fill out the start date and expire date if You choose date option!');
-                    return $this->redirectToRoute('add_coupon_codes', [
-                        'id' => $coupon->getId()]);
-                }
-            }
-            $codesAll = $form->get('all')->getData();
+
+            $codesAll = $form->get('allProducts')->getData();
             $codesCategory = $form->get('category')->getData();
             $codesProduct = $form->get('product')->getData();
             if(!$codesAll && $codesCategory === null && $codesProduct === null) {
@@ -974,28 +965,24 @@ class AdminController extends AbstractController
                 $code->setCodeGroup($coupon);
                 $code->setCodeName($codesArrayNames[$i]);
                 if($codesAll) {
-                    $code->setAll(1);
-                    $code->setProduct(0);
-                    $code->setCategory(0);
+                    $code->setAllProducts(1);
+                    $code->setProductId(0);
+                    $code->setCategoryId(0);
                 } elseif ($codesCategory !== null) {
-                    $code->setCategory($codesCategory->getId());
-                    $code->setAll(0);
-                    $code->setProduct(0);
+                    $code->setCategoryId($codesCategory->getId());
+                    $code->setAllProducts(0);
+                    $code->setProductId(0);
                 } elseif ($codesProduct !== null) {
-                    $code->setProduct($codesProduct->getId());
-                    $code->setAll(0);
-                    $code->setCategory(0);
+                    $code->setProductId($codesProduct->getId());
+                    $code->setAllProducts(0);
+                    $code->setCategoryId(0);
                 }
-                if($codesDateEnabled) {
-                    $code->setDateEnabled(1);
-                    $code->setStartDate($codesStartDate);
-                    $code->setExpireData($codesExpireDate);
-                }
+
                 $code->setDiscount($coupon->getDiscount());
                 $entityManager->persist($code);
-                $entityManager->flush();
                 $i++;
             }
+            $entityManager->flush();
         };
         return $this->render('/admin/add_coupon_codes.html.twig', [
             'form' => $form->createView(),

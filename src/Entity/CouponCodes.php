@@ -42,32 +42,18 @@ class CouponCodes
     /**
      * @ORM\Column(type="integer")
      */
-    private $all;
+    private $allProducts;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $category;
+    private $categoryId;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $product;
+    private $productId;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $dateEnabled;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $startDate;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $expireData;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Coupon")
@@ -102,65 +88,49 @@ class CouponCodes
     /**
      * @return mixed
      */
-    public function getStartDate()
+    public function getProductId()
     {
-        return $this->startDate;
+        return $this->productId;
     }
 
     /**
-     * @param mixed $startDate
+     * @param mixed $productId
      */
-    public function setStartDate($startDate): void
+    public function setProductId($productId): void
     {
-        $this->startDate = $startDate;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProduct()
-    {
-        return $this->product;
-    }
-
-    /**
-     * @param mixed $product
-     */
-    public function setProduct($product): void
-    {
-        $this->product = $product;
+        $this->productId = $productId;
     }
 
     /**
      * @return mixed
      */
-    public function getCategory()
+    public function getCategoryId()
     {
-        return $this->category;
+        return $this->categoryId;
     }
 
     /**
-     * @param mixed $category
+     * @param mixed $categoryId
      */
-    public function setCategory($category): void
+    public function setCategoryId($categoryId): void
     {
-        $this->category = $category;
+        $this->categoryId = $categoryId;
     }
 
     /**
      * @return mixed
      */
-    public function getAll()
+    public function getAllProducts()
     {
-        return $this->all;
+        return $this->allProducts;
     }
 
     /**
-     * @param mixed $all
+     * @param mixed $allProducts
      */
-    public function setAll($all): void
+    public function setAllProducts($allProducts): void
     {
-        $this->all = $all;
+        $this->allProducts = $allProducts;
     }
 
     /**
@@ -193,37 +163,5 @@ class CouponCodes
     public function setCodeName($codeName): void
     {
         $this->codeName = $codeName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDateEnabled()
-    {
-        return $this->dateEnabled;
-    }
-
-    /**
-     * @param mixed $dateEnabled
-     */
-    public function setDateEnabled($dateEnabled): void
-    {
-        $this->dateEnabled = $dateEnabled;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getExpireData()
-    {
-        return $this->expireData;
-    }
-
-    /**
-     * @param mixed $expireData
-     */
-    public function setExpireData($expireData): void
-    {
-        $this->expireData = $expireData;
     }
 }

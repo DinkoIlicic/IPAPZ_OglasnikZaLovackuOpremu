@@ -31,7 +31,7 @@ class CouponCodesFormType extends AbstractType
                 'required' => true,
                 'data' => 1
             ])
-            ->add('all', CheckboxType::class, [
+            ->add('allProducts', CheckboxType::class, [
                 'label'    => 'All products',
                 'required' => false,
             ])
@@ -46,22 +46,6 @@ class CouponCodesFormType extends AbstractType
                 'choice_label' => 'name',
                 'required' => false,
                 'placeholder' => 'Choose product'
-            ])
-            ->add('dateEnabled', CheckboxType::class, [
-                'label'    => 'Enable dates',
-                'required' => false,
-            ])
-            ->add('startDate', DateTimeType::class, [
-                'label' => 'Starts On: ',
-                'placeholder' => [
-                    'year' => 'Year', 'month' => 'Month', 'day' => 'Day',
-                ]
-            ])
-            ->add('expireDate', DateTimeType::class, [
-                'label' => 'Ends On: ',
-                'placeholder' => [
-                    'year' => 'Year', 'month' => 'Month', 'day' => 'Day',
-                ]
             ]);
     }
 
