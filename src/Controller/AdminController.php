@@ -29,7 +29,9 @@ use App\Form\ProductImageFormType;
 use App\Form\ProductInfoFormType;
 use App\Form\ProductQuantityFormType;
 use App\Form\ProfileFormType;
+use App\Form\RemoveCouponCodesFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\CouponCodesRepository;
 use App\Repository\CouponRepository;
 use App\Repository\CustomPageRepository;
 use App\Repository\ProductCategoryRepository;
@@ -46,6 +48,9 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -1112,9 +1117,15 @@ class AdminController extends AbstractController
 
                 $code->setDiscount($coupon->getDiscount());
                 $entityManager->persist($code);
-                $i++;
             }
             $entityManager->flush();
+            $this->addFlash(
+                'success',
+                'Coupons added!'
+            );
+            return $this->redirectToRoute(
+                'show_coupons'
+            );
         };
         return $this->render(
             '/admin/add_coupon_codes.html.twig',
@@ -1127,22 +1138,97 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/delete-coupon-codes/{id}", name="delete_coupon_codes")
      * @param                                    Request $request
+     * @param                                    Coupon $coupon
+     * @param                                    EntityManagerInterface $entityManager
      * @return                                   Response
      */
-    public function deleteCouponCodes(Request $request)
+    public function deleteCouponCodes(Request $request, Coupon $coupon, EntityManagerInterface $entityManager)
     {
-        $form = $this->createForm(CouponCodesFormType::class);
+        $form = $this->createForm(RemoveCouponCodesFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
-            $codesArray = $form->get('amount')->getData();
-            echo $codesArray;
+            $startId = $form->get('startId')->getData();
+            $endId = $form->get('endId')->getData();
+            $deleteQuery = $entityManager->createQuery(
+                '
+                Delete 
+                From App\Entity\CouponCodes cc
+                WHERE cc.id >= :startId AND cc.id <= :endId AND cc.codeGroup = :coupon
+                '
+            );
+            $deleteQuery->setParameter('startId', $startId);
+            $deleteQuery->setParameter('endId', $endId);
+            $deleteQuery->setParameter('coupon', $coupon);
+            $deleteQuery->execute();
+            $this->addFlash(
+                'success',
+                'Coupon codes removed!'
+            );
+            return $this->redirectToRoute(
+                'show_coupons'
+            );
         };
         return $this->render(
-            '/admin/add_coupon_codes.html.twig',
+            '/admin/remove_coupon_codes.html.twig',
             [
                 'form' => $form->createView(),
             ]
         );
+    }
+
+    /**
+     * @Route("/admin/excel-coupon-codes/{id}", name="create_excel_coupon_codes_file")
+     * @return              \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @throws              \PhpOffice\PhpSpreadsheet\Exception
+     * @throws              \PhpOffice\PhpSpreadsheet\Writer\Exception
+     * @param               CouponCodesRepository $couponCodesRepository
+     * @param               Coupon $coupon
+     */
+    public function excelCouponCodes(CouponCodesRepository $couponCodesRepository, Coupon $coupon)
+    {
+        \PhpOffice\PhpSpreadsheet\Cell\Cell::setValueBinder(
+            new \PhpOffice\PhpSpreadsheet\Cell\AdvancedValueBinder()
+        );
+        $spreadsheet = new Spreadsheet();
+        $couponCodes = $couponCodesRepository->findBy(['codeGroup' => $coupon], ['id' => 'ASC']);
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Id');
+        $sheet->setCellValue('B1', 'Coupon Code Name');
+        $sheet->setCellValue('C1', 'Coupon Group');
+        $sheet->setCellValue('D1', 'Discount');
+        $sheet->setCellValue('E1', 'All Products');
+        $sheet->setCellValue('F1', 'Category');
+        $sheet->setCellValue('G1', 'Product');
+        $i = 2;
+        foreach ($couponCodes as $item) {
+            /**
+             * @var CouponCodes $item
+             */
+            $sheet->setCellValue('A' . $i, $item->getId());
+            $sheet->setCellValue('B' . $i, $item->getCodeName());
+            $sheet->setCellValue('C' . $i, $item->getCodeGroup()->getCodeGroupName());
+            $sheet->setCellValue('D' . $i, $item->getDiscount());
+            $sheet->setCellValue('E' . $i, $item->getAllProducts());
+            $sheet->setCellValue('F' . $i, $item->getCategoryId());
+            $sheet->setCellValue('G' . $i, $item->getProductId());
+            $i++;
+        }
+
+        $sheet->setTitle("Coupon Codes");
+
+        // Create your Office 2007 Excel (XLSX Format)
+        $writer = new Xlsx($spreadsheet);
+
+        // Create a Temporary file in the system
+        $fileName = 'coupon_codes.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+
+        // Create the excel file in the tmp directory of the system
+        $writer->save($temp_file);
+
+        // Return the excel file as an attachment
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
 

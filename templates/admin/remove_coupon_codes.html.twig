@@ -4,13 +4,13 @@
         <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
     </div><br />
     <div>
-        <p>New page</p>
+        <p>Remove coupon codes</p>
     </div>
     <div>
         {{ form_start(form) }}
-            {{ form_row(form.pageName) }}
-            {{ form_row(form.content, {'attr':{class: 'contentedittool'}}) }}
-        <button type="submit" class="btn btn-primary" formnovalidate>Insert</button>
+            {{ form_row(form.startId) }}
+            {{ form_row(form.endId) }}
+            <button type="submit" class="btn btn-primary" formnovalidate>Delete</button>
         {{ form_end(form) }}
     </div>
 {% endblock %}

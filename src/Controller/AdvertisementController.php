@@ -512,7 +512,7 @@ class AdvertisementController extends AbstractController
         $writer = new Xlsx($spreadsheet);
 
         // Create a Temporary file in the system
-        $fileName = 'my_first_excel_symfony4.xlsx';
+        $fileName = 'bought_products.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
 
         // Create the excel file in the tmp directory of the system
