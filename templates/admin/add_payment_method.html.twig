@@ -1,0 +1,15 @@
+{% extends '/admin/header.html.twig' %}
+{% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
+    </div><br />
+    <div>
+        <p>Add payment method</p>
+    </div>
+    <div>
+        {{ form_start(form) }}
+            {{ form_row(form.method) }}
+            <button type="submit" class="btn btn-primary" formnovalidate>Insert</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

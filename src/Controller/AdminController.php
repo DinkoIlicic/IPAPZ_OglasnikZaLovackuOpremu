@@ -12,6 +12,7 @@ use App\Entity\Category;
 use App\Entity\Coupon;
 use App\Entity\CouponCodes;
 use App\Entity\CustomPage;
+use App\Entity\PaymentMethod;
 use App\Entity\Product;
 use App\Entity\RandomCodeGenerator;
 use App\Entity\Seller;
@@ -25,6 +26,7 @@ use App\Form\CouponCodesFormType;
 use App\Form\CouponFormType;
 use App\Form\CustomPageFormType;
 use App\Form\PasswordFormType;
+use App\Form\PaymentMethodFormType;
 use App\Form\ProductImageFormType;
 use App\Form\ProductInfoFormType;
 use App\Form\ProductQuantityFormType;
@@ -34,6 +36,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\CouponCodesRepository;
 use App\Repository\CouponRepository;
 use App\Repository\CustomPageRepository;
+use App\Repository\PaymentMethodRepository;
 use App\Repository\ProductCategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
@@ -1229,6 +1232,103 @@ class AdminController extends AbstractController
 
         // Return the excel file as an attachment
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+    /**
+     * @Route("/admin/add-payment-method/", name="add_payment_method")
+     * @param                       Request $request
+     * @param                       EntityManagerInterface $entityManager
+     * @return                      Response
+     */
+    public function addPaymentMethod(Request $request, EntityManagerInterface $entityManager)
+    {
+        $form = $this->createForm(PaymentMethodFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var PaymentMethod $paymentMethod
+             */
+            $paymentMethod = $form->getData();
+            $paymentMethod->setEnabled(false);
+            $entityManager->persist($paymentMethod);
+            $entityManager->flush();
+            $this->addFlash('success', 'Payment method added!');
+            return $this->redirectToRoute('show_payment_methods');
+        };
+        return $this->render(
+            'admin/add_payment_method.html.twig',
+            [
+                'form' => $form->createView(),
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/edit-payment-method/{id}", name="edit_payment_method")
+     * @param                       Request $request
+     * @param                       EntityManagerInterface $entityManager
+     * @param                       PaymentMethod $paymentMethod
+     * @return                      Response
+     */
+    public function editPaymentMethod(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PaymentMethod $paymentMethod
+    ) {
+        $form = $this->createForm(PaymentMethodFormType::class, $paymentMethod);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var PaymentMethod $paymentMethod
+             */
+            $paymentMethod = $form->getData();
+            $entityManager->persist($paymentMethod);
+            $entityManager->flush();
+            $this->addFlash('success', 'Payment method updated!');
+            return $this->redirectToRoute('show_payment_methods');
+        };
+        return $this->render(
+            'admin/edit_payment_method.html.twig',
+            [
+                'form' => $form->createView(),
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/payment-methods/", name="show_payment_methods")
+     * @param                       PaymentMethodRepository $paymentMethodRepository
+     * @return                      Response
+     */
+    public function showPaymentMethods(PaymentMethodRepository $paymentMethodRepository)
+    {
+        $paymentMethods = $paymentMethodRepository->findAll();
+        return $this->render(
+            'admin/payment_methods.html.twig',
+            [
+                'paymentMethods' => $paymentMethods,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/enable-payment-method/{id}", name="enable_payment_method")
+     * @param                       PaymentMethod $paymentMethod
+     * @param                       EntityManagerInterface $entityManager
+     * @return                      Response
+     */
+    public function enablePaymentMethods(PaymentMethod $paymentMethod, EntityManagerInterface $entityManager)
+    {
+        if ($paymentMethod->getEnabled() === true) {
+            $paymentMethod->setEnabled(false);
+            $this->addFlash('success', 'Payment method disabled!');
+        } elseif ($paymentMethod->getEnabled() === false) {
+            $paymentMethod->setEnabled(true);
+            $this->addFlash('success', 'Payment method enabled!');
+        }
+        $entityManager->persist($paymentMethod);
+        $entityManager->flush();
+        return $this->redirectToRoute('show_payment_methods');
     }
 
 

@@ -1,0 +1,31 @@
+{% extends '/admin/header.html.twig' %}
+
+{% block body %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('admin_index') }}">Back</a>
+    </div><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Payment method</th>
+            <th scope="col">Enabled</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for paymentMethod in paymentMethods %}
+            <tr>
+                <td><a class="nav-link" href="{{ path('edit_payment_method', {'id': paymentMethod.id}) }}">{{ paymentMethod.method }}</a></td>
+                <td>
+                    <a class="btn btn-primary" href="{{ path('enable_payment_method', {'id': paymentMethod.id}) }}">
+                        {% if(paymentMethod.enabled == 1) %}
+                            Enabled
+                        {% elseif(paymentMethod.enabled == 0) %}
+                            Disabled
+                        {% endif %}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
