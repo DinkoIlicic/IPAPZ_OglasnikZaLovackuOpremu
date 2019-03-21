@@ -61,6 +61,20 @@ class Sold
     private $price;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $couponCodeName;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\Regex(
+     *     pattern     = "/^[0-9.%]+$/i",
+     *     message     = "Only numbers, dot and percentage are allowed"
+     * )
+     */
+    private $discount;
+
+    /**
      * @ORM\Column(type="decimal", scale=2)
      */
     private $totalPrice;
@@ -69,6 +83,11 @@ class Sold
      * @ORM\Column(type="integer")
      */
     private $confirmed;
+
+    /**
+     * @ORM\Column(type="decimal", scale=2)
+     */
+    private $afterDiscount;
 
     /**
      * @return mixed
@@ -204,5 +223,53 @@ class Sold
     public function getTotalPrice()
     {
         return $this->totalPrice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDiscount()
+    {
+        return $this->discount;
+    }
+
+    /**
+     * @param mixed $discount
+     */
+    public function setDiscount($discount): void
+    {
+        $this->discount = $discount;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCouponCodeName()
+    {
+        return $this->couponCodeName;
+    }
+
+    /**
+     * @param mixed $couponCodeName
+     */
+    public function setCouponCodeName($couponCodeName): void
+    {
+        $this->couponCodeName = $couponCodeName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAfterDiscount()
+    {
+        return $this->afterDiscount;
+    }
+
+    /**
+     * @param mixed $afterDiscount
+     */
+    public function setAfterDiscount($afterDiscount): void
+    {
+        $this->afterDiscount = $afterDiscount;
     }
 }

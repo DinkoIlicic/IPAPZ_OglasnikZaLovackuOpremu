@@ -11,6 +11,7 @@ namespace App\Form;
 use App\Entity\Sold;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -23,8 +24,15 @@ class SoldFormType extends AbstractType
                 'quantity',
                 IntegerType::class,
                 [
-                    'label' => 'Quantity',
+                    'label' => 'Quantity: ',
                     'data' => 1
+                ]
+            )
+            ->add(
+                'couponCodeName',
+                TextType::class,
+                [
+                    'label' => 'Coupon Code: '
                 ]
             );
     }

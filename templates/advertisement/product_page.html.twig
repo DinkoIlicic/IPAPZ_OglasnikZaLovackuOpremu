@@ -19,6 +19,7 @@
                     {% if (is_granted('ROLE_USER') and product.visibility == 1 and product.visibilityAdmin == 1) %}
                         {{ form_start(form) }}
                             {{ form_row(form.quantity) }}
+                            {{ form_row(form.couponCodeName) }}
                             <button type="submit" class="btn btn-primary" formnovalidate>Buy</button>
                         {{ form_end(form) }}
                     {% else %}

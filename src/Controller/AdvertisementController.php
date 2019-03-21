@@ -10,6 +10,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Comment;
+use App\Entity\CouponCodes;
 use App\Entity\Product;
 use App\Entity\Seller;
 use App\Entity\Sold;
@@ -19,7 +20,9 @@ use App\Form\ContactFormType;
 use App\Form\SellerFormType;
 use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\CouponCodesRepository;
 use App\Repository\CustomPageRepository;
+use App\Repository\ProductCategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
 use App\Repository\SoldRepository;
@@ -174,6 +177,8 @@ class AdvertisementController extends AbstractController
      * @param                              WishlistRepository $wishlistRepository
      * @param                              ProductRepository $productRepository
      * @param                              CustomPageRepository $customPageRepository
+     * @param                              CouponCodesRepository $couponCodesRepository
+     * @param                              ProductCategoryRepository $productCategoryRepository
      * @param                              Request $request
      * @return                             Response
      * @var                                $pageName
@@ -185,6 +190,8 @@ class AdvertisementController extends AbstractController
         WishlistRepository $wishlistRepository,
         ProductRepository $productRepository,
         CustomPageRepository $customPageRepository,
+        CouponCodesRepository $couponCodesRepository,
+        ProductCategoryRepository $productCategoryRepository,
         $pageName
     ) {
         /**
@@ -203,6 +210,7 @@ class AdvertisementController extends AbstractController
                 'user' => $this->getUser(),
             ]
         );
+        $discount = null;
 
         $form = $this->createForm(SoldFormType::class);
         $form->handleRequest($request);
@@ -211,8 +219,9 @@ class AdvertisementController extends AbstractController
              * @var Sold $sold
              */
             $sold = $form->getData();
-            $quan = $sold->getQuantity();
-            if ($quan === null) {
+            $quantityUser = $sold->getQuantity();
+            $couponCode = $sold->getCouponCodeName();
+            if ($quantityUser === null) {
                 $this->addFlash('warning', 'Please insert correct number in field Quantity!');
                 return $this->redirectToRoute(
                     'check_product',
@@ -227,22 +236,82 @@ class AdvertisementController extends AbstractController
                     [
                         'pageName' => $product->getCustomUrl()]
                 );
-            } else {
-                $sold->setUser($this->getUser());
-                $sold->setProduct($product);
-                $sold->setPrice($product->getPrice());
-                $sold->setTotalPrice($sold->getQuantity() * $sold->getPrice());
-                $sold->setConfirmed(0);
-                $product->setAvailableQuantity($product->getAvailableQuantity() - $sold->getQuantity());
-                $entityManager->persist($sold);
-                $entityManager->flush();
-                $this->addFlash('success', 'Bought the product!');
-                return $this->redirectToRoute(
-                    'check_product',
-                    [
-                        'pageName' => $product->getCustomUrl()]
-                );
             }
+            if ($couponCode !== null) {
+                /**
+                 * @var $checkForCouponCode CouponCodes
+                 */
+                $checkForCouponCode = $couponCodesRepository->findOneBy(['codeName' => $couponCode]);
+                if ($checkForCouponCode === null) {
+                    $this->addFlash('warning', 'Invalid coupon code!');
+                    return $this->redirectToRoute(
+                        'check_product',
+                        [
+                            'pageName' => $product->getCustomUrl()]
+                    );
+                }
+                if ($checkForCouponCode->getAllProducts()) {
+                    $discount = $checkForCouponCode->getDiscount();
+                } elseif ($checkForCouponCode->getCategoryId()) {
+                    $productHasCategory = $productCategoryRepository->findOneBy([
+                        'product' => $product,
+                        'category' => $checkForCouponCode->getCategoryId()
+                    ]);
+                    if ($productHasCategory === null) {
+                        $this->addFlash('warning', 'Invalid coupon code!');
+                        return $this->redirectToRoute(
+                            'check_product',
+                            [
+                                'pageName' => $product->getCustomUrl()]
+                        );
+                    }
+                    $discount = $checkForCouponCode->getDiscount();
+                } elseif ($checkForCouponCode->getProductId()) {
+                    if ($checkForCouponCode->getProductId() != $product->getId()) {
+                        $this->addFlash('warning', 'Invalid coupon code!');
+                        return $this->redirectToRoute(
+                            'check_product',
+                            [
+                                'pageName' => $product->getCustomUrl()]
+                        );
+                    }
+                    $discount = $checkForCouponCode->getDiscount();
+                } else {
+                    $this->addFlash('warning', 'Invalid coupon code!');
+                    return $this->redirectToRoute(
+                        'check_product',
+                        [
+                            'pageName' => $product->getCustomUrl()]
+                    );
+                }
+            }
+            $sold->setUser($this->getUser());
+            $sold->setProduct($product);
+            $sold->setPrice($product->getPrice());
+            $sold->setTotalPrice($sold->getQuantity() * $sold->getPrice());
+            if ($discount !== null) {
+                $sold->setDiscount($discount);
+                $totalPrice = $sold->getTotalPrice();
+                $discountAmount = str_replace('%', '', $discount);
+                $discountReduce = $totalPrice * $discountAmount / 100;
+                $afterDiscount = $totalPrice - $discountReduce;
+                $sold->setAfterDiscount($afterDiscount);
+                $entityManager->remove($checkForCouponCode);
+            } else {
+                $sold->setCouponCodeName('');
+                $sold->setDiscount('0');
+                $sold->setAfterDiscount($sold->getTotalPrice());
+            }
+            $sold->setConfirmed(0);
+            $product->setAvailableQuantity($product->getAvailableQuantity() - $sold->getQuantity());
+            $entityManager->persist($sold);
+            $entityManager->flush();
+            $this->addFlash('success', 'Bought the product!');
+            return $this->redirectToRoute(
+                'check_product',
+                [
+                    'pageName' => $product->getCustomUrl()]
+            );
         }
 
         $formMail = $this->createForm(ContactFormType::class);
