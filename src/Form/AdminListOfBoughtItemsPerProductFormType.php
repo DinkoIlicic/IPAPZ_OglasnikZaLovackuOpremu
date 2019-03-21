@@ -7,10 +7,11 @@
  */
 
 namespace App\Form;
-use App\Entity\Sold;
+
 use App\Entity\Product;
-use Symfony\Component\Form\AbstractType;
+use App\Entity\Sold;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,19 +20,27 @@ class AdminListOfBoughtItemsPerProductFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', EntityType::class, [
-                'class' => Product::class,
-                'choice_label' => function($product) {
-                    /** @var Product $product */
-                    return $product->getName();
-                },
-            ]);
+            ->add(
+                'product',
+                EntityType::class,
+                [
+                    'class' => Product::class,
+                    'choice_label' => function ($product) {
+                        /**
+                         * @var Product $product
+                         */
+                        return $product->getName();
+                    },
+                ]
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => Sold::class,
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => Sold::class,
+            ]
+        );
     }
 }

@@ -19,6 +19,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
  * Class UserController
+ *
  * @package App\Controller
  *
  * Security annotation on login will throw 403 and on register route we use redirect to route. Both examples are correct.
@@ -27,9 +28,9 @@ class UserController extends AbstractController
 {
     /**
      * @Route("/login", name="app_login")
-     * @Security("not is_granted('ROLE_USER')")
-     * @param AuthenticationUtils $authenticationUtils
-     * @return Response
+     * @Security("not   is_granted('ROLE_USER')")
+     * @param           AuthenticationUtils $authenticationUtils
+     * @return          Response
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -43,12 +44,12 @@ class UserController extends AbstractController
 
     /**
      * @Route("/register", name="app_register")
-     * @param Request $request
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param GuardAuthenticatorHandler $guardHandler
-     * @param LoginFormAuthenticator $authenticator
-     * @param EntityManagerInterface $entityManager
-     * @return null|Response
+     * @param              Request $request
+     * @param              UserPasswordEncoderInterface $passwordEncoder
+     * @param              GuardAuthenticatorHandler $guardHandler
+     * @param              LoginFormAuthenticator $authenticator
+     * @param              EntityManagerInterface $entityManager
+     * @return             null|Response
      */
     public function register(
         Request $request,
@@ -87,16 +88,19 @@ class UserController extends AbstractController
             );
         }
 
-        return $this->render('security/register.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
+        return $this->render(
+            'security/register.html.twig',
+            [
+                'registrationForm' => $form->createView(),
+            ]
+        );
     }
 
     /**
      * @Route("/profile", name="app_profile")
-     * @param Request $request
-     * @param EntityManagerInterface $entityManager
-     * @return null|Response
+     * @param             Request $request
+     * @param             EntityManagerInterface $entityManager
+     * @return            null|Response
      */
     public function profile(
         Request $request,
@@ -111,17 +115,20 @@ class UserController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
         }
-        return $this->render('security/profile.html.twig', [
-            'profileForm' => $form->createView(),
-        ]);
+        return $this->render(
+            'security/profile.html.twig',
+            [
+                'profileForm' => $form->createView(),
+            ]
+        );
     }
 
     /**
      * @Route("/new-password", name="update_password")
-     * @param Request $request
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param EntityManagerInterface $entityManager
-     * @return null|Response
+     * @param                  Request $request
+     * @param                  UserPasswordEncoderInterface $passwordEncoder
+     * @param                  EntityManagerInterface $entityManager
+     * @return                 null|Response
      */
     public function newPassword(
         Request $request,
@@ -132,7 +139,6 @@ class UserController extends AbstractController
         $form = $this->createForm(PasswordFormType::class, $user);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
-
             $user->setPassword(
                 $passwordEncoder->encodePassword(
                     $user,
@@ -144,9 +150,12 @@ class UserController extends AbstractController
             $this->addFlash('success', 'Password Updated!');
             return $this->redirectToRoute('app_profile');
         }
-        return $this->render('/security/new_password.html.twig', [
-            'profileForm' => $form->createView(),
-        ]);
+        return $this->render(
+            '/security/new_password.html.twig',
+            [
+                'profileForm' => $form->createView(),
+            ]
+        );
     }
 
     /**
@@ -154,6 +163,5 @@ class UserController extends AbstractController
      */
     public function logout()
     {
-
     }
 }

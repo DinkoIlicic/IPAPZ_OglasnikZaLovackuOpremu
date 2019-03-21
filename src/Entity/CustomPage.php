@@ -13,8 +13,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class CustomPage
+ *
  * @ORM\Entity(repositoryClass="App\Repository\CustomPageRepository")
- * @package App\Entity
+ * @package                                                           App\Entity
  */
 class CustomPage
 {

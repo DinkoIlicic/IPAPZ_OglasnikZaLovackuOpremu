@@ -8,20 +8,16 @@
 
 namespace App\Entity;
 
-use App\Entity\Category;
-use App\Entity\ProductCategory;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Class Product
+ *
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
- * @package App\Entity
+ * @package                                                        App\Entity
  */
 class Product
 {
@@ -39,7 +35,7 @@ class Product
      * @Assert\Regex(
      *     pattern     = "/^[a-zA-Z0-9 _.-]+$/i",
      *     message     = "Only letters, numbers, space, underscore, dot and minus are allowed"
-     *)
+     * )
      */
     private $name;
 
@@ -61,7 +57,7 @@ class Product
 
     /**
      * @Assert\NotBlank(message="Please, insert product price.")
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="decimal",       scale=2)
      * @Assert\GreaterThan(
      *     value = 0
      * )
@@ -86,7 +82,7 @@ class Product
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Please, upload the image.")
-     * @Assert\File(mimeTypes={ "image/jpg", "image/jpeg" })
+     * @Assert\File(mimeTypes={          "image/jpg", "image/jpeg" })
      * @Assert\Image(
      *     minWidth = 300,
      *     maxWidth = 2000,
@@ -334,7 +330,7 @@ class Product
     }
 
     /**
-     * @param Comment $comment
+     * @param  Comment $comment
      * @return $this
      */
     public function addComment(Comment $comment)
@@ -345,8 +341,9 @@ class Product
         }
         return $this;
     }
+
     /**
-     * @param Comment $comment
+     * @param  Comment $comment
      * @return $this
      */
     public function removeComment(Comment $comment)

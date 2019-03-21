@@ -10,14 +10,14 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class Seller
+ *
  * @ORM\Entity(repositoryClass="App\Repository\SellerRepository")
- * @package App\Entity
- * @UniqueEntity(fields={"user"}, message="This user is already applied for seller")
+ * @package                                                       App\Entity
+ * @UniqueEntity(fields={"user"},                                 message="This user is already applied for seller")
  */
 class Seller
 {

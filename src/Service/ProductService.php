@@ -8,8 +8,8 @@
 
 namespace App\Service;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ProductService
 {
@@ -19,8 +19,7 @@ class ProductService
     public function __construct(
         EntityManagerInterface $entityManager,
         ContainerInterface $container
-    )
-    {
+    ) {
         $this->em = $entityManager;
         $this->container = $container;
     }

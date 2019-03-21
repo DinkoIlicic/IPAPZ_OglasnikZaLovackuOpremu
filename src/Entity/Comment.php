@@ -8,7 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class Comment
- * @package App\Entity
+ *
+ * @package                     App\Entity
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */

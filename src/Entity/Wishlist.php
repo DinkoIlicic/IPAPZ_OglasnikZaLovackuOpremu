@@ -12,7 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class Wishlist
- * @package App\Entity
+ *
+ * @package                                                         App\Entity
  * @ORM\Entity(repositoryClass="App\Repository\WishlistRepository")
  */
 class Wishlist

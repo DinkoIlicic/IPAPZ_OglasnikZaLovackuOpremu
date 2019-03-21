@@ -13,8 +13,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class CouponCodes
+ *
  * @ORM\Entity(repositoryClass="App\Repository\CouponCodesRepository")
- * @package App\Entity
+ * @package                                                            App\Entity
  */
 class CouponCodes
 {
@@ -35,7 +36,7 @@ class CouponCodes
      * @Assert\Regex(
      *     pattern     = "/^[0-9.%]+$/i",
      *     message     = "Only numbers, dot and percentage are allowed"
-     *)
+     * )
      */
     private $discount;
 

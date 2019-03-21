@@ -8,19 +8,16 @@
 
 namespace App\Entity;
 
-use App\Entity\Product;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * Class Category
+ *
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
- * @package App\Entity
- * @UniqueEntity(fields={"name"}, message="This category name is already used")
+ * @package                                                         App\Entity
+ * @UniqueEntity(fields={"name"},                                   message="This category name is already used")
  */
 class Category
 {

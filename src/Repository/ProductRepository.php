@@ -22,12 +22,11 @@ class ProductRepository extends ServiceEntityRepository
     public function getProductsFromCategory($category)
     {
         return $this->createQueryBuilder('p')
-            ->innerJoin( 'p.productCategory', 'c')
+            ->innerJoin('p.productCategory', 'c')
             ->andWhere('c.category = :category')
             ->setParameter('category', $category)
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
     public function findOnlyIds()
@@ -35,7 +34,6 @@ class ProductRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->select('p.id')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 }

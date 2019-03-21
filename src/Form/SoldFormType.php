@@ -9,8 +9,8 @@
 namespace App\Form;
 
 use App\Entity\Sold;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,16 +19,22 @@ class SoldFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('quantity', IntegerType::class, [
-                'label' => 'Quantity',
-                'data' => 1
-            ]);
+            ->add(
+                'quantity',
+                IntegerType::class,
+                [
+                    'label' => 'Quantity',
+                    'data' => 1
+                ]
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => Sold::class,
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => Sold::class,
+            ]
+        );
     }
 }

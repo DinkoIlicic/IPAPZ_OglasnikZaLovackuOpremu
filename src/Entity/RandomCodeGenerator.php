@@ -8,7 +8,6 @@
 
 namespace App\Entity;
 
-
 class RandomCodeGenerator
 {
 
@@ -72,7 +71,7 @@ class RandomCodeGenerator
     }
 
     /**
-     * @param integer $amount
+     * @param  integer $amount
      * @return \SplFixedArray
      */
     public function generate($amount)
@@ -84,59 +83,54 @@ class RandomCodeGenerator
         $completeCodes = new \SplFixedArray($amount);
         $index = 0;
 
-        do
-        {
+        do {
             $number = bin2hex(openssl_random_pseudo_bytes($this->length));
-            if($this->useLetters)
-            {
+            if ($this->useLetters) {
                 $string = base_convert($number, 16, 20);
                 $string = strtr($string, $this->fromChars, $this->toChars);
-            }
-            else
-            {
+            } else {
                 $string = base_convert($number, 16, 10);
             }
 
             $string = substr($string, 0, $this->length);
             $chars = str_split($string);
 
-            if(!$this->isInArray($chars, $codes, 0))
-            {
+            if (!$this->isInArray($chars, $codes, 0)) {
                 $finalCode = str_repeat('-', $this->length);
                 $this->addToarray($chars, $codes, 0, $finalCode);
                 $completeCodes[$index] = $finalCode;
                 $index++;
             }
-
-        } while($index < $amount);
+        } while ($index < $amount);
 
         unset($codes);
         return $completeCodes;
     }
 
     /**
-     * @param array $chars
-     * @param array $codes
-     * @param integer $index
+     * @param  array $chars
+     * @param  array $codes
+     * @param  integer $index
      * @return bool
      */
     private function isInArray(&$chars, &$codes, $index)
     {
-        if($index < $this->length - 2 && !is_array($codes))
-        {
-            if($codes == implode("", array_slice($chars, $index+1))) return true;
+        if ($index < $this->length - 2 && !is_array($codes)) {
+            if ($codes == implode("", array_slice($chars, $index + 1))) {
+                return true;
+            }
 
             return false;
         }
 
-        if(!isset($codes[$this->map[$chars[$index]]])) return false;
-        else
-        {
-            if($index == $this->length - 2)
-                return $codes[$this->map[$chars[$index]]] == $chars[$index+1];
+        if (!isset($codes[$this->map[$chars[$index]]])) {
+            return false;
+        } else {
+            if ($index == $this->length - 2) {
+                return $codes[$this->map[$chars[$index]]] == $chars[$index + 1];
+            }
 
-            if($index < $this->length - 2)
-            {
+            if ($index < $this->length - 2) {
                 return $this->isInArray($chars, $codes[$this->map[$chars[$index]]], ++$index);
             }
         }
@@ -170,7 +164,6 @@ class RandomCodeGenerator
                 $codes[$this->map[$chars[$index]]][] = implode("", array_slice($chars, $index + 1));
                 $finalCode = substr($finalCode, 0, $index) . implode("", array_slice($chars, $index));
                 return;
-
             }
             $finalCode[$index] = $chars[$index];
 

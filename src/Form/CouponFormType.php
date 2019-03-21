@@ -19,18 +19,28 @@ class CouponFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('codeGroupName', TextType::class, [
-                'label' => 'Insert Your Group Code Name here: '
-            ])
-            ->add('discount', TextType::class, [
-                'label' => 'Insert Your discount here: '
-            ]);
+            ->add(
+                'codeGroupName',
+                TextType::class,
+                [
+                    'label' => 'Insert Your Group Code Name here: '
+                ]
+            )
+            ->add(
+                'discount',
+                TextType::class,
+                [
+                    'label' => 'Insert Your discount here: '
+                ]
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => Coupon::class,
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => Coupon::class,
+            ]
+        );
     }
 }

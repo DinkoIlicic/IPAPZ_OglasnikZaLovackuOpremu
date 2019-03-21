@@ -8,28 +8,32 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use App\Entity\Seller;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class SellerFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('apply_content', TextareaType::class, [
-                'label' => 'Why do You want to become a seller'
-            ]);
+            ->add(
+                'apply_content',
+                TextareaType::class,
+                [
+                    'label' => 'Why do You want to become a seller'
+                ]
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => Seller::class,
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => Seller::class,
+            ]
+        );
     }
 }
-

@@ -28,8 +28,7 @@ class SoldRepository extends ServiceEntityRepository
             ->innerJoin('s.user', 'u')
             ->setMaxResults(1)
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
     public function getSoldProductPerUser($id, $products)
@@ -44,7 +43,6 @@ class SoldRepository extends ServiceEntityRepository
             ->setParameter('id', $id)
             ->orderBy('s.boughtAt', 'DESC')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 }

@@ -21,18 +21,17 @@ class UserRepository extends ServiceEntityRepository
 
     /**
      * @return User[] Returns an array of User objects
-     * @param $value
+     * @param  $value
      */
     public function findByName($value)
     {
         return $this->createQueryBuilder('u')
             ->select('u.id', 'u.fullName')
             ->andWhere('u.fullName like :query')
-            ->setParameter('query', "%". $value ."%")
+            ->setParameter('query', "%" . $value . "%")
             ->orderBy('u.fullName', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 }
