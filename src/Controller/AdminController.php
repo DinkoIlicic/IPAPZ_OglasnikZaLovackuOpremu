@@ -1079,7 +1079,10 @@ class AdminController extends AbstractController
             $codesCategory = $form->get('category')->getData();
             $codesProduct = $form->get('product')->getData();
             if (!$codesAll && $codesCategory === null && $codesProduct === null) {
-                $this->addFlash('warning', 'Please choose at least one of the 3 given options (All products, category or product)!');
+                $this->addFlash(
+                    'warning',
+                    'Please choose at least one of the 3 given options (All products, category or product)!'
+                );
                 return $this->redirectToRoute(
                     'add_coupon_codes',
                     [
@@ -1124,10 +1127,9 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/delete-coupon-codes/{id}", name="delete_coupon_codes")
      * @param                                    Request $request
-     * @param                                    EntityManagerInterface $entityManager
      * @return                                   Response
      */
-    public function deleteCouponCodes(Request $request, EntityManagerInterface $entityManager)
+    public function deleteCouponCodes(Request $request)
     {
         $form = $this->createForm(CouponCodesFormType::class);
         $form->handleRequest($request);

@@ -22,7 +22,8 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
  *
  * @package App\Controller
  *
- * Security annotation on login will throw 403 and on register route we use redirect to route. Both examples are correct.
+ * Security annotation on login will throw 403 and
+ * on register route we use redirect to route. Both examples are correct.
  */
 class UserController extends AbstractController
 {

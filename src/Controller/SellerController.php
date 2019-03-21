@@ -339,8 +339,11 @@ class SellerController extends AbstractController
      * @param                                ProductRepository $productRepository
      * @return                               Response
      */
-    public function listOfPeopleThatBoughtMyProduct(Request $request, SoldRepository $soldRepository, ProductRepository $productRepository)
-    {
+    public function listOfPeopleThatBoughtMyProduct(
+        Request $request,
+        SoldRepository $soldRepository,
+        ProductRepository $productRepository
+    ) {
         $products = $productRepository->findBy(
             [
                 'user' => $this->getUser()->getId()

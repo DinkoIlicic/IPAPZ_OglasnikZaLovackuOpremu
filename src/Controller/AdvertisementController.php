@@ -477,15 +477,17 @@ class AdvertisementController extends AbstractController
      */
     public function excelUser(SoldRepository $soldRepository)
     {
+        \PhpOffice\PhpSpreadsheet\Cell\Cell::setValueBinder(
+            new \PhpOffice\PhpSpreadsheet\Cell\AdvancedValueBinder()
+        );
         $spreadsheet = new Spreadsheet();
         $sold = $soldRepository->findBy(['user' => $this->getUser()], ['product' => 'ASC']);
 
-        /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'Product name');
         $sheet->setCellValue('B1', 'Seller');
         $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('D1', 'Qauntity');
+        $sheet->setCellValue('D1', 'Quantity');
         $sheet->setCellValue('E1', 'Price');
         $sheet->setCellValue('F1', 'Total Price');
         $sheet->setCellValue('G1', 'Bought at');
@@ -500,7 +502,7 @@ class AdvertisementController extends AbstractController
             $sheet->setCellValue('D' . $i, $item->getQuantity());
             $sheet->setCellValue('E' . $i, $item->getPrice());
             $sheet->setCellValue('F' . $i, $item->getTotalPrice());
-            $sheet->setCellValue('G' . $i, $item->getBoughtAt());
+            $sheet->setCellValue('G' . $i, $item->getBoughtAt()->format('Y-m-d H:i:s'));
             $i++;
         }
 
@@ -527,8 +529,11 @@ class AdvertisementController extends AbstractController
      * @var                              $pageName
      * @return                           Response
      */
-    public function renderCustomPage(CategoryRepository $categoryRepository, CustomPageRepository $customPageRepository, $pageName)
-    {
+    public function renderCustomPage(
+        CategoryRepository $categoryRepository,
+        CustomPageRepository $customPageRepository,
+        $pageName
+    ) {
         $categories = $this->getAllVisibleCategories($categoryRepository);
         $allCustomPages = $customPageRepository->findAll();
         $customPage = $customPageRepository->findOneBy(['pageName' => $pageName]);
