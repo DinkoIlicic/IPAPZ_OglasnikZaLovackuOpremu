@@ -15,16 +15,13 @@
                 </p>
             </header>
             <h3>Amount: 1 EUR</h3>
-            <h3>Books:</h3>
-            <form method="post" id="payment-form" action="{{ path('payment', {'id': borrowed.id}) }}">
+            <h3>Product:</h3>
+            <form method="post" id="payment-form" action="{{ path('paypal_payment') }}">
                 <section>
-
-
                     <div class="bt-drop-in-wrapper">
                         <div id="bt-dropin"></div>
                     </div>
                 </section>
-
                 <input id="nonce" name="payment_method_nonce" type="hidden" />
                 <button class="btn btn-primary" type="submit"><span>Complete Transaction</span></button>
             </form>

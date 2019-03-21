@@ -32,6 +32,8 @@
                 {% elseif (is_granted('ROLE_USER') and productInWishlist) %}
                     <a class="btn btn-danger" href="{{ path('remove_from_wishlist', {'id': product.id}) }}">Remove from wish list</a>
                 {% endif %}
+                <br /><br />
+                <a class="btn btn-primary" href="{{ path('paypal_pay', {'id': product.id}) }}">Pay</a>
             </div>
         </div>
         <hr />

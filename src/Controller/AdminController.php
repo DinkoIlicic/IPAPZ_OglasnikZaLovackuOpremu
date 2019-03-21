@@ -1235,67 +1235,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/add-payment-method/", name="add_payment_method")
-     * @param                       Request $request
-     * @param                       EntityManagerInterface $entityManager
-     * @return                      Response
-     */
-    public function addPaymentMethod(Request $request, EntityManagerInterface $entityManager)
-    {
-        $form = $this->createForm(PaymentMethodFormType::class);
-        $form->handleRequest($request);
-        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
-            /**
-             * @var PaymentMethod $paymentMethod
-             */
-            $paymentMethod = $form->getData();
-            $paymentMethod->setEnabled(false);
-            $entityManager->persist($paymentMethod);
-            $entityManager->flush();
-            $this->addFlash('success', 'Payment method added!');
-            return $this->redirectToRoute('show_payment_methods');
-        };
-        return $this->render(
-            'admin/add_payment_method.html.twig',
-            [
-                'form' => $form->createView(),
-            ]
-        );
-    }
-
-    /**
-     * @Route("/admin/edit-payment-method/{id}", name="edit_payment_method")
-     * @param                       Request $request
-     * @param                       EntityManagerInterface $entityManager
-     * @param                       PaymentMethod $paymentMethod
-     * @return                      Response
-     */
-    public function editPaymentMethod(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        PaymentMethod $paymentMethod
-    ) {
-        $form = $this->createForm(PaymentMethodFormType::class, $paymentMethod);
-        $form->handleRequest($request);
-        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
-            /**
-             * @var PaymentMethod $paymentMethod
-             */
-            $paymentMethod = $form->getData();
-            $entityManager->persist($paymentMethod);
-            $entityManager->flush();
-            $this->addFlash('success', 'Payment method updated!');
-            return $this->redirectToRoute('show_payment_methods');
-        };
-        return $this->render(
-            'admin/edit_payment_method.html.twig',
-            [
-                'form' => $form->createView(),
-            ]
-        );
-    }
-
-    /**
      * @Route("/admin/payment-methods/", name="show_payment_methods")
      * @param                       PaymentMethodRepository $paymentMethodRepository
      * @return                      Response

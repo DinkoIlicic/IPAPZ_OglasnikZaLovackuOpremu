@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PaypalTransactionController extends AbstractController
 {
     /**
-     * @Route("/profile/pay/{id}", name="pay")
+     * @Route("/profile/paypal-pay/", name="paypal_pay")
      * @return                     Response
      */
     public function paypalShow()
@@ -31,7 +31,7 @@ class PaypalTransactionController extends AbstractController
     }
 
     /**
-     * @Route("/profile/payment/{id}", name="payment")
+     * @Route("/profile/paypal-payment/", name="paypal_payment")
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
@@ -61,5 +61,9 @@ class PaypalTransactionController extends AbstractController
                 'privateKey' => 'e300308a809c4ea50d66e5dba62a48fb'
             ]
         );
+    }
+
+    public function checkCouponCode()
+    {
     }
 }

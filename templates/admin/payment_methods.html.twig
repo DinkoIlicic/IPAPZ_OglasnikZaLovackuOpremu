@@ -14,7 +14,7 @@
         <tbody>
         {% for paymentMethod in paymentMethods %}
             <tr>
-                <td><a class="nav-link" href="{{ path('edit_payment_method', {'id': paymentMethod.id}) }}">{{ paymentMethod.method }}</a></td>
+                <td>{{ paymentMethod.method }}</td>
                 <td>
                     <a class="btn btn-primary" href="{{ path('enable_payment_method', {'id': paymentMethod.id}) }}">
                         {% if(paymentMethod.enabled == 1) %}
