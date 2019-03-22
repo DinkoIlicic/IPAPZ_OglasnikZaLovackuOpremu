@@ -52,7 +52,7 @@ class PaypalTransactionController extends AbstractController
             ]
         );
         $transaction = $result->transaction;
-        if ($transaction->id == null) {
+        if ($transaction == null) {
             $this->addFlash('warning', 'Payment unsuccessful!');
             return $this->redirectToRoute('my_items');
         }

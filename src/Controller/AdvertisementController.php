@@ -53,17 +53,33 @@ class AdvertisementController extends AbstractController
         Request $request,
         CustomPageRepository $customPageRepository
     ) {
-        $allCustomPages = $customPageRepository->findAll();
-        $categories = $this->getAllVisibleCategories($categoryRepository);
+        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         $data = $productService->returnAllProducts($request);
         return $this->render(
             'advertisement/index.html.twig',
             [
-                'categories' => $categories,
-                'pages' => $allCustomPages,
+                'pages' => $arrayWithHeaderData['customPages'],
+                'categories' => $arrayWithHeaderData['categories'],
                 'products' => $data
             ]
         );
+    }
+
+    /**
+     * @param CategoryRepository $categoryRepository
+     * @param CustomPageRepository $customPageRepository
+     * @return array
+     */
+    public function findDataForHeader(
+        CustomPageRepository $customPageRepository,
+        CategoryRepository $categoryRepository
+    ) {
+        $allCustomPages = $customPageRepository->findAll();
+        $categories = $this->getAllVisibleCategories($categoryRepository);
+        $arrayWithHeaderData = [];
+        $arrayWithHeaderData['customPages'] = $allCustomPages;
+        $arrayWithHeaderData['categories'] = $categories;
+        return $arrayWithHeaderData;
     }
 
     /**
@@ -96,14 +112,13 @@ class AdvertisementController extends AbstractController
         Request $request,
         CustomPageRepository $customPageRepository
     ) {
-        $categories = $this->getAllVisibleCategories($categoryRepository);
-        $allCustomPages = $customPageRepository->findAll();
+        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         $data = $productService->returnDataPerCategory($request, $category);
         return $this->render(
             '/advertisement/category_products.html.twig',
             [
-                'categories' => $categories,
-                'pages' => $allCustomPages,
+                'pages' => $arrayWithHeaderData['customPages'],
+                'categories' => $arrayWithHeaderData['categories'],
                 'products' => $data,
             ]
         );
@@ -126,8 +141,7 @@ class AdvertisementController extends AbstractController
         CategoryRepository $categoryRepository
     ) {
 
-        $categories = $this->getAllVisibleCategories($categoryRepository);
-        $allCustomPages = $customPageRepository->findAll();
+        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         $applied = $sellerRepository->findOneBy(
             [
                 'user' => $this->getUser()
@@ -139,35 +153,35 @@ class AdvertisementController extends AbstractController
                 [
                     'message' => 'Applied',
                     'applied' => $applied,
-                    'categories' => $categories,
-                    'page' => $allCustomPages,
+                    'pages' => $arrayWithHeaderData['customPages'],
+                    'categories' => $arrayWithHeaderData['categories'],
                 ]
             );
-        } else {
-            $form = $this->createForm(SellerFormType::class);
-            $form->handleRequest($request);
-            if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
-                /**
-                 * @var Seller $seller
-                 */
-                $seller = $form->getData();
-                $seller->setUser($this->getUser());
-                $seller->setVerified(0);
-                $entityManager->persist($seller);
-                $entityManager->flush();
-                $this->addFlash('success', 'Applied for seller position!');
-                return $this->redirectToRoute('advertisement_index');
-            }
-            return $this->render(
-                '/advertisement/apply_for_seller.html.twig',
-                [
-                    'form' => $form->createView(),
-                    'categories' => $categories,
-                    'pages' => $allCustomPages,
-                    'message' => ''
-                ]
-            );
+        };
+
+        $form = $this->createForm(SellerFormType::class);
+        $form->handleRequest($request);
+        if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var Seller $seller
+             */
+            $seller = $form->getData();
+            $seller->setUser($this->getUser());
+            $seller->setVerified(0);
+            $entityManager->persist($seller);
+            $entityManager->flush();
+            $this->addFlash('success', 'Applied for seller position!');
+            return $this->redirectToRoute('advertisement_index');
         }
+        return $this->render(
+            '/advertisement/apply_for_seller.html.twig',
+            [
+                'form' => $form->createView(),
+                'pages' => $arrayWithHeaderData['customPages'],
+                'categories' => $arrayWithHeaderData['categories'],
+                'message' => ''
+            ]
+        );
     }
 
     /**
@@ -202,8 +216,7 @@ class AdvertisementController extends AbstractController
                 'customUrl' => $pageName
             ]
         );
-        $categories = $this->getAllVisibleCategories($categoryRepository);
-        $allCustomPages = $customPageRepository->findAll();
+        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         $productInWishlist = $wishlistRepository->findOneBy(
             [
                 'product' => $product,
@@ -372,9 +385,9 @@ class AdvertisementController extends AbstractController
         return $this->render(
             '/advertisement/product_page.html.twig',
             [
-                'categories' => $categories,
                 'product' => $product,
-                'pages' => $allCustomPages,
+                'pages' => $arrayWithHeaderData['customPages'],
+                'categories' => $arrayWithHeaderData['categories'],
                 'seller' => $product->getUser(),
                 'productInWishlist' => $productInWishlist,
                 'form' => $form->createView(),
@@ -398,14 +411,13 @@ class AdvertisementController extends AbstractController
         CustomPageRepository $customPageRepository,
         Request $request
     ) {
-        $categories = $this->getAllVisibleCategories($categoryRepository);
-        $allCustomPages = $customPageRepository->findAll();
+        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         $data = $productService->returnDataMyItems($request, $this->getUser()->getId());
         return $this->render(
             '/advertisement/my_items.html.twig',
             [
-                'categories' => $categories,
-                'pages' => $allCustomPages,
+                'pages' => $arrayWithHeaderData['customPages'],
+                'categories' => $arrayWithHeaderData['categories'],
                 'myitems' => $data
             ]
         );
@@ -427,8 +439,7 @@ class AdvertisementController extends AbstractController
         CustomPageRepository $customPageRepository,
         Request $request
     ) {
-        $categories = $this->getAllVisibleCategories($categoryRepository);
-        $allCustomPages = $customPageRepository->findAll();
+        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         $wishlist = $productService->returnDataMyWishlist($request, $this->getUser()->getId());
         foreach ($wishlist as $wishlistProduct) {
             /**
@@ -456,8 +467,8 @@ class AdvertisementController extends AbstractController
         return $this->render(
             '/advertisement/my_wish_list.html.twig',
             [
-                'categories' => $categories,
-                'pages' => $allCustomPages,
+                'pages' => $arrayWithHeaderData['customPages'],
+                'categories' => $arrayWithHeaderData['categories'],
                 'mywishlist' => $wishlist
             ]
         );
@@ -603,14 +614,13 @@ class AdvertisementController extends AbstractController
         CustomPageRepository $customPageRepository,
         $pageName
     ) {
-        $categories = $this->getAllVisibleCategories($categoryRepository);
-        $allCustomPages = $customPageRepository->findAll();
+        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         $customPage = $customPageRepository->findOneBy(['pageName' => $pageName]);
         return $this->render(
             '/advertisement/custom_page_layout.html.twig',
             [
-                'categories' => $categories,
-                'pages' => $allCustomPages,
+                'pages' => $arrayWithHeaderData['customPages'],
+                'categories' => $arrayWithHeaderData['categories'],
                 'customPage' => $customPage,
             ]
         );
