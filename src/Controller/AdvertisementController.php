@@ -36,6 +36,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class AdvertisementController extends AbstractController
 {
@@ -216,172 +217,34 @@ class AdvertisementController extends AbstractController
                 'customUrl' => $pageName
             ]
         );
-        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         $productInWishlist = $wishlistRepository->findOneBy(
             [
                 'product' => $product,
                 'user' => $this->getUser(),
             ]
         );
-        $discount = null;
-
         $form = $this->createForm(SoldFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
-            /**
-             * @var Sold $sold
-             */
             $sold = $form->getData();
-            $quantityUser = $sold->getQuantity();
-            $couponCode = $sold->getCouponCodeName();
-            if ($quantityUser === null) {
-                $this->addFlash('warning', 'Please insert correct number in field Quantity!');
-                return $this->redirectToRoute(
-                    'check_product',
-                    [
-                        'pageName' => $product->getCustomUrl()]
-                );
-            }
-            if ($sold->getQuantity() > $product->getAvailableQuantity()) {
-                $this->addFlash('warning', 'Not enough available quantity!');
-                return $this->redirectToRoute(
-                    'check_product',
-                    [
-                        'pageName' => $product->getCustomUrl()]
-                );
-            }
-            if ($couponCode !== null) {
-                /**
-                 * @var $checkForCouponCode CouponCodes
-                 */
-                $checkForCouponCode = $couponCodesRepository->findOneBy(['codeName' => $couponCode]);
-                if ($checkForCouponCode === null) {
-                    $this->addFlash('warning', 'Invalid coupon code!');
-                    return $this->redirectToRoute(
-                        'check_product',
-                        [
-                            'pageName' => $product->getCustomUrl()]
-                    );
-                }
-                if ($checkForCouponCode->getAllProducts()) {
-                    $discount = $checkForCouponCode->getDiscount();
-                } elseif ($checkForCouponCode->getCategoryId()) {
-                    $productHasCategory = $productCategoryRepository->findOneBy([
-                        'product' => $product,
-                        'category' => $checkForCouponCode->getCategoryId()
-                    ]);
-                    if ($productHasCategory === null) {
-                        $this->addFlash('warning', 'Invalid coupon code!');
-                        return $this->redirectToRoute(
-                            'check_product',
-                            [
-                                'pageName' => $product->getCustomUrl()]
-                        );
-                    }
-                    $discount = $checkForCouponCode->getDiscount();
-                } elseif ($checkForCouponCode->getProductId()) {
-                    if ($checkForCouponCode->getProductId() != $product->getId()) {
-                        $this->addFlash('warning', 'Invalid coupon code!');
-                        return $this->redirectToRoute(
-                            'check_product',
-                            [
-                                'pageName' => $product->getCustomUrl()]
-                        );
-                    }
-                    $discount = $checkForCouponCode->getDiscount();
-                } else {
-                    $this->addFlash('warning', 'Invalid coupon code!');
-                    return $this->redirectToRoute(
-                        'check_product',
-                        [
-                            'pageName' => $product->getCustomUrl()]
-                    );
-                }
-            }
-            $sold->setUser($this->getUser());
-            $sold->setProduct($product);
-            $sold->setPrice($product->getPrice());
-            $sold->setTotalPrice($sold->getQuantity() * $sold->getPrice());
-            if ($discount !== null) {
-                $sold->setDiscount($discount);
-                $totalPrice = $sold->getTotalPrice();
-                $discountAmount = str_replace('%', '', $discount);
-                $discountReduce = $totalPrice * $discountAmount / 100;
-                $afterDiscount = $totalPrice - $discountReduce;
-                $sold->setAfterDiscount($afterDiscount);
-                $entityManager->remove($checkForCouponCode);
-            } else {
-                $sold->setCouponCodeName('');
-                $sold->setDiscount('0');
-                $sold->setAfterDiscount($sold->getTotalPrice());
-            }
-            $sold->setConfirmed(0);
-            $product->setAvailableQuantity($product->getAvailableQuantity() - $sold->getQuantity());
-            $entityManager->persist($sold);
-            $entityManager->flush();
-            $this->addFlash('success', 'Bought the product!');
-            return $this->redirectToRoute(
-                'check_product',
-                [
-                    'pageName' => $product->getCustomUrl()]
-            );
+            self::userBuyProduct($sold, $product, $entityManager, $couponCodesRepository, $productCategoryRepository);
         }
 
         $formMail = $this->createForm(ContactFormType::class);
         $formMail->handleRequest($request);
         if ($this->isGranted('ROLE_USER') && $formMail->isSubmitted() && $formMail->isValid()) {
             $formMailData = $formMail->getData();
-            $name = $formMailData['name'];
-            $from = $formMailData['from'];
-            $message = $formMailData['message'];
-            $to = $product->getUser()->getEmail();
-            if (empty($name) || empty($from) || empty($message)) {
-                $this->addFlash('warning', 'Please fill out all fields to send mail!');
-                return $this->redirectToRoute(
-                    'check_product',
-                    [
-                        'pageName' => $product->getCustomUrl()]
-                );
-            } elseif (filter_var($from, FILTER_VALIDATE_EMAIL)) {
-                $this->addFlash(
-                    'success',
-                    'Mail sent. Name: ' . $name . ', from: ' . $from . ', to: '
-                    . $to . ', message: ' . $message
-                );
-                return $this->redirectToRoute(
-                    'check_product',
-                    [
-                        'pageName' => $product->getCustomUrl()]
-                );
-            } else {
-                $this->addFlash('warning', 'Your email is not valid!');
-                return $this->redirectToRoute(
-                    'check_product',
-                    [
-                        'pageName' => $product->getCustomUrl()]
-                );
-            }
+            self::sendMail($formMailData, $product);
         }
 
         $formComment = $this->createForm(CommentFormType::class);
         $formComment->handleRequest($request);
         if ($this->isGranted('ROLE_USER') && $formComment->isSubmitted() && $formComment->isValid()) {
-            /**
-             * @var Comment $comment
-             */
             $comment = $formComment->getData();
-            $comment->setUser($this->getUser());
-            $comment->setProduct($product);
-            $product->addComment($comment);
-            $entityManager->flush();
-            $this->addFlash('success', 'Comment added!');
-            return $this->redirectToRoute(
-                'check_product',
-                [
-                    'pageName' => $product->getCustomUrl()]
-            );
+            self::commentOnProduct($comment, $product, $entityManager);
         }
 
+        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         return $this->render(
             '/advertisement/product_page.html.twig',
             [
@@ -395,6 +258,185 @@ class AdvertisementController extends AbstractController
                 'emailForm' => $formMail->createView()
             ]
         );
+    }
+
+    public function userBuyProduct(
+        Sold $sold,
+        Product $product,
+        EntityManagerInterface $entityManager,
+        CouponCodesRepository $couponCodesRepository,
+        ProductCategoryRepository $productCategoryRepository
+    ) {
+        $discount = null;
+        $quantityUser = $sold->getQuantity();
+        $couponCode = $sold->getCouponCodeName();
+        if ($quantityUser === null) {
+            $this->addFlash('warning', 'Please insert correct number in field Quantity!');
+            return $this->redirectToRoute(
+                'check_product',
+                [
+                    'pageName' => $product->getCustomUrl()]
+            );
+        }
+        if ($sold->getQuantity() > $product->getAvailableQuantity()) {
+            $this->addFlash('warning', 'Not enough available quantity!');
+            return $this->redirectToRoute(
+                'check_product',
+                [
+                    'pageName' => $product->getCustomUrl()]
+            );
+        }
+
+        if ($couponCode !== null) {
+            $validCouponCode = self::checkCouponCode(
+                $couponCode,
+                $product,
+                $productCategoryRepository,
+                $couponCodesRepository
+            );
+
+            if (!$validCouponCode) {
+                $this->addFlash('warning', 'Invalid coupon code!');
+                return $this->redirectToRoute(
+                    'check_product',
+                    [
+                        'pageName' => $product->getCustomUrl()]
+                );
+            }
+            $checkForCouponCode = $couponCodesRepository->findOneBy(['codeName' => $couponCode]);
+            $discount = $checkForCouponCode->getDiscount();
+        }
+
+        $sold->setUser($this->getUser());
+        $sold->setProduct($product);
+        $sold->setPrice($product->getPrice());
+        $sold->setTotalPrice($sold->getQuantity() * $sold->getPrice());
+        if ($discount !== null) {
+            $sold->setDiscount($discount);
+            $totalPrice = $sold->getTotalPrice();
+            $discountAmount = str_replace('%', '', $discount);
+            $discountReduce = $totalPrice * $discountAmount / 100;
+            $afterDiscount = $totalPrice - $discountReduce;
+            $sold->setAfterDiscount($afterDiscount);
+            $entityManager->remove($checkForCouponCode);
+        } else {
+            $sold->setCouponCodeName('');
+            $sold->setDiscount('0');
+            $sold->setAfterDiscount($sold->getTotalPrice());
+        }
+        $sold->setConfirmed(0);
+        $product->setAvailableQuantity($product->getAvailableQuantity() - $sold->getQuantity());
+        $entityManager->persist($sold);
+        $entityManager->flush();
+        $this->addFlash('success', 'Bought the product!');
+        return $this->redirectToRoute(
+            'check_product',
+            [
+                'pageName' => $product->getCustomUrl()]
+        );
+    }
+
+    /**
+     * @param $couponCode
+     * @param Product $product
+     * @param ProductCategoryRepository $productCategoryRepository
+     * @param CouponCodesRepository $couponCodesRepository
+     * @return bool
+     */
+    public function checkCouponCode(
+        $couponCode,
+        Product $product,
+        ProductCategoryRepository $productCategoryRepository,
+        CouponCodesRepository $couponCodesRepository
+    ) {
+
+        /**
+         * @var $checkForCouponCode CouponCodes
+         */
+        $checkForCouponCode = $couponCodesRepository->findOneBy(['codeName' => $couponCode]);
+        if ($checkForCouponCode === null) {
+            return false;
+        }
+        if ($checkForCouponCode->getAllProducts()) {
+            return true;
+        }
+        if ($checkForCouponCode->getCategoryId()) {
+            $productHasCategory = $productCategoryRepository->findOneBy([
+                'product' => $product,
+                'category' => $checkForCouponCode->getCategoryId()
+            ]);
+            if ($productHasCategory === null) {
+                return false;
+            }
+            return true;
+        }
+
+        if ($checkForCouponCode->getProductId()) {
+            if ($checkForCouponCode->getProductId() != $product->getId()) {
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
+
+    /**
+     * @param Comment $comment
+     * @param Product $product
+     * @param EntityManagerInterface $entityManager
+     * @return RedirectResponse
+     */
+    public function commentOnProduct(Comment $comment, Product $product, EntityManagerInterface $entityManager)
+    {
+        $comment->setUser($this->getUser());
+        $comment->setProduct($product);
+        $product->addComment($comment);
+        $entityManager->flush();
+        $this->addFlash('success', 'Comment added!');
+        return $this->redirectToRoute(
+            'check_product',
+            [
+                'pageName' => $product->getCustomUrl()]
+        );
+    }
+
+    /**
+     * @param $formMailData
+     * @param Product $product
+     * @return RedirectResponse
+     */
+    public function sendMail($formMailData, Product $product)
+    {
+        $name = $formMailData['name'];
+        $from = $formMailData['from'];
+        $message = $formMailData['message'];
+        $to = $product->getUser()->getEmail();
+        if (empty($name) || empty($from) || empty($message)) {
+            $this->addFlash('warning', 'Please fill out all fields to send mail!');
+            return $this->redirectToRoute(
+                'check_product',
+                [
+                    'pageName' => $product->getCustomUrl()]
+            );
+        } elseif (filter_var($from, FILTER_VALIDATE_EMAIL)) {
+            $this->addFlash(
+                'success',
+                'Mail sent. Name: ' . $name . ', from: ' . $from . ', to: '
+                . $to . ', message: ' . $message
+            );
+            return $this->redirectToRoute(
+                'check_product',
+                [
+                    'pageName' => $product->getCustomUrl()]
+            );
+        } else {
+            $this->addFlash('warning', 'Your email is not valid!');
+            return $this->redirectToRoute(
+                'check_product',
+                [
+                    'pageName' => $product->getCustomUrl()]
+            );
+        }
     }
 
     /**
