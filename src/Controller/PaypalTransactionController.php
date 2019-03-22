@@ -65,5 +65,6 @@ class PaypalTransactionController extends AbstractController
 
     public function checkCouponCode()
     {
+        $test = 1;
     }
 }
