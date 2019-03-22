@@ -16,6 +16,9 @@
                             <p style="color: black"><strong>Price: €{{ item.price }}</strong></p>
                             <p style="color: black"><strong>Total Price: €{{ item.totalPrice }}</strong></p>
                             <p style="color: black"><strong>Bought at: {{ item.boughtAt|date("d.m.Y H:i") }}</strong></p>
+                            {% if (item.confirmed == 0) %}
+                                <a class="btn btn-primary" href="{{ path('paypal_pay', {'id': item.id}) }}">Pay with paypal</a>
+                            {% endif %}
                         </a>
                     </div>
                 {% endfor %}

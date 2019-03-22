@@ -14,9 +14,13 @@
                     Pay using PayPal or credit card
                 </p>
             </header>
-            <h3>Amount: 1 EUR</h3>
-            <h3>Product:</h3>
-            <form method="post" id="payment-form" action="{{ path('paypal_payment') }}">
+            <h3>Product: {{ sold.product.name }}</h3>
+            <h3>Price: {{ sold.product.name }}</h3>
+            <h3>Quantity: {{ sold.quantity }}</h3>
+            <h3>Total Price: {{ sold.totalPrice }}</h3>
+            <h3>Discount: {{ sold.discount }}</h3>
+            <h3>Price to pay: {{ sold.afterDiscount }}</h3>
+            <form method="post" id="payment-form" action="{{ path('paypal_payment', {'id': sold.id}) }}">
                 <section>
                     <div class="bt-drop-in-wrapper">
                         <div id="bt-dropin"></div>
