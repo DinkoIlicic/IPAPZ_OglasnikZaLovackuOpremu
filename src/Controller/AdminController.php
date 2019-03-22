@@ -26,7 +26,6 @@ use App\Form\CouponCodesFormType;
 use App\Form\CouponFormType;
 use App\Form\CustomPageFormType;
 use App\Form\PasswordFormType;
-use App\Form\PaymentMethodFormType;
 use App\Form\ProductImageFormType;
 use App\Form\ProductInfoFormType;
 use App\Form\ProductQuantityFormType;
@@ -43,6 +42,7 @@ use App\Repository\SellerRepository;
 use App\Repository\SoldRepository;
 use App\Repository\UserRepository;
 use App\Repository\WishlistRepository;
+use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -69,9 +69,7 @@ class AdminController extends AbstractController
     public function index()
     {
         return $this->render(
-            'admin/index.html.twig',
-            [
-            ]
+            'admin/index.html.twig'
         );
     }
 
@@ -88,11 +86,9 @@ class AdminController extends AbstractController
                 'id' => 'DESC'
             ]
         );
-        $message = "List of all appliers: ";
         return $this->render(
             '/admin/list_of_all_appliers.html.twig',
             [
-                'message' => $message,
                 'sellers' => $sellers
             ]
         );
@@ -106,7 +102,11 @@ class AdminController extends AbstractController
      */
     public function listOneApplierForSeller(Seller $seller, SellerRepository $sellerRepository)
     {
-        $sell = $sellerRepository->findOneBy(['id' => $seller->getId()]);
+        $sell = $sellerRepository->findOneBy(
+            [
+                'id' => $seller->getId()
+            ]
+        );
         return $this->render(
             '/admin/view_applier.html.twig',
             [
@@ -127,14 +127,14 @@ class AdminController extends AbstractController
         if ($seller->getVerified() === 0) {
             $seller->setVerified(1);
             $seller->getUser()->setRoles(['ROLE_SELLER']);
-            $entityManager->flush();
             $this->addFlash('success', 'Applier verified!');
         } elseif ($seller->getVerified() === 1) {
             $seller->setVerified(0);
             $seller->getUser()->setRoles(['ROLE_USER']);
-            $entityManager->flush();
             $this->addFlash('success', 'Applier unverified!');
         }
+
+        $entityManager->flush();
         return $this->redirectToRoute(
             'check_one_applier_for_seller',
             [
@@ -173,7 +173,7 @@ class AdminController extends AbstractController
             $category->setVisibilityAdmin(1);
             $entityManager->persist($category);
             $entityManager->flush();
-            $this->addFlash('success', 'Inserted new category!');
+            $this->addFlash('success', 'New category added!');
             return $this->redirectToRoute('list_of_categories');
         }
         return $this->render(
@@ -227,18 +227,16 @@ class AdminController extends AbstractController
     ) {
         if ($category->getVisibilityAdmin() === 0) {
             $category->setVisibilityAdmin(1);
-            $entityManager->flush();
             $this->addFlash('success', 'Category made visible!');
-            return $this->redirectToRoute('list_of_categories');
         } elseif ($category->getVisibilityAdmin() === 1) {
             $category->setVisibilityAdmin(0);
-            $entityManager->flush();
             $this->addFlash('success', 'Category hidden!');
-            return $this->redirectToRoute('list_of_categories');
         } else {
             $this->addFlash('warning', 'Something went wrong!');
-            return $this->redirectToRoute('list_of_categories');
         }
+
+        $entityManager->flush();
+        return $this->redirectToRoute('list_of_categories');
     }
 
     /**
@@ -283,6 +281,7 @@ class AdminController extends AbstractController
      * @Route("/admin/update-product-info/{id}", name="update_product_info")
      * @param                                    EntityManagerInterface $entityManager
      * @param                                    ProductCategoryRepository $productCategoryRepository
+     * @param                                    ProductService $productService
      * @param                                    Request $request
      * @param                                    Product $product
      * @return                                   Response
@@ -291,13 +290,16 @@ class AdminController extends AbstractController
         Product $product,
         Request $request,
         EntityManagerInterface $entityManager,
-        ProductCategoryRepository $productCategoryRepository
+        ProductCategoryRepository $productCategoryRepository,
+        ProductService $productService
     ) {
         $productIm = $product->getImage();
         $productUrlNum = substr($product->getCustomUrl(), -9);
         $productUrl = substr($product->getCustomUrl(), 0, -9);
         $product->setCustomUrl($productUrl);
-        $product->setImage(new File($this->getParameter('image_directory') . '/' . $product->getImage()));
+        $product->setImage(
+            new File($this->getParameter('image_directory') . DIRECTORY_SEPARATOR . $product->getImage())
+        );
         $form = $this->createForm(ProductInfoFormType::class, $product);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
@@ -306,11 +308,7 @@ class AdminController extends AbstractController
              */
             $product = $form->getData();
             $customUrl = $product->getCustomUrl();
-            if (empty($customUrl)) {
-                $customUrl = $product->getName();
-                $productUrlNum = '-' . rand(10000000, 99999999);
-            }
-            $pageName = $customUrl . $productUrlNum;
+            $pageName = $productService->changeCustomUrl($customUrl, $product, $productUrlNum);
             $product->setCustomUrl(str_replace(' ', '-', $pageName));
             $product->setImage($productIm);
             $allProductsFromProductCategory = $productCategoryRepository->findBy(
@@ -351,7 +349,9 @@ class AdminController extends AbstractController
     ) {
         $productIm = $product->getImage();
         $productBeforeQuantity = $product->getAvailableQuantity();
-        $product->setImage(new File($this->getParameter('image_directory') . '/' . $product->getImage()));
+        $product->setImage(
+            new File($this->getParameter('image_directory') . DIRECTORY_SEPARATOR . $product->getImage())
+        );
 
         $form = $this->createForm(ProductQuantityFormType::class, $product);
         $form->handleRequest($request);
@@ -399,7 +399,9 @@ class AdminController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager
     ) {
-        $product->setImage(new File($this->getParameter('image_directory') . '/' . $product->getImage()));
+        $product->setImage(
+            new File($this->getParameter('image_directory') . DIRECTORY_SEPARATOR . $product->getImage())
+        );
         $form = $this->createForm(ProductImageFormType::class, $product);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
@@ -443,18 +445,18 @@ class AdminController extends AbstractController
     ) {
         if ($product->getVisibilityAdmin() === 0) {
             $product->setVisibilityAdmin(1);
-            $entityManager->flush();
             $this->addFlash('success', 'Product made visible!');
             return $this->redirectToRoute('list_of_products');
         } elseif ($product->getVisibilityAdmin() === 1) {
             $product->setVisibilityAdmin(0);
-            $entityManager->flush();
             $this->addFlash('success', 'Product hidden!');
             return $this->redirectToRoute('list_of_products');
         } else {
             $this->addFlash('warning', 'Something went wrong');
-            return $this->redirectToRoute('list_of_products');
         }
+
+        $entityManager->flush();
+        return $this->redirectToRoute('list_of_products');
     }
 
     /**
@@ -544,36 +546,12 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @return Response
-     */
-    public function searchBar()
-    {
-        $form = $this->createFormBuilder(null)
-            ->add(
-                "query",
-                TextType::class,
-                [
-                    'attr' => [
-                        'placeholder' => 'Enter user name'
-                    ],
-                    'label' => 'User'
-                ]
-            )
-            ->getForm();
-        return $this->render(
-            'advertisement/search.html.twig',
-            [
-                'form' => $form->createView()
-            ]
-        );
-    }
-
-    /**
-     * @Route("/admin/handle-search/{_query?}", name="handle_search", methods={"POST", "GET"})
+     * @Route("/admin/handle-search-per-user-admin/{_query?}", name="handle_search_per_user_admin", methods={"POST", "GET"})
      * @var                                     $_query
+     * @param                                   ProductService $productService
      * @return                                  JsonResponse
      */
-    public function handleSearchRequest($_query)
+    public function handleSearchRequestPerUserAdmin($_query, ProductService $productService)
     {
         $em = $this->getDoctrine()->getManager();
         if ($_query) {
@@ -582,38 +560,18 @@ class AdminController extends AbstractController
             $data = $em->getRepository(User::class)->findAll();
         }
 
-        // setting up the serializer
-        $normalizers = [
-            new ObjectNormalizer()
-        ];
-        $encoders = [
-            new JsonEncoder()
-        ];
-        $serializer = new Serializer($normalizers, $encoders);
-        $jsonObject = $serializer->serialize(
-            $data,
-            'json',
-            [
-                'circular_reference_handler' => function ($user) {
-                    /**
-                     * @var $user User
-                     */
-                    return $user->getId();
-                }
-            ]
-        );
-
+        $jsonObject = $productService->returnJsonObjectUser($data);
         return new JsonResponse($jsonObject, 200, [], true);
     }
 
     /**
-     * @Route("/admin/ajax-person-sold/{id?}", name="ajax_person_sold")
+     * @Route("/admin/ajax-person-sold-per-user-admin/{id?}", name="ajax_person_sold_admin_user")
      * @param                                  SoldRepository $soldRepository
      * @param                                  ProductRepository $productRepository
      * @param                                  User $id
      * @return                                 Response
      */
-    public function ajaxListPerson(
+    public function ajaxListPersonPerPersonAdmin(
         SoldRepository $soldRepository,
         ProductRepository $productRepository,
         User $id = null
@@ -689,37 +647,35 @@ class AdminController extends AbstractController
                     'boughtAt' => 'DESC'
                 ]
             );
-        }
+        };
         return $this->render(
             '/admin/view_sold_items_per_person.html.twig',
             [
                 'soldItems' => $soldPerUser,
                 'userName' => $userName,
-                'controller_name' => 'HomeController',
             ]
         );
     }
 
     /**
-     * @Route("/admin/confirm-buy-per-person-admin/{id}", name="confirm_buy_per_person_admin")
+     * @Route("/admin/confirm-buy-per-user-admin/{id}", name="confirm_buy_per_user_admin")
      * @param                                             EntityManagerInterface $entityManager
      * @param                                             Sold $sold
      * @return                                            Response
      */
-    public function confirmBuyPerPersonAdmin(
+    public function confirmBuyPerUserAdmin(
         Sold $sold,
         EntityManagerInterface $entityManager
     ) {
         if ($sold->getConfirmed() === 0) {
             $sold->setConfirmed(1);
-            $entityManager->flush();
             $this->addFlash('success', 'Buy confirmed!');
         } elseif ($sold->getConfirmed() === 1) {
             $sold->setConfirmed(0);
-            $entityManager->flush();
             $this->addFlash('success', 'Buy unconfirmed!');
         }
 
+        $entityManager->flush();
         return $this->redirectToRoute(
             'view_sold_items_per_person',
             [
@@ -728,10 +684,11 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/delete-sold-item-per-person-admin/{id}", name="delete_sold_item_per_person_admin")
+     * @Route("/admin/delete-sold-item-per-user-admin/{id}", name="delete_sold_item_per_user_admin")
      * @param                                                  ProductRepository $productRepository
      * @param                                                  EntityManagerInterface $entityManager
      * @param                                                  WishlistRepository $wishlistRepository
+     * @param                                                  ProductService $productService
      * @param                                                  Sold $sold
      * @return                                                 Response
      */
@@ -739,33 +696,10 @@ class AdminController extends AbstractController
         Sold $sold,
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository,
-        WishlistRepository $wishlistRepository
+        WishlistRepository $wishlistRepository,
+        ProductService $productService
     ) {
-        /**
-         * @var Product $productOld
-         */
-        $productOld = $productRepository->findOneBy(
-            [
-                'id' => $sold->getProduct()->getId()
-            ]
-        );
-        if ($productOld->getAvailableQuantity() === 0) {
-            $wishlistProducts = $wishlistRepository->findBy(
-                [
-                    'product' => $productOld->getId()]
-            );
-            foreach ($wishlistProducts as $wishlistProduct) {
-                /**
-                 * @var $wishlistProduct Wishlist
-                 */
-                $wishlistProduct->setNotify(1);
-                $entityManager->persist($wishlistProduct);
-            }
-        }
-        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
-        $entityManager->remove($sold);
-        $entityManager->flush();
-
+        $productService->deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute(
             'view_sold_items_per_person',
@@ -818,7 +752,7 @@ class AdminController extends AbstractController
             '/admin/view_sold_items_per_product.html.twig',
             [
                 'form' => $form->createView(),
-                'solditems' => $listOfSoldItems,
+                'soldItems' => $listOfSoldItems,
                 'message' => $message
             ]
         );
@@ -836,14 +770,13 @@ class AdminController extends AbstractController
     ) {
         if ($sold->getConfirmed() === 0) {
             $sold->setConfirmed(1);
-            $entityManager->flush();
             $this->addFlash('success', 'Buy confirmed!');
         } elseif ($sold->getConfirmed() === 1) {
             $sold->setConfirmed(0);
-            $entityManager->flush();
             $this->addFlash('success', 'Buy unconfirmed!');
         }
 
+        $entityManager->flush();
         return $this->redirectToRoute('view_sold_items_per_product');
     }
 
@@ -852,6 +785,7 @@ class AdminController extends AbstractController
      * @param                                                    ProductRepository $productRepository
      * @param                                                    EntityManagerInterface $entityManager
      * @param                                                    WishlistRepository $wishlistRepository
+     * @param                                                    ProductService $productService
      * @param                                                    Sold $sold
      * @return                                                   Response
      */
@@ -859,33 +793,10 @@ class AdminController extends AbstractController
         Sold $sold,
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository,
-        WishlistRepository $wishlistRepository
+        WishlistRepository $wishlistRepository,
+        ProductService $productService
     ) {
-        /**
-         * @var Product $productOld
-         */
-        $productOld = $productRepository->findOneBy(
-            [
-                'id' => $sold->getProduct()->getId()
-            ]
-        );
-        if ($productOld->getAvailableQuantity() === 0) {
-            $wishlistProducts = $wishlistRepository->findBy(
-                [
-                    'product' => $productOld->getId()]
-            );
-            foreach ($wishlistProducts as $wishlistProduct) {
-                /**
-                 * @var $wishlistProduct Wishlist
-                 */
-                $wishlistProduct->setNotify(1);
-                $entityManager->persist($wishlistProduct);
-            }
-        }
-        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
-        $entityManager->remove($sold);
-        $entityManager->flush();
-
+        $productService->deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute('view_sold_items_per_product');
     }
@@ -920,6 +831,10 @@ class AdminController extends AbstractController
              * @var $customPage CustomPage
              */
             $customPage = $form->getData();
+            if ($customPage->getContent() === null) {
+                $this->addFlash('warning', 'Content field can not be empty!');
+                return $this->redirectToRoute('view_custom_pages_admin');
+            }
             $customPage->setPageName(str_replace(' ', '-', $customPage->getPageName()));
             $customPage->setVisibilityAdmin(1);
             $entityManager->persist($customPage);
@@ -1005,18 +920,16 @@ class AdminController extends AbstractController
     {
         if ($customPage->getVisibilityAdmin() === 0) {
             $customPage->setVisibilityAdmin(1);
-            $entityManager->flush();
             $this->addFlash('success', 'Page made visible!');
-            return $this->redirectToRoute('view_custom_pages_admin');
         } elseif ($customPage->getVisibilityAdmin() === 1) {
             $customPage->setVisibilityAdmin(0);
-            $entityManager->flush();
             $this->addFlash('success', 'Page hidden!');
-            return $this->redirectToRoute('view_custom_pages_admin');
         } else {
             $this->addFlash('warning', 'Something went wrong');
-            return $this->redirectToRoute('view_custom_pages_admin');
         }
+
+        $entityManager->flush();
+        return $this->redirectToRoute('view_custom_pages_admin');
     }
 
     /**

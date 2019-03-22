@@ -9,7 +9,7 @@
                 {% for item in mywishlist %}
                     <div class="col-sm" align="center" style="margin-bottom: 50px; margin-right: 10px;">
                         {% if item.notified == 1 %}
-                            <p>Available again</p>
+                            <h2>Available again</h2>
                         {% endif %}
                         <a href="{{ path('check_product', {'pageName': item.product.customUrl}) }}">
                             <img width="300" height="300" src="../../../../../uploads/image/{{ item.product.image }}" alt="">

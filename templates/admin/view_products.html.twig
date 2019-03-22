@@ -27,13 +27,13 @@
             {% for eachItem in products %}
                 <tr>
                     <td><a class="nav-link" href="{{ path('update_product_info', {'id': eachItem.id}) }}">{{ eachItem.name }}</a></td>
-                    <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname}}</td>
+                    <td>{{ eachItem.user.FullName }}</td>
                     <td><a class="nav-link" href="{{ path('update_product_quantity', {'id': eachItem.id}) }}">{{ eachItem.availableQuantity }}</a></td>
                     <td>
                         <a class="nav-link" href="{{ path('update_product_visibility_admin', {'id': eachItem.id}) }}">
-                            {% if(eachitem.visibilityAdmin == 1) %}
+                            {% if(eachItem.visibilityAdmin == 1) %}
                                 Visible
-                            {% elseif(eachitem.visibilityAdmin == 0) %}
+                            {% elseif(eachItem.visibilityAdmin == 0) %}
                                 Not Visible
                             {% endif %}
                         </a>

@@ -8,8 +8,21 @@
 
 namespace App\Service;
 
+use App\Entity\Product;
+use App\Entity\Sold;
+use App\Entity\User;
+use App\Entity\Wishlist;
+use App\Repository\ProductRepository;
+use App\Repository\WishlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class ProductService
 {
@@ -136,5 +149,97 @@ class ProductService
             $request->query->getInt('limit', 9)
         );
         return $results;
+    }
+
+    /**
+     * @param $customUrl
+     * @param Product $product
+     * @return string
+     */
+    public function createCustomUrl($customUrl, Product $product)
+    {
+        if (empty($customUrl)) {
+            $customUrl = $product->getName();
+        }
+        $productUrlNum = '-' . rand(10000000, 99999999);
+        $pageName = $customUrl . $productUrlNum;
+        return $pageName;
+    }
+
+    /**
+     * @param $customUrl
+     * @param Product $product
+     * @param $productUrlNum
+     * @return string
+     */
+    public function changeCustomUrl($customUrl, Product $product, $productUrlNum)
+    {
+        if (empty($customUrl)) {
+            $customUrl = $product->getName();
+            $productUrlNum = '-' . rand(10000000, 99999999);
+        }
+        $pageName = $customUrl . $productUrlNum;
+        return $pageName;
+    }
+
+    public function deleteProductItem(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        ProductRepository $productRepository,
+        WishlistRepository $wishlistRepository
+    ) {
+        /**
+         * @var Product $productOld
+         */
+        $productOld = $productRepository->findOneBy(
+            [
+                'id' => $sold->getProduct()->getId()
+            ]
+        );
+        if ($productOld->getAvailableQuantity() === 0) {
+            $wishlistProducts = $wishlistRepository->findBy(
+                [
+                    'product' => $productOld->getId()]
+            );
+            foreach ($wishlistProducts as $wishlistProduct) {
+                /**
+                 * @var $wishlistProduct Wishlist
+                 */
+                $wishlistProduct->setNotify(1);
+                $entityManager->persist($wishlistProduct);
+            }
+        }
+        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
+        $entityManager->remove($sold);
+        $entityManager->flush();
+    }
+
+    /**
+     * @var                                     $data
+     * @return                                  JsonResponse
+     */
+    public function returnJsonObjectUser($data)
+    {
+        // setting up the serializer
+        $normalizers = [
+            new ObjectNormalizer()
+        ];
+        $encoders = [
+            new JsonEncoder()
+        ];
+        $serializer = new Serializer($normalizers, $encoders);
+        $jsonObject = $serializer->serialize(
+            $data,
+            'json',
+            [
+                'circular_reference_handler' => function ($user) {
+                    /**
+                     * @var $user User
+                     */
+                    return $user->getId();
+                }
+            ]
+        );
+        return $jsonObject;
     }
 }

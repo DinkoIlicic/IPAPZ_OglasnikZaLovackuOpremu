@@ -26,23 +26,23 @@
             </tr>
         </thead>
         <tbody>
-            {% for eachitem in solditems %}
+            {% for eachItem in soldItems %}
                 <tr>
-                    <td><a href="{{ path('view_sold_product_info', {'id': eachitem.id}) }}" class="card-link">{{ eachitem.product.name }}</a></td>
-                    <td>{{ eachitem.user.firstname }} {{ eachitem.user.lastname }}</td>
-                    <td>{{ eachitem.quantity }}</td>
-                    <td>{{ eachitem.price }}</td>
-                    <td>{{ eachitem.totalPrice }}</td>
-                    <td>{{ eachitem.boughtAt|date("d.m.Y H:i") }}</td>
-                    <td>{% if(eachitem.confirmed == 0) %}
-                            <a class="btn btn-primary" href="{{ path('confirm_buy_per_product', {'id': eachitem.id}) }}">Confirm</a>
+                    <td><a href="{{ path('view_sold_product_info', {'id': eachItem.id}) }}" class="card-link">{{ eachItem.product.name }}</a></td>
+                    <td>{{ eachItem.user.fullName }}</td>
+                    <td>{{ eachItem.quantity }}</td>
+                    <td>{{ eachItem.price }}</td>
+                    <td>{{ eachItem.totalPrice }}</td>
+                    <td>{{ eachItem.boughtAt|date("d.m.Y H:i") }}</td>
+                    <td>{% if(eachItem.confirmed == 0) %}
+                            <a class="btn btn-primary" href="{{ path('confirm_buy_per_product', {'id': eachItem.id}) }}">Confirm</a>
                         {% else %}
-                            <a class="btn btn-primary" href="{{ path('confirm_buy_per_product', {'id': eachitem.id}) }}">Confirmed</a>
+                            <a class="btn btn-primary" href="{{ path('confirm_buy_per_product', {'id': eachItem.id}) }}">Confirmed</a>
                         {% endif %}
                     </td>
-                    {% if(eachitem.confirmed == 0) %}
+                    {% if(eachItem.confirmed == 0) %}
                         <td>
-                            <a class="btn btn-danger" href="{{ path('delete_sold_item_per_product', {'id': eachitem.id}) }}">Delete</a>
+                            <a class="btn btn-danger" href="{{ path('delete_sold_item_per_product', {'id': eachItem.id}) }}">Delete</a>
                         </td>
                     {% endif %}
                 </tr>

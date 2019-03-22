@@ -1,16 +1,13 @@
-$(document).ready(function ()
-{
+$(document).ready(function () {
     var users = new Bloodhound(
         {
             datumTokenizer: Bloodhound.tokenizers.whitespace,
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                url: "/admin/handle-search/%QUERY%",
+                url: "/admin/handle-search-per-user-admin/%QUERY%",
                 wildcard: '%QUERY%',
-                filter: function (users)
-                {
-                    return $.map(users, function (user)
-                    {
+                filter: function (users) {
+                    return $.map(users, function (user) {
                         return {
                             user_id: user.id,
                             user_fullName: user.fullName
@@ -18,7 +15,8 @@ $(document).ready(function ()
                     })
                 }
             }
-        });
+        }
+    );
     users.initialize();
     $('#form_query').typeahead(
         {
@@ -37,8 +35,7 @@ $(document).ready(function ()
                         'No user found!',
                     '</div>'
                 ].join('\n'),
-                suggestion: function (data)
-                {
+                suggestion: function (data) {
                     return `
                                 <div>
                                     <span>`+data.user_fullName+`</span>
@@ -46,32 +43,31 @@ $(document).ready(function ()
                             `
                 }
             }
-        }).on('typeahead:autocomplete', function(event, data) {
-            event.preventDefault();
-            $.ajax({
-                method: 'POST',
-                url: "/admin/ajax-person-sold/"+data.user_id
-            }).done(function (data)
-            {
-                prepareSoldProducts(data);
-            })
-        }).on('typeahead:selected', function(event, data) {
-            event.preventDefault();
-            $.ajax({
-                method: 'POST',
-                url: "/admin/ajax-person-sold/"+data.user_id
-            }).done(function (data) {
-                prepareSoldProducts(data);
-            })
-
-        }).on('typeahead:select', function(event, data) {
-            event.preventDefault();
-            $.ajax({
-                method: 'POST',
-                url: "/admin/ajax-person-sold/"+data.user_id
-            }).done(function (data) {
-                prepareSoldProducts(data);
-            })
+        }
+    ).on('typeahead:autocomplete', function (event, data) {
+        event.preventDefault();
+        $.ajax({
+            method: 'POST',
+            url: "/admin/ajax-person-sold-per-user-admin/"+data.user_id
+        }).done(function (data) {
+            prepareSoldProducts(data);
+        })
+    }).on('typeahead:selected', function (event, data) {
+        event.preventDefault();
+        $.ajax({
+            method: 'POST',
+            url: "/admin/ajax-person-sold-per-user-admin/"+data.user_id
+        }).done(function (data) {
+            prepareSoldProducts(data);
+        })
+    }).on('typeahead:select', function (event, data) {
+        event.preventDefault();
+        $.ajax({
+            method: 'POST',
+            url: "/admin/ajax-person-sold-per-user-admin/"+data.user_id
+        }).done(function (data) {
+            prepareSoldProducts(data);
+        })
     });
 });
 
@@ -106,10 +102,10 @@ function renderSoldProducts(item, index)
     var date1 = new Date(item.boughtAt.date);
     cell6.innerHTML = date1.toLocaleDateString("hr-HR", options);
     if (item.confirmed === 0) {
-        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirm-buy-per-person-admin/"+item.id+"'>Confirm</a>";
-        cell8.innerHTML = "<a class='btn btn-danger' href='/admin/delete-sold-item-per-person-admin/"+item.id+"'>Delete</a>";
+        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirm-buy-per-user-admin/"+item.id+"'>Confirm</a>";
+        cell8.innerHTML = "<a class='btn btn-danger' href='/admin/delete-sold-item-per-user-admin/"+item.id+"'>Delete</a>";
     }
-    if(item.confirmed === 1) {
-        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirm-buy-per-person-admin/"+item.id+"'>Confirmed</a>";
+    if (item.confirmed === 1) {
+        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirm-buy-per-user-admin/"+item.id+"'>Confirmed</a>";
     }
 }

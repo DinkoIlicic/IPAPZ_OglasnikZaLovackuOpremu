@@ -32,6 +32,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -303,6 +304,7 @@ class AdvertisementController extends AbstractController
                         'pageName' => $product->getCustomUrl()]
                 );
             }
+
             $checkForCouponCode = $couponCodesRepository->findOneBy(['codeName' => $couponCode]);
             $discount = $checkForCouponCode->getDiscount();
         }
@@ -664,6 +666,31 @@ class AdvertisementController extends AbstractController
                 'pages' => $arrayWithHeaderData['customPages'],
                 'categories' => $arrayWithHeaderData['categories'],
                 'customPage' => $customPage,
+            ]
+        );
+    }
+
+    /**
+     * @return Response
+     */
+    public function searchBar()
+    {
+        $form = $this->createFormBuilder(null)
+            ->add(
+                "query",
+                TextType::class,
+                [
+                    'attr' => [
+                        'placeholder' => 'Enter here'
+                    ],
+                    'label' => ' '
+                ]
+            )
+            ->getForm();
+        return $this->render(
+            'advertisement/search.html.twig',
+            [
+                'form' => $form->createView()
             ]
         );
     }
