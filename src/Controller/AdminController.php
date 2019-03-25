@@ -45,7 +45,6 @@ use App\Repository\WishlistRepository;
 use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -56,9 +55,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 class AdminController extends AbstractController
 {
@@ -546,7 +542,8 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/handle-search-per-user-admin/{_query?}", name="handle_search_per_user_admin", methods={"POST", "GET"})
+     * @Route("/admin/handle-search-per-user-admin/{_query?}",
+     *      name="handle_search_per_user_admin", methods={"POST", "GET"})
      * @var                                     $_query
      * @param                                   ProductService $productService
      * @return                                  JsonResponse

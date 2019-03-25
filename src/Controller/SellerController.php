@@ -13,7 +13,6 @@ use App\Entity\Sold;
 use App\Entity\User;
 use App\Entity\Wishlist;
 use App\Form\ListOfBoughtItemsPerProductFormType;
-use App\Form\ListOfUserBoughtItemsFormType;
 use App\Form\ProductFormType;
 use App\Form\ProductImageFormType;
 use App\Form\ProductInfoFormType;
