@@ -10,6 +10,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Comment;
+use App\Entity\PaymentMethod;
 use App\Entity\Product;
 use App\Entity\Sold;
 use App\Entity\Wishlist;
@@ -20,6 +21,7 @@ use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
 use App\Repository\CouponCodesRepository;
 use App\Repository\CustomPageRepository;
+use App\Repository\PaymentMethodRepository;
 use App\Repository\ProductCategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
@@ -455,6 +457,7 @@ class AdvertisementController extends AbstractController
      * @param           CategoryRepository $categoryRepository
      * @param           ProductService $productService
      * @param           CustomPageRepository $customPageRepository
+     * @param           PaymentMethodRepository $paymentMethodRepository
      * @param           Request $request
      * @return          \Symfony\Component\HttpFoundation\Response
      */
@@ -462,16 +465,22 @@ class AdvertisementController extends AbstractController
         CategoryRepository $categoryRepository,
         ProductService $productService,
         CustomPageRepository $customPageRepository,
+        PaymentMethodRepository $paymentMethodRepository,
         Request $request
     ) {
         $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
         $data = $productService->returnDataMyItems($request, $this->getUser()->getId());
+        $paymentOptions = $paymentMethodRepository->findAll();
+        $paypal = $paymentOptions[0];
+        $invoice = $paymentOptions[1];
         return $this->render(
             '/advertisement/my_items.html.twig',
             [
                 'pages' => $arrayWithHeaderData['customPages'],
                 'categories' => $arrayWithHeaderData['categories'],
-                'myitems' => $data
+                'myitems' => $data,
+                'paypal' => $paypal,
+                'invoice' => $invoice,
             ]
         );
     }

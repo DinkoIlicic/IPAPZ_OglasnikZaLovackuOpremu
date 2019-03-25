@@ -27,30 +27,27 @@
                 <th scope="col">Quantity</th>
                 <th scope="col">Total price</th>
                 <th scope="col">Bought at</th>
-                <th scope="col">Status</th>
+                <th scope="col">Method</th>
             </tr>
         </thead>
         <tbody id="tbodyChangeUser">
             {% for eachItem in soldItems %}
                 <tr>
-                    <td><a href="{{ path('view_sold_product_info_admin', {'id': eachItem.id}) }}" class="card-link">{{ eachItem.product.name }}</a></td>
-                    <td>{{ eachItem.product.user.firstName }} {{ eachItem.product.user.lastName }}</td>
-                    <td>{{ eachItem.user.firstname }} {{ eachItem.user.lastname }}</td>
+                    <td><a href="{{ path('view_sold_product_info_admin', {'id': eachItem.id}) }}" class="card-link">{{ eachItem.productName }}</a></td>
+                    <td>{{ eachItem.sellerName }}</td>
+                    <td>{{ eachItem.buyerName }}</td>
                     <td>{{ eachItem.quantity }}</td>
                     <td>{{ eachItem.totalPrice }}</td>
                     <td>{{ eachItem.boughtAt|date("d. m. Y. H:i") }}</td>
                     <td>
-                        {% if(eachItem.confirmed == 0) %}
-                            <a class="btn btn-primary" href="{{ path('confirm_buy_per_user_admin', {'id': eachItem.id}) }}">Confirm</a>
-                        {% else %}
-                            <a class="btn btn-primary" href="{{ path('confirm_buy_per_user_admin', {'id': eachItem.id}) }}">Confirmed</a>
+                        {% if (eachItem.ptMethod == 'Paypal') %}
+                            <a class="card-link" href="{{ path('view_sold_items_per_user_payment_method', {'id': eachItem.ptId}) }}">Paid with paypal</a>
+                        {% elseif (eachItem.ptMethod == 'Invoice') %}
+                            <a class="card-link" href="{{ path('view_sold_items_per_user_payment_method', {'id': eachItem.ptId}) }}">Invoice</a>
+                        {% elseif (eachItem.ptMethod == null) %}
+                            Not chosen
                         {% endif %}
                     </td>
-                    {% if(eachItem.confirmed == 0) %}
-                        <td>
-                            <a class="btn btn-danger" href="{{ path('delete_sold_item_per_user_admin', {'id': eachItem.id}) }}">Delete</a>
-                        </td>
-                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>

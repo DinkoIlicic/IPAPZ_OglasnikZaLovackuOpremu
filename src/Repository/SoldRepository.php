@@ -51,16 +51,50 @@ class SoldRepository extends ServiceEntityRepository
                 's.totalPrice',
                 's.confirmed',
                 's.boughtAt',
-                'pr.name',
+                '(pr.name) as productName',
                 '(u.fullName) as buyerName',
-                '(se.fullName) as sellerName'
+                '(se.fullName) as sellerName',
+                '(pt.id) as ptId',
+                '(pt.method) as ptMethod',
+                '(pt.transactionId) as ptTId',
+                '(pt.confirmed) as ptConfirmed'
             )
             ->innerJoin('s.product', 'pr')
             ->innerJoin('pr.user', 'se')
             ->innerJoin('s.user', 'u')
+            ->leftJoin('\App\Entity\PaymentTransaction', 'pt', 'WITH', 'pt.soldProduct = s.id')
             ->andWhere('s.product in (:products)', 's.user = :id')
             ->setParameter('products', $products)
             ->setParameter('id', $id)
+            ->orderBy('s.boughtAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getSoldProductPerUserAll($products)
+    {
+        return $this->createQueryBuilder('s')
+            ->select(
+                's.id',
+                's.quantity',
+                's.price',
+                's.totalPrice',
+                's.confirmed',
+                's.boughtAt',
+                '(pr.name) as productName',
+                '(u.fullName) as buyerName',
+                '(se.fullName) as sellerName',
+                '(pt.id) as ptId',
+                '(pt.method) as ptMethod',
+                '(pt.transactionId) as ptTId',
+                '(pt.confirmed) as ptConfirmed'
+            )
+            ->innerJoin('s.product', 'pr')
+            ->innerJoin('pr.user', 'se')
+            ->innerJoin('s.user', 'u')
+            ->leftJoin('\App\Entity\PaymentTransaction', 'pt', 'WITH', 'pt.soldProduct = s.id')
+            ->andWhere('s.product in (:products)')
+            ->setParameter('products', $products)
             ->orderBy('s.boughtAt', 'DESC')
             ->getQuery()
             ->getResult();

@@ -1,0 +1,49 @@
+{% extends '/admin/header.html.twig' %}
+{% block body %}
+    <br />
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <img width="300" height="300" src="../../../../../uploads/image/{{ payment.soldProduct.product.image }}" alt="">
+            </div>
+            <div class="col-sm">
+                <p>Product info:</p>
+                <p>Product name: {{ payment.soldProduct.product.name }}</p>
+                <p>Seller name: {{ payment.soldProduct.user.fullName }}</p>
+                <p>Seller email: {{ payment.soldProduct.user.email }}</p>
+                <p>Seller phone number: {{ payment.soldProduct.user.phoneNumber }}</p>
+                <p>Additional info: {{ payment.soldProduct.product.content }}</p>
+                <br />
+                <p>Buyer info:</p>
+                <p>Name: {{ payment.user.fullName }}</p>
+                <p>Email: {{ payment.user.email }}</p>
+                <p>Phone number: {{ payment.user.phoneNumber }}</p>
+            </div>
+
+            <div class="col-sm">
+                <p>Additional info:</p>
+                <p>Price: {{ payment.soldProduct.price }}</p>
+                <p>Amount: {{ payment.soldProduct.quantity }}</p>
+                <p>Total price: {{ payment.soldProduct.totalPrice }}</p>
+                <p>Discount: {{ payment.soldProduct.discount }}</p>
+                <p>To pay: {{ payment.soldProduct.afterDiscount }}</p>
+                <br />
+                {% if (payment.method == 'Paypal') %}
+                    <p>Method: {{ payment.method }}</p>
+                    <p>Transaction id: {{ payment.transactionId }}</p>
+                    <p>Paid at: {{ payment.paidAt|date("d. m. Y. H:i") }}</p>
+                {% elseif (payment.method == 'Invoice') %}
+                    <p>Method: {{ payment.method }}</p>
+                    <p>Invoice id: <a href="../../public/invoice/{{ payment.transactionId }}">{{ payment.transactionId }}</a></p>
+                    <p>Chosen at: {{ payment.chosenAt|date("d. m. Y. H:i") }}</p>
+                    {% if (payment.confirmed == 1) %}
+                        <p>Paid at: {{ payment.paidAt|date("d. m. Y. H:i") }}</p>
+                    {% elseif (payment.confirmed == 0) %}
+                        <p>Confirm payment</p>
+                        <p>Delete</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

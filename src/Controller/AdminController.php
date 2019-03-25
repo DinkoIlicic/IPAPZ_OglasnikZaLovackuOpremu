@@ -35,7 +35,6 @@ use App\Repository\CategoryRepository;
 use App\Repository\CouponCodesRepository;
 use App\Repository\CouponRepository;
 use App\Repository\CustomPageRepository;
-use App\Repository\OnDeliveryTransactionRepository;
 use App\Repository\PaymentMethodRepository;
 use App\Repository\PaymentTransactionRepository;
 use App\Repository\ProductCategoryRepository;
@@ -586,26 +585,12 @@ class AdminController extends AbstractController
         User $id = null
     ) {
         $products = $productRepository->findAll();
-        $soldPerUser = [];
         if ($id) {
             $userName = $id->getFullName();
-            /**
-             * @var Product $product
-             */
             $soldPerUser = $soldRepository->getSoldProductPerUser($id, $products);
         } else {
             $userName = "All users";
-            /**
-             * @var Product $product
-             */
-            $soldPerUser[] = $soldRepository->findBy(
-                [
-                    'product' => $products
-                ],
-                [
-                    'boughtAt' => 'DESC'
-                ]
-            );
+            $soldPerUser = $soldRepository->getSoldProductPerUserAll($products);
         }
 
         return new JsonResponse(
@@ -631,31 +616,10 @@ class AdminController extends AbstractController
         $products = $productRepository->findAll();
         if ($id) {
             $userName = $id->getFullName();
-            /**
-             * @var Product $product
-             */
-            $soldPerUser = $soldRepository->findBy(
-                [
-                    'user' => $id,
-                    'product' => $products
-                ],
-                [
-                    'boughtAt' => 'DESC'
-                ]
-            );
+            $soldPerUser = $soldRepository->getSoldProductPerUser($id, $products);
         } else {
             $userName = "All users";
-            /**
-             * @var Product $product
-             */
-            $soldPerUser = $soldRepository->findBy(
-                [
-                    'product' => $products
-                ],
-                [
-                    'boughtAt' => 'DESC'
-                ]
-            );
+            $soldPerUser = $soldRepository->getSoldProductPerUserAll($products);
         };
 
         return $this->render(
@@ -663,6 +627,22 @@ class AdminController extends AbstractController
             [
                 'soldItems' => $soldPerUser,
                 'userName' => $userName,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/sold-item-payment-method/{id?}", name="view_sold_items_per_user_payment_method")
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function viewSoldItemPerUserPaymentMethod(
+        PaymentTransaction $paymentTransaction
+    ) {
+        return $this->render(
+            '/admin/view_sold_item_payment_method.html.twig',
+            [
+                'payment' => $paymentTransaction
             ]
         );
     }

@@ -94,7 +94,7 @@ function renderSoldProducts(item, index)
     var cell6 = row.insertCell(5);
     var cell7 = row.insertCell(6);
     var cell8 = row.insertCell(7);
-    cell1.innerHTML = "<a href='/admin/sold-product/"+item.id+"' class='card-link'>"+item.name+"</a>";
+    cell1.innerHTML = "<a href='/admin/sold-product/"+item.id+"' class='card-link'>"+item.productName+"</a>";
     cell2.innerHTML = item.sellerName;
     cell3.innerHTML = item.buyerName;
     cell4.innerHTML = item.quantity;
