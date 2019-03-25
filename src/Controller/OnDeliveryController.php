@@ -42,7 +42,7 @@ class OnDeliveryController extends AbstractController
         $entityManager->persist($sold);
         $entityManager->flush();
 
-        self:$this->createDomPdf($sold, $invoice);
+        self:$this->createDomPdf($sold, $invoice, $entityManager);
 
         $this->addFlash('success', 'Invoice successfully chosen!');
         return $this->redirectToRoute('my_items');
@@ -51,8 +51,9 @@ class OnDeliveryController extends AbstractController
     /**
      * @param Sold $sold
      * @param OnDeliveryTransaction $invoice
+     * @param EntityManagerInterface $entityManager
      */
-    public function createDomPdf(Sold $sold, OnDeliveryTransaction $invoice)
+    public function createDomPdf(Sold $sold, OnDeliveryTransaction $invoice, EntityManagerInterface $entityManager)
     {
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
@@ -69,6 +70,9 @@ class OnDeliveryController extends AbstractController
         );
 
         $pdfName = date("Y") . $invoice->getId() . $sold->getUser()->getId() . '.pdf';
+        $invoice->setFileName($pdfName);
+        $entityManager->persist($invoice);
+        $entityManager->flush();
 
         $domPdf->loadHtml($html);
 
