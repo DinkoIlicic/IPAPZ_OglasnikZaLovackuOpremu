@@ -161,6 +161,7 @@ class ProductService
         if (empty($customUrl)) {
             $customUrl = $product->getName();
         }
+
         $productUrlNum = '-' . rand(10000000, 99999999);
         $pageName = $customUrl . $productUrlNum;
         return $pageName;
@@ -178,6 +179,7 @@ class ProductService
             $customUrl = $product->getName();
             $productUrlNum = '-' . rand(10000000, 99999999);
         }
+
         $pageName = $customUrl . $productUrlNum;
         return $pageName;
     }
@@ -209,6 +211,7 @@ class ProductService
                 $entityManager->persist($wishlistProduct);
             }
         }
+
         $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
         $entityManager->remove($sold);
         $entityManager->flush();

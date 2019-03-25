@@ -56,7 +56,9 @@ class PaypalTransactionController extends AbstractController
             $this->addFlash('warning', 'Payment unsuccessful!');
             return $this->redirectToRoute('my_items');
         }
+
         $sold->setConfirmed(1);
+        $sold->setPaymentMethod('Paypal');
         $paypalTransaction = new PaypalTransaction();
         $paypalTransaction->setUser($sold->getUser());
         $paypalTransaction->setSoldProduct($sold);

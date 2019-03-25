@@ -90,6 +90,11 @@ class Sold
     private $afterDiscount;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $paymentMethod;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -271,5 +276,21 @@ class Sold
     public function setAfterDiscount($afterDiscount): void
     {
         $this->afterDiscount = $afterDiscount;
+    }
+
+    /**
+     * @param mixed $paymentMethod
+     */
+    public function setPaymentMethod($paymentMethod): void
+    {
+        $this->paymentMethod = $paymentMethod;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaymentMethod()
+    {
+        return $this->paymentMethod;
     }
 }

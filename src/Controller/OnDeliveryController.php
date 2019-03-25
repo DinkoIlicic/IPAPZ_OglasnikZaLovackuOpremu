@@ -30,12 +30,14 @@ class OnDeliveryController extends AbstractController
         if ($sold === null) {
             return $this->redirectToRoute('advertisement_index');
         }
+
         $invoice = new OnDeliveryTransaction();
         $invoice->setSoldProduct($sold);
         $invoice->setUser($this->getUser());
         $invoice->setConfirmed(0);
         $invoice->onPrePersist();
         $sold->setConfirmed(true);
+        $sold->setPaymentMethod('Invoice');
         $entityManager->persist($invoice);
         $entityManager->persist($sold);
         $entityManager->flush();
@@ -46,6 +48,10 @@ class OnDeliveryController extends AbstractController
         return $this->redirectToRoute('my_items');
     }
 
+    /**
+     * @param Sold $sold
+     * @param OnDeliveryTransaction $invoice
+     */
     public function createDomPdf(Sold $sold, OnDeliveryTransaction $invoice)
     {
         $pdfOptions = new Options();
@@ -53,11 +59,14 @@ class OnDeliveryController extends AbstractController
 
         $domPdf = new Dompdf($pdfOptions);
 
-        $html = $this->renderView('advertisement/my_pdf.html.twig', [
+        $html = $this->renderView(
+            'advertisement/my_pdf.html.twig',
+            [
             'title' => "Welcome to our PDF Test",
-            'product' => $sold,
+            'sold' => $sold,
             'invoice' => $invoice
-        ]);
+            ]
+        );
 
         $pdfName = date("Y") . $invoice->getId() . $sold->getUser()->getId() . '.pdf';
 
@@ -69,7 +78,7 @@ class OnDeliveryController extends AbstractController
 
         $output = $domPdf->output();
 
-        $publicDirectory = $this->get('kernel')->getProjectDir() . '/public';
+        $publicDirectory = '../public/invoice/';
 
         $pdfFilepath =  $publicDirectory . $pdfName;
 

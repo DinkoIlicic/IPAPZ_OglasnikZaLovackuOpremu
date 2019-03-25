@@ -339,6 +339,7 @@ class Product
             $comment->setProduct($this);
             $this->comments[] = $comment;
         }
+
         return $this;
     }
 
@@ -354,6 +355,7 @@ class Product
                 $comment->setProduct(null);
             }
         }
+
         return $this;
     }
 

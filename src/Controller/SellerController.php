@@ -70,6 +70,7 @@ class SellerController extends AbstractController
             } catch (FileException $e) {
                 // ... handle exception if something happens during file upload
             }
+
             $customUrl = $product->getCustomUrl();
             $pageName = $productService->createCustomUrl($customUrl, $product);
             $product->setCustomUrl(str_replace(' ', '-', $pageName));
@@ -82,6 +83,7 @@ class SellerController extends AbstractController
             $this->addFlash('success', 'Inserted new product!');
             return $this->redirectToRoute('insert_product');
         }
+
         return $this->render(
             '/seller/new_product.html.twig',
             [
@@ -185,6 +187,7 @@ class SellerController extends AbstractController
         if ($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('show_my_products');
         }
+
         $productIm = $product->getImage();
         $productUrlNum = substr($product->getCustomUrl(), -9);
         $productUrl = substr($product->getCustomUrl(), 0, -9);
@@ -212,11 +215,13 @@ class SellerController extends AbstractController
                 $entityManager->remove($oneProductsFromProductCategory);
                 $entityManager->flush();
             }
+
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
             return $this->redirectToRoute('show_my_products');
         }
+
         return $this->render(
             '/seller/update_my_product_info.html.twig',
             [
@@ -242,6 +247,7 @@ class SellerController extends AbstractController
         if ($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('show_my_products');
         }
+
         $productIm = $product->getImage();
         $productBeforeQuantity = $product->getAvailableQuantity();
         $product->setImage(
@@ -268,11 +274,13 @@ class SellerController extends AbstractController
                     $entityManager->persist($wishlistProduct);
                 }
             }
+
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Available Quantity!');
             return $this->redirectToRoute('show_my_products');
         }
+
         return $this->render(
             '/seller/update_my_product_quantity.html.twig',
             [
@@ -296,6 +304,7 @@ class SellerController extends AbstractController
         if ($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('show_my_products');
         }
+
         $product->setImage(
             new File($this->getParameter('image_directory') . DIRECTORY_SEPARATOR . $product->getImage())
         );
@@ -316,12 +325,14 @@ class SellerController extends AbstractController
             } catch (FileException $e) {
                 // ... handle exception if something happens during file upload
             }
+
             $product->setImage($fileName);
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Image!');
             return $this->redirectToRoute('show_my_products');
         }
+
         return $this->render(
             '/seller/update_my_product_image.html.twig',
             [
@@ -500,6 +511,7 @@ class SellerController extends AbstractController
         if ($this->getUser() !== $sold->getProduct()->getUser()) {
             return $this->redirectToRoute('sold_items_per_user');
         }
+
         $productService->deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute(
@@ -554,6 +566,7 @@ class SellerController extends AbstractController
                 ]
             );
         }
+
         return $this->render(
             '/seller/list_of_sold_items_per_product.html.twig',
             [
@@ -614,6 +627,7 @@ class SellerController extends AbstractController
         if ($this->getUser() !== $sold->getProduct()->getUser()) {
             return $this->redirectToRoute('list_of_sold_items_per_product');
         };
+
         $productService->deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute(

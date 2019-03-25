@@ -12,6 +12,7 @@ use App\Entity\Category;
 use App\Entity\Coupon;
 use App\Entity\CouponCodes;
 use App\Entity\CustomPage;
+use App\Entity\OnDeliveryTransaction;
 use App\Entity\PaymentMethod;
 use App\Entity\Product;
 use App\Entity\RandomCodeGenerator;
@@ -35,6 +36,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\CouponCodesRepository;
 use App\Repository\CouponRepository;
 use App\Repository\CustomPageRepository;
+use App\Repository\OnDeliveryTransactionRepository;
 use App\Repository\PaymentMethodRepository;
 use App\Repository\ProductCategoryRepository;
 use App\Repository\ProductRepository;
@@ -172,6 +174,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'New category added!');
             return $this->redirectToRoute('list_of_categories');
         }
+
         return $this->render(
             '/admin/category_list.html.twig',
             [
@@ -202,6 +205,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Updated category!');
             return $this->redirectToRoute('list_of_categories');
         }
+
         return $this->render(
             '/admin/view_category.html.twig',
             [
@@ -263,6 +267,7 @@ class AdminController extends AbstractController
             );
             $message = "All categories";
         }
+
         return $this->render(
             '/admin/view_products.html.twig',
             [
@@ -316,11 +321,13 @@ class AdminController extends AbstractController
                 $entityManager->remove($oneProductsFromProductCategory);
                 $entityManager->flush();
             }
+
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
             return $this->redirectToRoute('list_of_products');
         }
+
         return $this->render(
             '/admin/update_product_info.html.twig',
             [
@@ -370,11 +377,13 @@ class AdminController extends AbstractController
                     $entityManager->persist($wishlistProduct);
                 }
             }
+
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Info!');
             return $this->redirectToRoute('list_of_products');
         }
+
         return $this->render(
             '/admin/update_product_quantity.html.twig',
             [
@@ -415,12 +424,14 @@ class AdminController extends AbstractController
             } catch (FileException $e) {
                 // ... handle exception if something happens during file upload
             }
+
             $product->setImage($fileName);
             $entityManager->merge($product);
             $entityManager->flush();
             $this->addFlash('success', 'Updated the Product Image!!');
             return $this->redirectToRoute('list_of_products');
         }
+
         return $this->render(
             '/admin/update_product_image.html.twig',
             [
@@ -497,6 +508,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'User info updated!');
             return $this->redirectToRoute('list_of_users');
         }
+
         return $this->render(
             '/admin/update_user_info.html.twig',
             [
@@ -533,6 +545,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Password updated!');
             return $this->redirectToRoute('list_of_users');
         }
+
         return $this->render(
             '/admin/update_user_password.html.twig',
             [
@@ -645,6 +658,7 @@ class AdminController extends AbstractController
                 ]
             );
         };
+
         return $this->render(
             '/admin/view_sold_items_per_person.html.twig',
             [
@@ -657,18 +671,29 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/confirm-buy-per-user-admin/{id}", name="confirm_buy_per_user_admin")
      * @param                                             EntityManagerInterface $entityManager
+     * @param                                             OnDeliveryTransactionRepository $deliveryTransactionRepository
      * @param                                             Sold $sold
      * @return                                            Response
      */
     public function confirmBuyPerUserAdmin(
         Sold $sold,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        OnDeliveryTransactionRepository $deliveryTransactionRepository
     ) {
-        if ($sold->getConfirmed() === 0) {
-            $sold->setConfirmed(1);
+        /**
+         * @var $invoice OnDeliveryTransaction
+         */
+        $invoice = $deliveryTransactionRepository->findOneBy(
+            [
+                'user' => $sold->getUser()->getId(),
+                'soldProduct' => $sold->getId()
+            ]
+        );
+        if ($invoice->getConfirmed() === 0) {
+            $invoice->setConfirmed(1);
             $this->addFlash('success', 'Buy confirmed!');
-        } elseif ($sold->getConfirmed() === 1) {
-            $sold->setConfirmed(0);
+        } elseif ($invoice->getConfirmed() === 1) {
+            $invoice->setConfirmed(0);
             $this->addFlash('success', 'Buy unconfirmed!');
         }
 
@@ -745,6 +770,7 @@ class AdminController extends AbstractController
                 ]
             );
         }
+
         return $this->render(
             '/admin/view_sold_items_per_product.html.twig',
             [
@@ -832,6 +858,7 @@ class AdminController extends AbstractController
                 $this->addFlash('warning', 'Content field can not be empty!');
                 return $this->redirectToRoute('view_custom_pages_admin');
             }
+
             $customPage->setPageName(str_replace(' ', '-', $customPage->getPageName()));
             $customPage->setVisibilityAdmin(1);
             $entityManager->persist($customPage);
@@ -839,6 +866,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Page added!');
             return $this->redirectToRoute('view_custom_pages_admin');
         }
+
         return $this->render(
             '/admin/add_custom_page.html.twig',
             [
@@ -899,6 +927,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Page edited!');
             return $this->redirectToRoute('view_custom_pages_admin');
         }
+
         return $this->render(
             '/admin/edit_custom_page.html.twig',
             [
@@ -963,6 +992,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Coupon group added!');
             return $this->redirectToRoute('show_coupons');
         };
+
         return $this->render(
             '/admin/add_coupon_group.html.twig',
             [
@@ -1031,6 +1061,7 @@ class AdminController extends AbstractController
                 $code->setDiscount($coupon->getDiscount());
                 $entityManager->persist($code);
             }
+
             $entityManager->flush();
             $this->addFlash(
                 'success',
@@ -1040,6 +1071,7 @@ class AdminController extends AbstractController
                 'show_coupons'
             );
         };
+
         return $this->render(
             '/admin/add_coupon_codes.html.twig',
             [
@@ -1081,6 +1113,7 @@ class AdminController extends AbstractController
                 'show_coupons'
             );
         };
+
         return $this->render(
             '/admin/remove_coupon_codes.html.twig',
             [
@@ -1135,13 +1168,13 @@ class AdminController extends AbstractController
 
         // Create a Temporary file in the system
         $fileName = 'coupon_codes.xlsx';
-        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $tempFile = tempnam(sys_get_temp_dir(), $fileName);
 
         // Create the excel file in the tmp directory of the system
-        $writer->save($temp_file);
+        $writer->save($tempFile);
 
         // Return the excel file as an attachment
-        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        return $this->file($tempFile, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
     /**
@@ -1175,6 +1208,7 @@ class AdminController extends AbstractController
             $paymentMethod->setEnabled(true);
             $this->addFlash('success', 'Payment method enabled!');
         }
+
         $entityManager->persist($paymentMethod);
         $entityManager->flush();
         return $this->redirectToRoute('show_payment_methods');

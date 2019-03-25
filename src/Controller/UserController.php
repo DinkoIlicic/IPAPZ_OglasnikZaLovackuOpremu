@@ -62,6 +62,7 @@ class UserController extends AbstractController
         if ($this->isGranted('ROLE_USER')) {
             return $this->redirectToRoute('advertisement_index');
         }
+
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -116,6 +117,7 @@ class UserController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
         }
+
         return $this->render(
             'security/profile.html.twig',
             [
@@ -151,6 +153,7 @@ class UserController extends AbstractController
             $this->addFlash('success', 'Password Updated!');
             return $this->redirectToRoute('app_profile');
         }
+
         return $this->render(
             '/security/new_password.html.twig',
             [

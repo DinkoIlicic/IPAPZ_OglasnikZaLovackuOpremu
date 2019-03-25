@@ -175,6 +175,7 @@ class AdvertisementController extends AbstractController
             $this->addFlash('success', 'Applied for seller position!');
             return $this->redirectToRoute('advertisement_index');
         }
+
         return $this->render(
             '/advertisement/apply_for_seller.html.twig',
             [
@@ -279,6 +280,7 @@ class AdvertisementController extends AbstractController
                     'pageName' => $product->getCustomUrl()]
             );
         }
+
         if ($sold->getQuantity() > $product->getAvailableQuantity()) {
             $this->addFlash('warning', 'Not enough available quantity!');
             return $this->redirectToRoute(
@@ -326,6 +328,7 @@ class AdvertisementController extends AbstractController
             $sold->setDiscount('0');
             $sold->setAfterDiscount($sold->getTotalPrice());
         }
+
         $sold->setConfirmed(0);
         $product->setAvailableQuantity($product->getAvailableQuantity() - $sold->getQuantity());
         $entityManager->persist($sold);
@@ -359,17 +362,22 @@ class AdvertisementController extends AbstractController
         if ($checkForCouponCode === null) {
             return false;
         }
+
         if ($checkForCouponCode->getAllProducts()) {
             return true;
         }
+
         if ($checkForCouponCode->getCategoryId()) {
-            $productHasCategory = $productCategoryRepository->findOneBy([
-                'product' => $product,
-                'category' => $checkForCouponCode->getCategoryId()
-            ]);
+            $productHasCategory = $productCategoryRepository->findOneBy(
+                [
+                    'product' => $product,
+                    'category' => $checkForCouponCode->getCategoryId()
+                ]
+            );
             if ($productHasCategory === null) {
                 return false;
             }
+
             return true;
         }
 
@@ -377,8 +385,10 @@ class AdvertisementController extends AbstractController
             if ($checkForCouponCode->getProductId() != $product->getId()) {
                 return false;
             }
+
             return true;
         }
+
         return true;
     }
 
@@ -492,11 +502,13 @@ class AdvertisementController extends AbstractController
             if ($wishlistProduct->getNotify() === 0 && $wishlistProduct->getNotified() === 0) {
                 continue;
             }
+
             if ($wishlistProduct->getNotify() === 0 && $wishlistProduct->getNotified() === 1) {
                 $wishlistProduct->setNotified(0);
                 $entityManager->persist($wishlistProduct);
                 continue;
             }
+
             /**
              * @var Product $productCheck
              */
@@ -507,6 +519,7 @@ class AdvertisementController extends AbstractController
                 $entityManager->persist($wishlistProduct);
             }
         }
+
         $entityManager->flush();
         return $this->render(
             '/advertisement/my_wish_list.html.twig',
@@ -544,6 +557,7 @@ class AdvertisementController extends AbstractController
                     'pageName' => $product->getCustomUrl()]
             );
         }
+
         $wishlist = new Wishlist();
         $wishlist->setProduct($product);
         $wishlist->setUser($this->getUser());
@@ -637,13 +651,13 @@ class AdvertisementController extends AbstractController
 
         // Create a Temporary file in the system
         $fileName = 'bought_products.xlsx';
-        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $tempFile = tempnam(sys_get_temp_dir(), $fileName);
 
         // Create the excel file in the tmp directory of the system
-        $writer->save($temp_file);
+        $writer->save($tempFile);
 
         // Return the excel file as an attachment
-        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        return $this->file($tempFile, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
     /**

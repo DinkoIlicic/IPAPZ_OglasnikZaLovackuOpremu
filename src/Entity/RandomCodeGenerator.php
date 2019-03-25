@@ -134,6 +134,7 @@ class RandomCodeGenerator
                 return $this->isInArray($chars, $codes[$this->map[$chars[$index]]], ++$index);
             }
         }
+
         return false;
     }
 
@@ -165,6 +166,7 @@ class RandomCodeGenerator
                 $finalCode = substr($finalCode, 0, $index) . implode("", array_slice($chars, $index));
                 return;
             }
+
             $finalCode[$index] = $chars[$index];
 
             $this->addToarray($chars, $codes[$this->map[$chars[$index]]], ++$index, $finalCode);

@@ -42,6 +42,11 @@ class OnDeliveryTransaction
     private $chosenAt;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $fileName;
+
+    /**
      * @ORM\Column(type="boolean")
      */
     private $confirmed;
@@ -124,5 +129,21 @@ class OnDeliveryTransaction
     public function onPrePersist()
     {
         $this->chosenAt = new \DateTime('now');
+    }
+
+    /**
+     * @param mixed $fileName
+     */
+    public function setFileName($fileName): void
+    {
+        $this->fileName = $fileName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFileName()
+    {
+        return $this->fileName;
     }
 }
