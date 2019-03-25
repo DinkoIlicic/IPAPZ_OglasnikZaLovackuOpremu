@@ -10,9 +10,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Comment;
-use App\Entity\CouponCodes;
 use App\Entity\Product;
-use App\Entity\Seller;
 use App\Entity\Sold;
 use App\Entity\Wishlist;
 use App\Form\CommentFormType;
@@ -34,10 +32,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route; //@codingStandardsIgnoreLine
 
 class AdvertisementController extends AbstractController
 {
@@ -47,7 +43,7 @@ class AdvertisementController extends AbstractController
      * @param      ProductService $productService
      * @param      Request $request
      * @param      CustomPageRepository $customPageRepository
-     * @return     Response
+     * @return     \Symfony\Component\HttpFoundation\Response
      */
     public function index(
         CategoryRepository $categoryRepository,
@@ -105,7 +101,7 @@ class AdvertisementController extends AbstractController
      * @param                          Request $request
      * @param                          Category $category
      * @param                          CustomPageRepository $customPageRepository
-     * @return                         Response
+     * @return                         \Symfony\Component\HttpFoundation\Response
      */
     public function showProductsPerCategory(
         Category $category,
@@ -128,7 +124,7 @@ class AdvertisementController extends AbstractController
 
     /**
      * @Route("/apply-for-seller", name="apply_for_seller")
-     * @return                     Response
+     * @return                     \Symfony\Component\HttpFoundation\Response
      * @param                      EntityManagerInterface $entityManager
      * @param                      SellerRepository $sellerRepository
      * @param                      CategoryRepository $categoryRepository
@@ -165,7 +161,7 @@ class AdvertisementController extends AbstractController
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
             /**
-             * @var Seller $seller
+             * @var \App\Entity\Seller $seller
              */
             $seller = $form->getData();
             $seller->setUser($this->getUser());
@@ -197,7 +193,7 @@ class AdvertisementController extends AbstractController
      * @param                              CouponCodesRepository $couponCodesRepository
      * @param                              ProductCategoryRepository $productCategoryRepository
      * @param                              Request $request
-     * @return                             Response
+     * @return                             \Symfony\Component\HttpFoundation\Response
      * @var                                $pageName
      */
     public function checkProduct(
@@ -322,6 +318,9 @@ class AdvertisementController extends AbstractController
             $discountReduce = $totalPrice * $discountAmount / 100;
             $afterDiscount = $totalPrice - $discountReduce;
             $sold->setAfterDiscount($afterDiscount);
+            /**
+             * @var \App\Entity\CouponCodes $checkForCouponCode
+             */
             $entityManager->remove($checkForCouponCode);
         } else {
             $sold->setCouponCodeName('');
@@ -356,7 +355,7 @@ class AdvertisementController extends AbstractController
     ) {
 
         /**
-         * @var $checkForCouponCode CouponCodes
+         * @var $checkForCouponCode \App\Entity\CouponCodes
          */
         $checkForCouponCode = $couponCodesRepository->findOneBy(['codeName' => $couponCode]);
         if ($checkForCouponCode === null) {
@@ -396,7 +395,7 @@ class AdvertisementController extends AbstractController
      * @param Comment $comment
      * @param Product $product
      * @param EntityManagerInterface $entityManager
-     * @return RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function commentOnProduct(Comment $comment, Product $product, EntityManagerInterface $entityManager)
     {
@@ -415,7 +414,7 @@ class AdvertisementController extends AbstractController
     /**
      * @param $formMailData
      * @param Product $product
-     * @return RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function sendMail($formMailData, Product $product)
     {
@@ -457,7 +456,7 @@ class AdvertisementController extends AbstractController
      * @param           ProductService $productService
      * @param           CustomPageRepository $customPageRepository
      * @param           Request $request
-     * @return          Response
+     * @return          \Symfony\Component\HttpFoundation\Response
      */
     public function myItems(
         CategoryRepository $categoryRepository,
@@ -484,7 +483,7 @@ class AdvertisementController extends AbstractController
      * @param              EntityManagerInterface $entityManager
      * @param              CustomPageRepository $customPageRepository
      * @param              Request $request
-     * @return             Response
+     * @return             \Symfony\Component\HttpFoundation\Response
      */
     public function myWishList(
         CategoryRepository $categoryRepository,
@@ -536,7 +535,7 @@ class AdvertisementController extends AbstractController
      * @param                          Product $product
      * @param                          EntityManagerInterface $entityManager
      * @param                          WishlistRepository $wishlistRepository
-     * @return                         Response
+     * @return                         \Symfony\Component\HttpFoundation\Response
      */
     public function addProductToWishList(
         Product $product,
@@ -579,7 +578,7 @@ class AdvertisementController extends AbstractController
      * @param                               Product $product
      * @param                               EntityManagerInterface $entityManager
      * @param                               WishlistRepository $wishlistRepository
-     * @return                              Response
+     * @return                              \Symfony\Component\HttpFoundation\Response
      */
     public function removeProductToWishList(
         Product $product,
@@ -665,7 +664,7 @@ class AdvertisementController extends AbstractController
      * @param                            CustomPageRepository $customPageRepository
      * @param                            CategoryRepository $categoryRepository
      * @var                              $pageName
-     * @return                           Response
+     * @return                           \Symfony\Component\HttpFoundation\Response
      */
     public function renderCustomPage(
         CategoryRepository $categoryRepository,
@@ -685,7 +684,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function searchBar()
     {

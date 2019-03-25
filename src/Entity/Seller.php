@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpSt\Doctrine\ORM\Mapping.
  * User: dinko
  * Date: 19.02.19.
  * Time: 11:23
@@ -8,40 +8,37 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * Class Seller
  *
- * @ORM\Entity(repositoryClass="App\Repository\SellerRepository")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\SellerRepository")
  * @package                                                       App\Entity
- * @UniqueEntity(fields={"user"},                                 message="This user is already applied for seller")
+ * @\Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity
+ *  (fields={"user"}, message="This user is already applied for seller")
  */
 class Seller
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\OneToOne(targetEntity="App\Entity\User")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
-     * @Assert\NotBlank()
-     * @ORM\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
+     * @\Doctrine\ORM\Mapping\Column(type="string")
      */
     private $applyContent;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $verified;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpSt\Doctrine\ORM\Mapping.
  * User: inchoo
  * Date: 3/21/19
  * Time: 2:15 PM
@@ -8,29 +8,27 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  * Class PaymentMethod
  * @package App\Entity
- * @ORM\Entity(repositoryClass="App\Repository\PaymentMethodRepository")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\PaymentMethodRepository")
  */
 class PaymentMethod
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="text")
+     * @\Doctrine\ORM\Mapping\Column(type="text")
      */
     private $method;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $enabled;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpSt\Doctrine\ORM\Mapping.
  * User: dinko
  * Date: 20.02.19.
  * Time: 12:32
@@ -9,48 +9,48 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Class Category
  *
- * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\CategoryRepository")
  * @package                                                         App\Entity
- * @UniqueEntity(fields={"name"},                                   message="This category name is already used")
+ * @\Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity
+ *  (fields={"name"}, message="This category name is already used")
  */
 class Category
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @\Doctrine\ORM\Mapping\Column(type="string")
      */
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\User")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $visibility;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $visibilityAdmin;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductCategory", mappedBy="category", cascade={"persist","remove"})
+     * @\Doctrine\ORM\Mapping\OneToMany
+     *  (targetEntity="App\Entity\ProductCategory", mappedBy="category", cascade={"persist","remove"})
      */
     private $productCategory;
 

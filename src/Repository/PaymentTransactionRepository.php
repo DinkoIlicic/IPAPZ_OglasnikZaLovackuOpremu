@@ -2,20 +2,20 @@
 /**
  * Created by PhpStorm.
  * User: inchoo
- * Date: 3/22/19
- * Time: 12:48 PM
+ * Date: 3/25/19
+ * Time: 1:17 PM
  */
 
 namespace App\Repository;
 
-use App\Entity\OnDeliveryTransaction;
+use App\Entity\PaymentTransaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class OnDeliveryTransactionRepository extends ServiceEntityRepository
+class PaymentTransactionRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, OnDeliveryTransaction::class);
+        parent::__construct($registry, PaymentTransaction::class);
     }
 }

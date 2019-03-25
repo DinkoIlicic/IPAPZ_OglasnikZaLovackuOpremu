@@ -10,7 +10,6 @@ namespace App\Form;
 
 use App\Entity\Product;
 use App\Entity\Sold;
-use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -22,7 +21,7 @@ class ListOfBoughtItemsPerProductFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /**
-         * @var User $user
+         * @var \App\Entity\User $user
          */
         $user = $options['user'];
         $id = $user->getId();

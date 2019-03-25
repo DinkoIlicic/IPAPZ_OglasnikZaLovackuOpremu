@@ -3,45 +3,42 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * Class Comment
  *
  * @package                     App\Entity
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
+ * @\Doctrine\ORM\Mapping\Entity()
+ * @\Doctrine\ORM\Mapping\HasLifecycleCallbacks()
  */
 class Comment
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank()
+     * @\Doctrine\ORM\Mapping\Column(type="text")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $content;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @\Doctrine\ORM\Mapping\Column(type="datetime")
      */
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="comments")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\Product", inversedBy="comments")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $product;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\User")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $user;
 
@@ -94,7 +91,7 @@ class Comment
     }
 
     /**
-     * @ORM\PrePersist()
+     * @\Doctrine\ORM\Mapping\PrePersist()
      */
     public function onPrePersist()
     {

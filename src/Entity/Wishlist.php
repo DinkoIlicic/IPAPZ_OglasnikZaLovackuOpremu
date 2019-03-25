@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpSt\Doctrine\ORM\Mapping.
  * User: inchoo
  * Date: 3/14/19
  * Time: 1:50 PM
@@ -8,40 +8,41 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use App\Entity\User;
+use App\Entity\Product;
 
 /**
  * Class Wishlist
  *
  * @package                                                         App\Entity
- * @ORM\Entity(repositoryClass="App\Repository\WishlistRepository")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\WishlistRepository")
  */
 class Wishlist
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="wishlist")
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\Product", inversedBy="wishlist")
      */
     private $product;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="wishlist")
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\User", inversedBy="wishlist")
      */
     private $user;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @\Doctrine\ORM\Mapping\Column(type="smallint")
      */
     private $notify;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @\Doctrine\ORM\Mapping\Column(type="smallint")
      */
     private $notified;
 

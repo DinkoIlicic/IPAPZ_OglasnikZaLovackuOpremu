@@ -12,14 +12,13 @@ use App\Entity\Category;
 use App\Entity\Coupon;
 use App\Entity\CouponCodes;
 use App\Entity\CustomPage;
-use App\Entity\OnDeliveryTransaction;
 use App\Entity\PaymentMethod;
+use App\Entity\PaymentTransaction;
 use App\Entity\Product;
 use App\Entity\RandomCodeGenerator;
 use App\Entity\Seller;
 use App\Entity\Sold;
 use App\Entity\User;
-use App\Entity\Wishlist;
 use App\Form\AdminListOfBoughtItemsPerProductFormType;
 use App\Form\AdminListOfCategoriesFormType;
 use App\Form\CategoryFormType;
@@ -38,6 +37,7 @@ use App\Repository\CouponRepository;
 use App\Repository\CustomPageRepository;
 use App\Repository\OnDeliveryTransactionRepository;
 use App\Repository\PaymentMethodRepository;
+use App\Repository\PaymentTransactionRepository;
 use App\Repository\ProductCategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
@@ -51,18 +51,17 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Annotation\Route; //@codingStandardsIgnoreLine
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AdminController extends AbstractController
 {
     /**
      * @Route("/admin/", name="admin_index")
-     * @return           Response
+     * @return           \Symfony\Component\HttpFoundation\Response
      */
     public function index()
     {
@@ -74,7 +73,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/appliers", name="check_apply_for_seller")
      * @param                    SellerRepository $sellerRepository
-     * @return                   Response
+     * @return                   \Symfony\Component\HttpFoundation\Response
      */
     public function listAllAppliersForSeller(SellerRepository $sellerRepository)
     {
@@ -96,7 +95,7 @@ class AdminController extends AbstractController
      * @Route("/admin/applier/{id}", name="check_one_applier_for_seller")
      * @param                        SellerRepository $sellerRepository
      * @param                        Seller $seller
-     * @return                       Response
+     * @return                       \Symfony\Component\HttpFoundation\Response
      */
     public function listOneApplierForSeller(Seller $seller, SellerRepository $sellerRepository)
     {
@@ -118,7 +117,7 @@ class AdminController extends AbstractController
      * @Route("/admin/verify-applier/{id}", name="verify_applier")
      * @param                               Seller $seller
      * @param                               EntityManagerInterface $entityManager
-     * @return                              Response
+     * @return                              \Symfony\Component\HttpFoundation\Response
      */
     public function verifyApplier(Seller $seller, EntityManagerInterface $entityManager)
     {
@@ -146,7 +145,7 @@ class AdminController extends AbstractController
      * @param                      Request $request
      * @param                      EntityManagerInterface $entityManager
      * @param                      CategoryRepository $categoryRepository
-     * @return                     Response
+     * @return                     \Symfony\Component\HttpFoundation\Response
      */
     public function listOfAllCategories(
         Request $request,
@@ -190,7 +189,7 @@ class AdminController extends AbstractController
      * @param                                EntityManagerInterface $entityManager
      * @param                                Request $request
      * @param                                Category $category
-     * @return                               Response
+     * @return                               \Symfony\Component\HttpFoundation\Response
      */
     public function updateOneCategory(
         Category $category,
@@ -219,7 +218,7 @@ class AdminController extends AbstractController
      * @Route("/admin/cat-visibility/{id}", name="category_visibility_admin")
      * @param                               EntityManagerInterface $entityManager
      * @param                               Category $category
-     * @return                              Response
+     * @return                              \Symfony\Component\HttpFoundation\Response
      */
     public function updateCategoryVisibilityAdmin(
         Category $category,
@@ -243,7 +242,7 @@ class AdminController extends AbstractController
      * @Route("/admin/products", name="list_of_products")
      * @param                    ProductRepository $productRepository
      * @param                    Request $request
-     * @return                   Response
+     * @return                   \Symfony\Component\HttpFoundation\Response
      */
     public function showAllProducts(
         Request $request,
@@ -285,7 +284,7 @@ class AdminController extends AbstractController
      * @param                                    ProductService $productService
      * @param                                    Request $request
      * @param                                    Product $product
-     * @return                                   Response
+     * @return                                   \Symfony\Component\HttpFoundation\Response
      */
     public function updateProductInfo(
         Product $product,
@@ -342,7 +341,7 @@ class AdminController extends AbstractController
      * @param                                        WishlistRepository $wishlistRepository
      * @param                                        Request $request
      * @param                                        Product $product
-     * @return                                       Response
+     * @return                                       \Symfony\Component\HttpFoundation\Response
      */
     public function updateProductQuantity(
         Product $product,
@@ -371,7 +370,7 @@ class AdminController extends AbstractController
                 );
                 foreach ($wishlistProducts as $wishlistProduct) {
                     /**
-                     * @var $wishlistProduct Wishlist
+                     * @var $wishlistProduct \App\Entity\Wishlist
                      */
                     $wishlistProduct->setNotify(1);
                     $entityManager->persist($wishlistProduct);
@@ -397,7 +396,7 @@ class AdminController extends AbstractController
      * @param                                     EntityManagerInterface $entityManager
      * @param                                     Request $request
      * @param                                     Product $product
-     * @return                                    Response
+     * @return                                    \Symfony\Component\HttpFoundation\Response
      */
     public function updateMyProductImage(
         Product $product,
@@ -444,7 +443,7 @@ class AdminController extends AbstractController
      * @Route("/admin/prod-visibility/{id}", name="update_product_visibility_admin")
      * @param                                EntityManagerInterface $entityManager
      * @param                                Product $product
-     * @return                               Response
+     * @return                               \Symfony\Component\HttpFoundation\Response
      */
     public function updateProductVisibilityAdmin(
         Product $product,
@@ -469,7 +468,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/users", name="list_of_users")
      * @param                 UserRepository $userRepository
-     * @return                Response
+     * @return                \Symfony\Component\HttpFoundation\Response
      */
     public function listOfUsers(UserRepository $userRepository)
     {
@@ -492,7 +491,7 @@ class AdminController extends AbstractController
      * @param                          EntityManagerInterface $entityManager
      * @param                          Request $request
      * @param                          User $user
-     * @return                         Response
+     * @return                         \Symfony\Component\HttpFoundation\Response
      */
     public function updateUserInfoAdmin(
         User $user,
@@ -523,7 +522,7 @@ class AdminController extends AbstractController
      * @param                                  EntityManagerInterface $entityManager
      * @param                                  Request $request
      * @param                                  User $user
-     * @return                                 Response
+     * @return                                 \Symfony\Component\HttpFoundation\Response
      */
     public function updateUserPasswordAdmin(
         User $user,
@@ -579,7 +578,7 @@ class AdminController extends AbstractController
      * @param                                  SoldRepository $soldRepository
      * @param                                  ProductRepository $productRepository
      * @param                                  User $id
-     * @return                                 Response
+     * @return                                 JsonResponse
      */
     public function ajaxListPersonPerPersonAdmin(
         SoldRepository $soldRepository,
@@ -622,7 +621,7 @@ class AdminController extends AbstractController
      * @param                                    SoldRepository $soldRepository
      * @param                                    ProductRepository $productRepository
      * @param                                    User $id
-     * @return                                   Response
+     * @return                                   \Symfony\Component\HttpFoundation\Response
      */
     public function listOfPeopleThatBoughtMyProduct(
         SoldRepository $soldRepository,
@@ -671,19 +670,19 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/confirm-buy-per-user-admin/{id}", name="confirm_buy_per_user_admin")
      * @param                                             EntityManagerInterface $entityManager
-     * @param                                             OnDeliveryTransactionRepository $deliveryTransactionRepository
+     * @param                                             PaymentTransactionRepository $paymentTransactionRepository
      * @param                                             Sold $sold
-     * @return                                            Response
+     * @return                                            \Symfony\Component\HttpFoundation\Response
      */
     public function confirmBuyPerUserAdmin(
         Sold $sold,
         EntityManagerInterface $entityManager,
-        OnDeliveryTransactionRepository $deliveryTransactionRepository
+        PaymentTransactionRepository $paymentTransactionRepository
     ) {
         /**
-         * @var $invoice OnDeliveryTransaction
+         * @var $invoice \App\Entity\PaymentTransaction
          */
-        $invoice = $deliveryTransactionRepository->findOneBy(
+        $invoice = $paymentTransactionRepository->findOneBy(
             [
                 'user' => $sold->getUser()->getId(),
                 'soldProduct' => $sold->getId()
@@ -712,7 +711,7 @@ class AdminController extends AbstractController
      * @param                                                  WishlistRepository $wishlistRepository
      * @param                                                  ProductService $productService
      * @param                                                  Sold $sold
-     * @return                                                 Response
+     * @return                                                 \Symfony\Component\HttpFoundation\Response
      */
     public function deleteSoldItemPerUser(
         Sold $sold,
@@ -735,7 +734,7 @@ class AdminController extends AbstractController
      * @param                                 Request $request
      * @param                                 SoldRepository $soldRepository
      * @param                                 ProductRepository $productRepository
-     * @return                                Response
+     * @return                                \Symfony\Component\HttpFoundation\Response
      */
     public function listOfBoughtItemsPerProduct(
         Request $request,
@@ -785,7 +784,7 @@ class AdminController extends AbstractController
      * @Route("/admin/confirm-buy-per-product-admin/{id}", name="confirm_buy_per_product_admin")
      * @param                                              EntityManagerInterface $entityManager
      * @param                                              Sold $sold
-     * @return                                             Response
+     * @return                                             \Symfony\Component\HttpFoundation\Response
      */
     public function confirmBuyPerProductAdmin(
         Sold $sold,
@@ -810,7 +809,7 @@ class AdminController extends AbstractController
      * @param                                                    WishlistRepository $wishlistRepository
      * @param                                                    ProductService $productService
      * @param                                                    Sold $sold
-     * @return                                                   Response
+     * @return                                                   \Symfony\Component\HttpFoundation\Response
      */
     public function deleteSoldItemPerProduct(
         Sold $sold,
@@ -827,7 +826,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/sold-product/{id}", name="view_sold_product_info_admin")
      * @param                             Sold $sold
-     * @return                            Response
+     * @return                            \Symfony\Component\HttpFoundation\Response
      */
     public function viewSoldProductInfo(Sold $sold)
     {
@@ -843,7 +842,7 @@ class AdminController extends AbstractController
      * @Route("/admin/add-page", name="add_custom_page_admin")
      * @param                    Request $request
      * @param                    EntityManagerInterface $entityManager
-     * @return                   Response
+     * @return                   \Symfony\Component\HttpFoundation\Response
      */
     public function addCustomPage(Request $request, EntityManagerInterface $entityManager)
     {
@@ -878,7 +877,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/view-pages", name="view_custom_pages_admin")
      * @param                      CustomPageRepository $customPageRepository
-     * @return                     Response
+     * @return                     \Symfony\Component\HttpFoundation\Response
      */
     public function viewCustomPages(CustomPageRepository $customPageRepository)
     {
@@ -895,7 +894,7 @@ class AdminController extends AbstractController
      * @Route("/admin/delete-page/{id}", name="delete_custom_page_admin")
      * @param                            CustomPage $customPage
      * @param                            EntityManagerInterface $entityManager
-     * @return                           Response
+     * @return                           \Symfony\Component\HttpFoundation\Response
      */
     public function deleteCustomPage(EntityManagerInterface $entityManager, CustomPage $customPage)
     {
@@ -910,7 +909,7 @@ class AdminController extends AbstractController
      * @param                          CustomPage $customPage
      * @param                          EntityManagerInterface $entityManager
      * @param                          Request $request
-     * @return                         Response
+     * @return                         \Symfony\Component\HttpFoundation\Response
      */
     public function editCustomPage(CustomPage $customPage, EntityManagerInterface $entityManager, Request $request)
     {
@@ -961,7 +960,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/coupons/", name="show_coupons")
      * @param                    CouponRepository $couponRepository
-     * @return                   Response
+     * @return                   \Symfony\Component\HttpFoundation\Response
      */
     public function showCouponGroup(CouponRepository $couponRepository)
     {
@@ -979,7 +978,7 @@ class AdminController extends AbstractController
      * @Route("/admin/add-coupon/", name="add_coupon_group")
      * @param                       Request $request
      * @param                       EntityManagerInterface $entityManager
-     * @return                      Response
+     * @return                      \Symfony\Component\HttpFoundation\Response
      */
     public function addCouponGroup(Request $request, EntityManagerInterface $entityManager)
     {
@@ -1006,7 +1005,7 @@ class AdminController extends AbstractController
      * @param                                 Request $request
      * @param                                 EntityManagerInterface $entityManager
      * @param                                 Coupon $coupon
-     * @return                                Response
+     * @return                                \Symfony\Component\HttpFoundation\Response
      */
     public function addCouponCodes(Request $request, EntityManagerInterface $entityManager, Coupon $coupon)
     {
@@ -1085,7 +1084,7 @@ class AdminController extends AbstractController
      * @param                                    Request $request
      * @param                                    Coupon $coupon
      * @param                                    EntityManagerInterface $entityManager
-     * @return                                   Response
+     * @return                                   \Symfony\Component\HttpFoundation\Response
      */
     public function deleteCouponCodes(Request $request, Coupon $coupon, EntityManagerInterface $entityManager)
     {
@@ -1180,7 +1179,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/payment-methods/", name="show_payment_methods")
      * @param                       PaymentMethodRepository $paymentMethodRepository
-     * @return                      Response
+     * @return                      \Symfony\Component\HttpFoundation\Response
      */
     public function showPaymentMethods(PaymentMethodRepository $paymentMethodRepository)
     {
@@ -1197,7 +1196,7 @@ class AdminController extends AbstractController
      * @Route("/admin/enable-payment-method/{id}", name="enable_payment_method")
      * @param                       PaymentMethod $paymentMethod
      * @param                       EntityManagerInterface $entityManager
-     * @return                      Response
+     * @return                      \Symfony\Component\HttpFoundation\Response
      */
     public function enablePaymentMethods(PaymentMethod $paymentMethod, EntityManagerInterface $entityManager)
     {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpSt\Doctrine\ORM\Mapping.
  * User: inchoo
  * Date: 3/20/19
  * Time: 11:36 AM
@@ -8,32 +8,29 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * Class CouponCodes
  *
- * @ORM\Entity(repositoryClass="App\Repository\CouponCodesRepository")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\CouponCodesRepository")
  * @package                                                            App\Entity
  */
 class CouponCodes
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @\Doctrine\ORM\Mapping\Column(type="string", length=255, unique=true)
      */
     private $codeName;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\Regex(
+     * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\Regex(
      *     pattern     = "/^[0-9.%]+$/i",
      *     message     = "Only numbers, dot and percentage are allowed"
      * )
@@ -41,24 +38,24 @@ class CouponCodes
     private $discount;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $allProducts;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $categoryId;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $productId;
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Coupon")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\Coupon")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $codeGroup;
 

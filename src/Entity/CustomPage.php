@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpSt\Doctrine\ORM\Mapping.
  * User: inchoo
  * Date: 3/19/19
  * Time: 1:24 PM
@@ -8,45 +8,42 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * Class CustomPage
  *
- * @ORM\Entity(repositoryClass="App\Repository\CustomPageRepository")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\CustomPageRepository")
  * @package                                                           App\Entity
  */
 class CustomPage
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @Assert\Regex(
+     * @\Symfony\Component\Validator\Constraints\Regex(
      *     pattern     = "/^[a-zA-Z0-9 _.-]+$/i",
      *     message     = "Only letters, numbers, space, underscore, dot and minus are allowed"
      *     )
-     * @ORM\Column(type="string")
+     * @\Doctrine\ORM\Mapping\Column(type="string")
      */
     private $pageName;
 
     /**
-     * @Assert\Length(
+     * @\Symfony\Component\Validator\Constraints\Length(
      *      max = 5000,
      *      maxMessage = "Content cannot be longer than {{ limit }} characters"
      * )
-     * @ORM\Column(type="string", length=2000)
-     * @Assert\NotBlank()
+     * @\Doctrine\ORM\Mapping\Column(type="string", length=2000)
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $content;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $visibilityAdmin;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpSt\Doctrine\ORM\Mapping.
  * User: dinko
  * Date: 20.02.19.
  * Time: 13:23
@@ -8,31 +8,30 @@
 
 namespace App\Entity;
 
+use App\Entity\Comment;
+use App\Entity\ProductCategory;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class Product
  *
- * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\ProductRepository")
  * @package                                                        App\Entity
  */
 class Product
 {
 
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @Assert\NotBlank(message="Please, insert product name.")
-     * @ORM\Column(type="string")
-     * @Assert\Regex(
+     * @\Symfony\Component\Validator\Constraints\NotBlank(message="Please, insert product name.")
+     * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\Regex(
      *     pattern     = "/^[a-zA-Z0-9 _.-]+$/i",
      *     message     = "Only letters, numbers, space, underscore, dot and minus are allowed"
      * )
@@ -40,50 +39,52 @@ class Product
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductCategory", mappedBy="product", cascade={"persist","remove"})
+     * @\Doctrine\ORM\Mapping\OneToMany
+     *  (targetEntity="App\Entity\ProductCategory", mappedBy="product", cascade={"persist","remove"})
      */
     private $productCategory;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Wishlist", mappedBy="product", cascade={"persist","remove"})
+     * @\Doctrine\ORM\Mapping\OneToMany
+     *  (targetEntity="App\Entity\Wishlist", mappedBy="product", cascade={"persist","remove"})
      */
     private $wishlist;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\User")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
-     * @Assert\NotBlank(message="Please, insert product price.")
-     * @ORM\Column(type="decimal",       scale=2)
-     * @Assert\GreaterThan(
+     * @\Symfony\Component\Validator\Constraints\NotBlank(message="Please, insert product price.")
+     * @\Doctrine\ORM\Mapping\Column(type="decimal",       scale=2)
+     * @\Symfony\Component\Validator\Constraints\GreaterThan(
      *     value = 0
      * )
      */
     private $price;
 
     /**
-     * @ORM\Column(type="string")
+     * @\Doctrine\ORM\Mapping\Column(type="string")
      */
     private $content;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $visibility;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $visibilityAdmin;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank(message="Please, upload the image.")
-     * @Assert\File(mimeTypes={          "image/jpg", "image/jpeg" })
-     * @Assert\Image(
+     * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\NotBlank(message="Please, upload the image.")
+     * @\Symfony\Component\Validator\Constraints\File(mimeTypes={          "image/jpg", "image/jpeg" })
+     * @\Symfony\Component\Validator\Constraints\Image(
      *     minWidth = 300,
      *     maxWidth = 2000,
      *     minHeight = 300,
@@ -93,28 +94,29 @@ class Product
     private $image;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Assert\GreaterThanOrEqual(
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
+     * @\Symfony\Component\Validator\Constraints\GreaterThanOrEqual(
      *     value = 0
      * )
-     * @Assert\LessThan(
+     * @\Symfony\Component\Validator\Constraints\LessThan(
      *     value = 10000
      * )
      */
     private $availableQuantity;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="product", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"createdAt"="DESC"})
+     * @\Doctrine\ORM\Mapping\OneToMany
+     *  (targetEntity="App\Entity\Comment", mappedBy="product", cascade={"persist", "remove"})
+     * @\Doctrine\ORM\Mapping\OrderBy({"createdAt"="DESC"})
      */
     private $comments;
 
     /**
-     * @Assert\Regex(
+     * @\Symfony\Component\Validator\Constraints\Regex(
      *     pattern     = "/^[a-zA-Z0-9 _.-]+$/i",
      *     message     = "Only letters, numbers, space, underscore, dot and minus are allowed"
      *     )
-     * @ORM\Column(name="custom_url", type="string", length=255)
+     * @\Doctrine\ORM\Mapping\Column(name="custom_url", type="string", length=255)
      */
     private $customUrl;
 
@@ -322,7 +324,7 @@ class Product
 
 
     /**
-     * @return Collection|Comment[]
+     * @return \Doctrine\Common\Collections\Collection|Comment[]
      */
     public function getComments()
     {

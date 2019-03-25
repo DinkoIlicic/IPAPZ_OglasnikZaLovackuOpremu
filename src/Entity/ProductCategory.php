@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpSt\Doctrine\ORM\Mapping.
  * User: inchoo
  * Date: 3/13/19
  * Time: 11:04 AM
@@ -8,30 +8,28 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  * Class ProductCategory
  *
  * @package                                                                App\Entity
- * @ORM\Entity(repositoryClass="App\Repository\ProductCategoryRepository")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\ProductCategoryRepository")
  */
 class ProductCategory
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="productCategory")
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\Product", inversedBy="productCategory")
      */
     private $product;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="productCategory")
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\Category", inversedBy="productCategory")
      */
     private $category;
 

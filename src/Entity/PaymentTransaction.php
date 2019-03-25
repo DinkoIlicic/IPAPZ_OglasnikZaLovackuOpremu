@@ -2,54 +2,62 @@
 /**
  * Created by PhpStorm.
  * User: inchoo
- * Date: 3/22/19
- * Time: 9:28 AM
+ * Date: 3/25/19
+ * Time: 1:10 PM
  */
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
- * Class PaypalTransaction
+ * Class Transaction
  *
- * @ORM\Entity(repositoryClass="App\Repository\PaypalTransactionRepository")
- * @ORM\HasLifecycleCallbacks()
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\PaymentTransactionRepository")
+ * @\Doctrine\ORM\Mapping\HasLifecycleCallbacks()
  * @package                                                     App\Entity
  */
-class PaypalTransaction
+class PaymentTransaction
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\User")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sold")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\Sold")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $soldProduct;
 
     /**
-     * @ORM\Column(type="string")
+     * @\Doctrine\ORM\Mapping\Column(type="string")
+     */
+    private $method;
+
+    /**
+     * @\Doctrine\ORM\Mapping\Column(type="string", nullable=true)
      */
     private $transactionId;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @\Doctrine\ORM\Mapping\Column(type="datetime")
+     */
+    private $chosenAt;
+
+    /**
+     * @\Doctrine\ORM\Mapping\Column(type="datetime", nullable=true)
      */
     private $paidAt;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $confirmed;
 
@@ -86,9 +94,9 @@ class PaypalTransaction
     }
 
     /**
-     * @ORM\PrePersist()
+     * @\Doctrine\ORM\Mapping\PrePersist()
      */
-    public function onPrePersist()
+    public function onPrePersistPaidAt()
     {
         $this->paidAt = new \DateTime('now');
     }
@@ -147,5 +155,45 @@ class PaypalTransaction
     public function setSoldProduct($soldProduct): void
     {
         $this->soldProduct = $soldProduct;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getChosenAt()
+    {
+        return $this->chosenAt;
+    }
+
+    /**
+     * @param mixed $chosenAt
+     */
+    public function setChosenAt($chosenAt): void
+    {
+        $this->chosenAt = $chosenAt;
+    }
+
+    /**
+     * @\Doctrine\ORM\Mapping\PrePersist()
+     */
+    public function onPrePersistChosenAt()
+    {
+        $this->chosenAt = new \DateTime('now');
+    }
+
+    /**
+     * @param mixed $method
+     */
+    public function setMethod($method): void
+    {
+        $this->method = $method;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMethod()
+    {
+        return $this->method;
     }
 }

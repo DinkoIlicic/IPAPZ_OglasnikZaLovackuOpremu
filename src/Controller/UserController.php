@@ -8,11 +8,10 @@ use App\Form\ProfileFormType;
 use App\Form\RegistrationFormType;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Annotation\Route; //@codingStandardsIgnoreLine
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -28,8 +27,8 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/login", name="app_login")
-     * @Security("not   is_granted('ROLE_USER')")
+     * @\Symfony\Component\Routing\Annotation\Route("/login", name="app_login")
+     * @\Sensio\Bundle\FrameworkExtraBundle\Configuration\Security("not   is_granted('ROLE_USER')")
      * @param           AuthenticationUtils $authenticationUtils
      * @return          Response
      */
@@ -44,7 +43,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/register", name="app_register")
+     * @\Symfony\Component\Routing\Annotation\Route("/register", name="app_register")
      * @param              Request $request
      * @param              UserPasswordEncoderInterface $passwordEncoder
      * @param              GuardAuthenticatorHandler $guardHandler

@@ -2,68 +2,67 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(fields={"email"},                              message="There is already an account with this email")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\UserRepository")
+ * @\Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity
+ *  (fields={"email"}, message="There is already an account with this email")
  */
 class User extends AbstractController implements UserInterface
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Email()
+     * @\Doctrine\ORM\Mapping\Column(type="string", length=180, unique=true)
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
+     * @\Symfony\Component\Validator\Constraints\Email()
      */
     private $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @\Doctrine\ORM\Mapping\Column(type="json")
      */
     private $roles = [];
 
     /**
      * @var                       string The hashed password
-     * @ORM\Column(type="string")
+     * @\Doctrine\ORM\Mapping\Column(type="string")
      */
     private $password;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
+     * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $firstName;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
+     * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $lastName;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
+     * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $phoneNumber;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Wishlist", mappedBy="user", cascade={"persist","remove"})
+     * @\Doctrine\ORM\Mapping\OneToMany(targetEntity="App\Entity\Wishlist",
+     *      mappedBy="user", cascade={"persist","remove"})
      */
     private $wishlist;
 
     /**
-     * @ORM\Column(type="string")
+     * @\Doctrine\ORM\Mapping\Column(type="string")
      */
     private $fullName;
 

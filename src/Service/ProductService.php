@@ -10,16 +10,10 @@ namespace App\Service;
 
 use App\Entity\Product;
 use App\Entity\Sold;
-use App\Entity\User;
-use App\Entity\Wishlist;
 use App\Repository\ProductRepository;
 use App\Repository\WishlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -205,7 +199,7 @@ class ProductService
             );
             foreach ($wishlistProducts as $wishlistProduct) {
                 /**
-                 * @var $wishlistProduct Wishlist
+                 * @var $wishlistProduct \App\Entity\Wishlist;
                  */
                 $wishlistProduct->setNotify(1);
                 $entityManager->persist($wishlistProduct);
@@ -219,7 +213,7 @@ class ProductService
 
     /**
      * @var                                     $data
-     * @return                                  JsonResponse
+     * @return                                  \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function returnJsonObjectUser($data)
     {
@@ -237,7 +231,7 @@ class ProductService
             [
                 'circular_reference_handler' => function ($user) {
                     /**
-                     * @var $user User
+                     * @var $user \App\Entity\User
                      */
                     return $user->getId();
                 }

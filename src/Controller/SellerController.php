@@ -11,7 +11,6 @@ namespace App\Controller;
 use App\Entity\Product;
 use App\Entity\Sold;
 use App\Entity\User;
-use App\Entity\Wishlist;
 use App\Form\ListOfBoughtItemsPerProductFormType;
 use App\Form\ProductFormType;
 use App\Form\ProductImageFormType;
@@ -28,14 +27,13 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Annotation\Route; //@codingStandardsIgnoreLine
 
 class SellerController extends AbstractController
 {
     /**
      * @Route("/seller/", name="seller_index")
-     * @return            Response
+     * @return            \Symfony\Component\HttpFoundation\Response
      */
     public function index()
     {
@@ -49,7 +47,7 @@ class SellerController extends AbstractController
      * @param                        Request $request
      * @param                        EntityManagerInterface $entityManager
      * @param                        ProductService $productService
-     * @return                       Response
+     * @return                       \Symfony\Component\HttpFoundation\Response
      */
     public function newProduct(Request $request, EntityManagerInterface $entityManager, ProductService $productService)
     {
@@ -95,7 +93,7 @@ class SellerController extends AbstractController
     /**
      * @Route("/seller/all-products", name="show_products")
      * @param                         ProductRepository $productRepository
-     * @return                        Response
+     * @return                        \Symfony\Component\HttpFoundation\Response
      */
     public function showAllProducts(ProductRepository $productRepository)
     {
@@ -116,7 +114,7 @@ class SellerController extends AbstractController
     /**
      * @Route("/seller/my-products", name="show_my_products")
      * @param                        ProductRepository $productRepository
-     * @return                       Response
+     * @return                       \Symfony\Component\HttpFoundation\Response
      */
     public function showMyProducts(ProductRepository $productRepository)
     {
@@ -148,7 +146,7 @@ class SellerController extends AbstractController
      * @Route("/seller/product-visibility/{id}", name="update_product_visibility_seller")
      * @param                                    EntityManagerInterface $entityManager
      * @param                                    Product $product
-     * @return                                   Response
+     * @return                                   \Symfony\Component\HttpFoundation\Response
      */
     public function updateProductVisibilitySeller(
         Product $product,
@@ -175,7 +173,7 @@ class SellerController extends AbstractController
      * @param                                     ProductService $productService
      * @param                                     Request $request
      * @param                                     Product $product
-     * @return                                    Response
+     * @return                                    \Symfony\Component\HttpFoundation\Response
      */
     public function updateMyProductInfo(
         Product $product,
@@ -236,7 +234,7 @@ class SellerController extends AbstractController
      * @param                                         WishlistRepository $wishlistRepository
      * @param                                         Request $request
      * @param                                         Product $product
-     * @return                                        Response
+     * @return                                        \Symfony\Component\HttpFoundation\Response
      */
     public function updateMyProductAvailableQuantity(
         Product $product,
@@ -268,7 +266,7 @@ class SellerController extends AbstractController
                 );
                 foreach ($wishlistProducts as $wishlistProduct) {
                     /**
-                     * @var $wishlistProduct Wishlist
+                     * @var $wishlistProduct \App\Entity\Wishlist
                      */
                     $wishlistProduct->setNotify(1);
                     $entityManager->persist($wishlistProduct);
@@ -294,7 +292,7 @@ class SellerController extends AbstractController
      * @param                                      EntityManagerInterface $entityManager
      * @param                                      Request $request
      * @param                                      Product $product
-     * @return                                     Response
+     * @return                                     \Symfony\Component\HttpFoundation\Response
      */
     public function updateMyProductImage(
         Product $product,
@@ -365,7 +363,7 @@ class SellerController extends AbstractController
      * @param                                  SoldRepository $soldRepository
      * @param                                  ProductRepository $productRepository
      * @param                                  User $id
-     * @return                                 Response
+     * @return                                 JsonResponse
      */
     public function ajaxListPersonPerUserSeller(
         SoldRepository $soldRepository,
@@ -408,7 +406,7 @@ class SellerController extends AbstractController
      * @param                                User $id
      * @param                                SoldRepository $soldRepository
      * @param                                ProductRepository $productRepository
-     * @return                               Response
+     * @return                               \Symfony\Component\HttpFoundation\Response
      */
     public function listOfPeopleThatBoughtMyProduct(
         SoldRepository $soldRepository,
@@ -466,7 +464,7 @@ class SellerController extends AbstractController
      * @Route("/seller/confirm-buy-per-user-seller/{id}", name="confirm_buy_per_user")
      * @param                                        EntityManagerInterface $entityManager
      * @param                                        Sold $sold
-     * @return                                       Response
+     * @return                                       \Symfony\Component\HttpFoundation\Response
      */
     public function confirmBuyPerUser(
         Sold $sold,
@@ -499,7 +497,7 @@ class SellerController extends AbstractController
      * @param                                           WishlistRepository $wishlistRepository
      * @param                                           ProductService $productService
      * @param                                           Sold $sold
-     * @return                                          Response
+     * @return                                          \Symfony\Component\HttpFoundation\Response
      */
     public function deleteSoldItemPerUser(
         Sold $sold,
@@ -526,7 +524,7 @@ class SellerController extends AbstractController
      * @param                                   Request $request
      * @param                                   SoldRepository $soldRepository
      * @param                                   ProductRepository $productRepository
-     * @return                                  Response
+     * @return                                  \Symfony\Component\HttpFoundation\Response
      */
     public function listOfBoughtItemsPerProduct(
         Request $request,
@@ -581,7 +579,7 @@ class SellerController extends AbstractController
      * @Route("/seller/confirm-buy-per-product/{id}", name="confirm_buy_per_product")
      * @param                                         EntityManagerInterface $entityManager
      * @param                                         Sold $sold
-     * @return                                        Response
+     * @return                                        \Symfony\Component\HttpFoundation\Response
      */
     public function confirmBuyPerProduct(
         Sold $sold,
@@ -615,7 +613,7 @@ class SellerController extends AbstractController
      * @param                                              ProductService $productService
      * @param                                              WishlistRepository $wishlistRepository
      * @param                                              Sold $sold
-     * @return                                             Response
+     * @return                                             \Symfony\Component\HttpFoundation\Response
      */
     public function deleteSoldItemPerProduct(
         Sold $sold,
@@ -627,7 +625,6 @@ class SellerController extends AbstractController
         if ($this->getUser() !== $sold->getProduct()->getUser()) {
             return $this->redirectToRoute('list_of_sold_items_per_product');
         };
-
         $productService->deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute(
@@ -641,7 +638,7 @@ class SellerController extends AbstractController
     /**
      * @Route("/seller/sold-product/{id}", name="view_sold_product_info")
      * @param                              Sold $sold
-     * @return                             Response
+     * @return                             \Symfony\Component\HttpFoundation\Response
      */
     public function viewSoldProductInfo(Sold $sold)
     {

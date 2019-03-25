@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpSt\Doctrine\ORM\Mapping.
  * User: dinko
  * Date: 21.02.19.
  * Time: 08:05
@@ -8,66 +8,63 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * Class Sold
  *
- * @ORM\Entity(repositoryClass="App\Repository\SoldRepository")
- * @ORM\HasLifecycleCallbacks()
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="App\Repository\SoldRepository")
+ * @\Doctrine\ORM\Mapping\HasLifecycleCallbacks()
  * @package                                                     App\Entity
  */
 class Sold
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Id()
+     * @\Doctrine\ORM\Mapping\GeneratedValue()
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\User")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product")
-     * @ORM\JoinColumn(nullable=false)
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\Product")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $product;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Assert\GreaterThan(
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
+     * @\Symfony\Component\Validator\Constraints\GreaterThan(
      *     value = 0
      * )
-     * @Assert\LessThan(
+     * @\Symfony\Component\Validator\Constraints\LessThan(
      *     value = 100
      * )
      */
     private $quantity;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @\Doctrine\ORM\Mapping\Column(type="datetime")
      */
     private $boughtAt;
 
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @\Doctrine\ORM\Mapping\Column(type="decimal", scale=2)
      */
     private $price;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @\Doctrine\ORM\Mapping\Column(type="string", length=255)
      */
     private $couponCodeName;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\Regex(
+     * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\Regex(
      *     pattern     = "/^[0-9.%]+$/i",
      *     message     = "Only numbers, dot and percentage are allowed"
      * )
@@ -75,22 +72,22 @@ class Sold
     private $discount;
 
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @\Doctrine\ORM\Mapping\Column(type="decimal", scale=2)
      */
     private $totalPrice;
 
     /**
-     * @ORM\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
      */
     private $confirmed;
 
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @\Doctrine\ORM\Mapping\Column(type="decimal", scale=2)
      */
     private $afterDiscount;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @\Doctrine\ORM\Mapping\Column(type="string", nullable=true)
      */
     private $paymentMethod;
 
@@ -175,7 +172,7 @@ class Sold
     }
 
     /**
-     * @ORM\PrePersist()
+     * @\Doctrine\ORM\Mapping\PrePersist()
      */
     public function onPrePersist()
     {
