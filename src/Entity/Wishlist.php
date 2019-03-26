@@ -37,12 +37,12 @@ class Wishlist
     private $user;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="smallint")
+     * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $notify;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="smallint")
+     * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $notified;
 

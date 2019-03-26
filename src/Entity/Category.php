@@ -39,12 +39,12 @@ class Category
     private $user;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $visibility;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $visibilityAdmin;
 

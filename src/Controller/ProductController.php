@@ -8,7 +8,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Category;
 use App\Entity\Product;
 use App\Service\ProductService;
 use App\Form\AdminListOfCategoriesFormType;
@@ -42,7 +41,7 @@ class ProductController extends AbstractController
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
             $category = $form->getData();
             /**
-             * @var Category $category
+             * @var \App\Entity\Category $category
              */
             $message = $category->getId()->getName();
             $products = $productRepository->getProductsFromCategory($category->getId());

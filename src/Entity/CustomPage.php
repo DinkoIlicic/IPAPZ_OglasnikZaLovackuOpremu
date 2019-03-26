@@ -43,7 +43,7 @@ class CustomPage
     private $content;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $visibilityAdmin;
 

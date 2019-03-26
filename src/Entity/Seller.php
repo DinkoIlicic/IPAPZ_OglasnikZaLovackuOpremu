@@ -38,7 +38,7 @@ class Seller
     private $applyContent;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $verified;
 

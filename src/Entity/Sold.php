@@ -77,7 +77,7 @@ class Sold
     private $totalPrice;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $confirmed;
 

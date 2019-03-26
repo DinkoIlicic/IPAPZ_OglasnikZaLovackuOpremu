@@ -9,7 +9,6 @@
 namespace App\Controller;
 
 use App\Entity\PaymentTransaction;
-use App\Entity\Product;
 use App\Entity\Sold;
 use App\Entity\User;
 use App\Form\AdminListOfBoughtItemsPerProductFormType;
@@ -200,7 +199,7 @@ class SoldProductsController extends AbstractController
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
             /**
-             * @var Product $product
+             * @var \App\Entity\Product $product
              */
             $product = $form->getData()->getProduct();
             $message = $product->getName();
