@@ -21,6 +21,7 @@ security:
                     - App\Security\LoginFormAuthenticator
             logout:
                     path: app_logout
+                    target: app_login
 
             # activate different ways to authenticate
 
@@ -35,7 +36,11 @@ security:
     access_control:
          - { path: ^/admin/, roles: ROLE_ADMIN }
          - { path: ^/seller/, roles: ROLE_SELLER }
-        # - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/login, allow_if: "is_anonymous()" }
+         - { path: ^/register, allow_if: "is_anonymous()" }
     role_hierarchy:
         ROLE_ADMIN: [ROLE_USER, ROLE_SELLER]
         ROLE_SELLER: [ROLE_USER]
+
+    access_denied_url: advertisement_index
