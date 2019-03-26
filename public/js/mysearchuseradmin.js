@@ -101,11 +101,22 @@ function renderSoldProducts(item, index)
     cell5.innerHTML = item.totalPrice;
     var date1 = new Date(item.boughtAt.date);
     cell6.innerHTML = date1.toLocaleDateString("hr-HR", options);
-    if (item.confirmed === 0) {
-        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirm-buy-per-user-admin/"+item.id+"'>Confirm</a>";
-        cell8.innerHTML = "<a class='btn btn-danger' href='/admin/delete-sold-item-per-user-admin/"+item.id+"'>Delete</a>";
+    if (item.ptMethod === 'Paypal') {
+        cell7.innerHTML = "<a class='card-link' href='/admin/sold-item-payment-method/"+item.ptId+"'>Paid with paypal</a>";
+    } else if (item.ptMethod === 'Invoice') {
+        if (item.ptConfirmed === '1') {
+            cell7.innerHTML = "<a class='card-link' href='/admin/sold-item-payment-method/"+item.ptId+"'>Paid with invoice</a>";
+        } else if (item.ptConfirmed === '0') {
+            cell7.innerHTML = "<a class='card-link' href='/admin/sold-item-payment-method/"+item.ptId+"'>Invoice</a>";
+        }
+    } else if (item.ptMethod === null) {
+        cell7.innerHTML = "Not chosen";
     }
-    if (item.confirmed === 1) {
-        cell7.innerHTML = "<a class='btn btn-primary' href='/admin/confirm-buy-per-user-admin/"+item.id+"'>Confirmed</a>";
+    if (item.ptConfirmed === '1') {
+        cell8.innerHTML = "Paid";
+    } else if (item.ptConfirmed === '0') {
+        cell8.innerHTML = "<a class='btn btn-danger' href='/admin/delete-sold-item-per-user-admin/"+item.id+"'>Delete</a>";
+    } else if (item.ptConfirmed === null) {
+        cell8.innerHTML = "<a class='btn btn-danger' href='/admin/delete-sold-item-per-user-admin/"+item.id+"'>Delete</a>";
     }
 }

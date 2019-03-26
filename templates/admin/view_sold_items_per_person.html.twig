@@ -28,6 +28,7 @@
                 <th scope="col">Total price</th>
                 <th scope="col">Bought at</th>
                 <th scope="col">Method</th>
+                <th scope="col">Delete</th>
             </tr>
         </thead>
         <tbody id="tbodyChangeUser">
@@ -43,9 +44,20 @@
                         {% if (eachItem.ptMethod == 'Paypal') %}
                             <a class="card-link" href="{{ path('view_sold_items_per_user_payment_method', {'id': eachItem.ptId}) }}">Paid with paypal</a>
                         {% elseif (eachItem.ptMethod == 'Invoice') %}
-                            <a class="card-link" href="{{ path('view_sold_items_per_user_payment_method', {'id': eachItem.ptId}) }}">Invoice</a>
+                            {% if (eachItem.ptConfirmed == 1) %}
+                                <a class="card-link" href="{{ path('view_sold_items_per_user_payment_method', {'id': eachItem.ptId}) }}">Paid with invoice</a>
+                            {% elseif (eachItem.ptConfirmed == 0) %}
+                                <a class="card-link" href="{{ path('view_sold_items_per_user_payment_method', {'id': eachItem.ptId}) }}">Invoice</a>
+                            {% endif %}
                         {% elseif (eachItem.ptMethod == null) %}
                             Not chosen
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if (eachItem.ptConfirmed == 1) %}
+                            Paid
+                        {% elseif (eachItem.ptConfirmed == 0) %}
+                            <a class="btn btn-danger" href="{{ path('delete_sold_item_per_user_admin', {'id': eachItem.id}) }}">Delete</a>
                         {% endif %}
                     </td>
                 </tr>

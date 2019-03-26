@@ -52,6 +52,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route; //@codingStandardsIgnoreLine
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -1193,6 +1194,69 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('show_payment_methods');
     }
 
+    /**
+     * @Route("/admin/download/{fileName}",name="pdf_download")
+     * @param $fileName
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function downloadPdf($fileName)
+    {
+        $filePath = $this->getParameter('kernel.project_dir') . '/public/invoice/' . $fileName;
+
+        $response = new Response();
+        $response->headers->set('Content-type', 'application/octet-stream');
+        $response->headers->set(
+            'Content-Disposition',
+            sprintf('attachment; filename="%s"', $fileName)
+        );
+        $response->setContent(file_get_contents($filePath));
+        $response->setStatusCode(200);
+        $response->headers->set('Content-Transfer-Encoding', 'binary');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+        return $response;
+    }
+
+    /**
+     * @Route("/admin/confirm-payment-transaction/{paymentTransaction}",name="confirm_payment_transaction")
+     * @param PaymentTransaction $paymentTransaction
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function confirmInvoicePayment(PaymentTransaction $paymentTransaction, EntityManagerInterface $entityManager)
+    {
+        if ($paymentTransaction->getConfirmed() === true) {
+            $paymentTransaction->setConfirmed(false);
+            $this->addFlash('success', 'Payment transaction confirm removed!');
+        } elseif ($paymentTransaction->getConfirmed() === false) {
+            $paymentTransaction->setConfirmed(true);
+            $paymentTransaction->onPrePersistPaidAt();
+            $this->addFlash('success', 'Payment transaction confirmed!');
+        }
+
+        $entityManager->persist($paymentTransaction);
+        $entityManager->flush();
+        return $this->redirectToRoute(
+            'view_sold_items_per_user_payment_method',
+            [
+                'id' => $paymentTransaction->getId()
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/delete-payment-transaction/{paymentTransaction}",name="delete_payment_transaction")
+     * @param EntityManagerInterface $entityManager
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deleteInvoicePayment(EntityManagerInterface $entityManager, PaymentTransaction $paymentTransaction)
+    {
+        $entityManager->remove($paymentTransaction);
+        $entityManager->flush();
+        $this->addFlash('success', 'Invoice deleted!');
+        return $this->redirectToRoute('view_sold_items_per_person');
+    }
 
     private function generateUniqueFileName()
     {
