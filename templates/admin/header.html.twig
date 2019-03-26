@@ -60,4 +60,12 @@
             <a class="dropdown-item" href="{{ path('show_payment_methods') }}">Payment methods</a>
         </div>
     </div>
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Shipping
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('show_shipping_price') }}">Show shipping price</a>
+        </div>
+    </div>
 {% endblock %}

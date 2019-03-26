@@ -138,7 +138,7 @@ class AdminController extends AbstractController
     ) {
         $form = $this->createForm(ProfileFormType::class, $user);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
             $user->setFullName($user->getFirstName() . ' ' . $user->getLastName());
             $entityManager->persist($user);
             $entityManager->flush();
@@ -170,7 +170,7 @@ class AdminController extends AbstractController
     ) {
         $form = $this->createForm(PasswordFormType::class, $user);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
             $user->setPassword(
                 $passwordEncoder->encodePassword(
                     $user,
