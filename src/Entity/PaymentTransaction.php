@@ -62,6 +62,12 @@ class PaymentTransaction
     private $confirmed;
 
     /**
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\UserAddress")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
+     */
+    private $userAddress;
+
+    /**
      * @return mixed
      */
     public function getTransactionId()
@@ -195,5 +201,21 @@ class PaymentTransaction
     public function getMethod()
     {
         return $this->method;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUserAddress()
+    {
+        return $this->userAddress;
+    }
+
+    /**
+     * @param mixed $userAddress
+     */
+    public function setUserAddress($userAddress): void
+    {
+        $this->userAddress = $userAddress;
     }
 }

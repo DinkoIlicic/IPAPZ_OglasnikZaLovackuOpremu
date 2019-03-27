@@ -1,0 +1,24 @@
+{% extends '/advertisement/header.html.twig' %}
+{% block body %}
+    <br/><br/>
+    <div>
+        <p>Choose payment option</p>
+        {{ form_start(paymentOption) }}
+        {{ form_row(paymentOption.payment) }}
+        {{ form_row(paymentOption.address) }}
+        <button type="submit" class="btn btn-primary" formnovalidate>Pay</button>
+        {{ form_end(paymentOption) }}
+    </div><br/><br/><br/><hr/>
+    <div>
+        <p>New Address</p>
+        {{ form_start(newAddress) }}
+            {{ form_row(newAddress.address1) }}
+            {{ form_row(newAddress.address2) }}
+            {{ form_row(newAddress.country) }}
+            {{ form_row(newAddress.state) }}
+            {{ form_row(newAddress.city) }}
+            {{ form_row(newAddress.postalCode) }}
+            <button type="submit" class="btn btn-primary" formnovalidate>Add address</button>
+        {{ form_end(newAddress) }}
+    </div>
+{% endblock %}

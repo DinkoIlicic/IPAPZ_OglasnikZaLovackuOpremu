@@ -92,6 +92,24 @@ class Sold
     private $paymentMethod;
 
     /**
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="App\Entity\UserAddress")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=true)
+     */
+    private $address;
+
+    /**
+     * @\Doctrine\ORM\Mapping\Column(type="decimal", scale=2)
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=true)
+     */
+    private $shippingPrice;
+
+    /**
+     * @\Doctrine\ORM\Mapping\Column(type="decimal", scale=2)
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=true)
+     */
+    private $toPay;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -289,5 +307,53 @@ class Sold
     public function getPaymentMethod()
     {
         return $this->paymentMethod;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param mixed $address
+     */
+    public function setAddress($address): void
+    {
+        $this->address = $address;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShippingPrice()
+    {
+        return $this->shippingPrice;
+    }
+
+    /**
+     * @param mixed $shippingPrice
+     */
+    public function setShippingPrice($shippingPrice): void
+    {
+        $this->shippingPrice = $shippingPrice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getToPay()
+    {
+        return $this->toPay;
+    }
+
+    /**
+     * @param mixed $toPay
+     */
+    public function setToPay($toPay): void
+    {
+        $this->toPay = $toPay;
     }
 }

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div>
+        <div>
+            <h3>Product: {{ sold.product.name }}</h3>
+            <h3>Price: {{ sold.product.name }}</h3>
+            <h3>Quantity: {{ sold.quantity }}</h3>
+            <h3>Total Price: {{ sold.totalPrice }}</h3>
+            <h3>Discount: {{ sold.discount }}</h3>
+            <h3>After discount: {{ sold.afterDiscount }}</h3>
+            <h3>Shipping: {{ sold.shippingPrice }}</h3>
+            <h3>Price to pay: {{ sold.toPay }}</h3>
+            <a class="btn btn-primary" href="{{ path('invoice_pay', {'id': sold.id}) }}">Confirm invoice</a>
+        </div>
+    </div>
+{% endblock %}

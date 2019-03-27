@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route; //@codingStandardsIgnoreLine
 class PaymentTransactionController extends AbstractController
 {
     /**
-     * @Route("/transaction/paypal-pay/{id}", name="paypal_pay")
+     * @Route("/transaction/paypal-show/{id}", name="paypal_show")
      * @param                      Sold $sold
      * @return                     \Symfony\Component\HttpFoundation\Response
      */
@@ -46,7 +46,7 @@ class PaymentTransactionController extends AbstractController
     public function payment(EntityManagerInterface $entityManager, Sold $sold, Request $request)
     {
         $gateway = self::gateway();
-        $amount = $sold->getAfterDiscount();
+        $amount = $sold->getToPay();
         $nonce = $request->get('payment_method_nonce');
         $result = $gateway->transaction()->sale(
             [
@@ -68,6 +68,7 @@ class PaymentTransactionController extends AbstractController
         $paymentTransaction->setTransactionId($transaction->id);
         $paymentTransaction->setConfirmed(true);
         $paymentTransaction->setMethod('Paypal');
+        $paymentTransaction->setUserAddress($sold->getAddress());
         $paymentTransaction->onPrePersistChosenAt();
         $paymentTransaction->onPrePersistPaidAt();
         $entityManager->persist($sold);
@@ -90,6 +91,21 @@ class PaymentTransactionController extends AbstractController
     }
 
     /**
+     * @Route("/transaction/invoice-show/{id}", name="invoice_show")
+     * @param                      Sold $sold
+     * @return                     \Symfony\Component\HttpFoundation\Response
+     */
+    public function invoiceShow(Sold $sold)
+    {
+        return $this->render(
+            'invoice/invoice.html.twig',
+            [
+                'sold' => $sold,
+            ]
+        );
+    }
+
+    /**
      * @Route("/transaction/invoice-pay/{id}", name="invoice_pay")
      * @param EntityManagerInterface $entityManager
      * @param Sold $sold
@@ -107,6 +123,7 @@ class PaymentTransactionController extends AbstractController
         $paymentTransaction->setConfirmed(0);
         $paymentTransaction->onPrePersistChosenAt();
         $paymentTransaction->setMethod('Invoice');
+        $paymentTransaction->setUserAddress($sold->getAddress());
         $sold->setConfirmed(true);
         $sold->setPaymentMethod('Invoice');
         $entityManager->persist($paymentTransaction);

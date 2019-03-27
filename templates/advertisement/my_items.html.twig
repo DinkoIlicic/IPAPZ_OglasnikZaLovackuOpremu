@@ -17,12 +17,7 @@
                             <p style="color: black"><strong>Total Price: €{{ item.totalPrice }}</strong></p>
                             <p style="color: black"><strong>Bought at: {{ item.boughtAt|date("d.m.Y H:i") }}</strong></p>
                             {% if (item.confirmed == 0) %}
-                                {% if (paypal.enabled == 1) %}
-                                    <a class="btn btn-primary" href="{{ path('paypal_pay', {'id': item.id}) }}">Pay with paypal</a>
-                                {% endif %}
-                                {% if (invoice.enabled == 1) %}
-                                    <a class="btn btn-primary" href="{{ path('invoice_pay', {'id': item.id}) }}">Invoice</a>
-                                {% endif %}
+                                <a class="btn btn-primary" href="{{ path('choose_payment_option_user', {'id': item.id}) }}">Pay</a>
                             {% endif %}
                         </a>
                     </div>

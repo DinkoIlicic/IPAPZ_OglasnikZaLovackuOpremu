@@ -1,10 +1,5 @@
 {% extends 'base.html.twig' %}
-
-
-
 {% block body %}
-
-
     <div class="wrapper">
         <div class="checkout container">
 
@@ -19,7 +14,9 @@
             <h3>Quantity: {{ sold.quantity }}</h3>
             <h3>Total Price: {{ sold.totalPrice }}</h3>
             <h3>Discount: {{ sold.discount }}</h3>
-            <h3>Price to pay: {{ sold.afterDiscount }}</h3>
+            <h3>After discount: {{ sold.afterDiscount }}</h3>
+            <h3>Shipping: {{ sold.shippingPrice }}</h3>
+            <h3>Price to pay: {{ sold.toPay }}</h3>
             <form method="post" id="payment-form" action="{{ path('paypal_payment', {'id': sold.id}) }}">
                 <section>
                     <div class="bt-drop-in-wrapper">
@@ -63,7 +60,6 @@
     </script>
 
 {% endblock %}
-
 
 {% block javascripts %}
 

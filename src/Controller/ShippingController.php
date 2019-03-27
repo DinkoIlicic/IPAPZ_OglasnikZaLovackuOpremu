@@ -169,15 +169,6 @@ class ShippingController extends AbstractController
         );
     }
 
-    public function checkCsvData()
-    {
-
-    }
-    public function readAndInsertCsvData()
-    {
-
-    }
-
     private function bulkAllCountries(EntityManagerInterface $entityManager)
     {
         $arrayCountries =

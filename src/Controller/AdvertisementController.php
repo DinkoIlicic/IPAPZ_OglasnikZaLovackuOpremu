@@ -11,10 +11,14 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Product;
+use App\Entity\Shipping;
 use App\Entity\Sold;
+use App\Entity\UserAddress;
 use App\Entity\Wishlist;
 use App\Form\CommentFormType;
 use App\Form\ContactFormType;
+use App\Form\NewAddressFormType;
+use App\Form\PaymentOptionFormType;
 use App\Form\SellerFormType;
 use App\Form\SoldFormType;
 use App\Repository\CategoryRepository;
@@ -24,7 +28,9 @@ use App\Repository\PaymentMethodRepository;
 use App\Repository\ProductCategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
+use App\Repository\ShippingRepository;
 use App\Repository\SoldRepository;
+use App\Repository\UserAddressRepository;
 use App\Repository\WishlistRepository;
 use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -226,7 +232,13 @@ class AdvertisementController extends AbstractController
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_USER') && $form->isSubmitted() && $form->isValid()) {
             $sold = $form->getData();
-            self::userBuyProduct($sold, $product, $entityManager, $couponCodesRepository, $productCategoryRepository);
+            return self::userBuyProduct(
+                $sold,
+                $product,
+                $entityManager,
+                $couponCodesRepository,
+                $productCategoryRepository
+            );
         }
 
         $formMail = $this->createForm(ContactFormType::class);
@@ -319,6 +331,8 @@ class AdvertisementController extends AbstractController
             $discountReduce = $totalPrice * $discountAmount / 100;
             $afterDiscount = $totalPrice - $discountReduce;
             $sold->setAfterDiscount($afterDiscount);
+            $sold->setShippingPrice(0);
+            $sold->setToPay($afterDiscount);
             /**
              * @var \App\Entity\CouponCodes $checkForCouponCode
              */
@@ -327,17 +341,114 @@ class AdvertisementController extends AbstractController
             $sold->setCouponCodeName('');
             $sold->setDiscount('0');
             $sold->setAfterDiscount($sold->getTotalPrice());
+            $sold->setShippingPrice(0);
+            $sold->setToPay($sold->getTotalPrice());
         }
 
         $sold->setConfirmed(0);
         $product->setAvailableQuantity($product->getAvailableQuantity() - $sold->getQuantity());
         $entityManager->persist($sold);
         $entityManager->flush();
-        $this->addFlash('success', 'Bought the product!');
         return $this->redirectToRoute(
-            'check_product',
+            'choose_payment_option_user',
             [
-                'pageName' => $product->getCustomUrl()]
+                'id' => $sold->getId()
+            ]
+        );
+    }
+
+
+    /**
+     * @Route("/choose-payment-option/{id}", name="choose_payment_option_user")
+     * @param Request $request
+     * @param CategoryRepository $categoryRepository
+     * @param CustomPageRepository $customPageRepository
+     * @param EntityManagerInterface $entityManager
+     * @param ShippingRepository $shippingRepository
+     * @param Sold $sold
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function choosePaymentOption(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CategoryRepository $categoryRepository,
+        CustomPageRepository $customPageRepository,
+        Sold $sold,
+        ShippingRepository $shippingRepository
+    ) {
+        $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
+
+        $formNewAddress = $this->createForm(NewAddressFormType::class);
+        $formNewAddress->handleRequest($request);
+        if ($this->isGranted('ROLE_USER') && $formNewAddress->isSubmitted() && $formNewAddress->isValid()) {
+            /**
+             * @var $newAddress \App\Entity\UserAddress
+             */
+            $newAddress = $formNewAddress->getData();
+            $newAddress->setUser($this->getUser());
+            $entityManager->persist($newAddress);
+            $entityManager->flush();
+        }
+
+        $paymentOption = $this->createForm(PaymentOptionFormType::class, null, array('user' => $this->getUser()));
+        $paymentOption->handleRequest($request);
+        if ($this->isGranted('ROLE_USER') && $paymentOption->isSubmitted() && $paymentOption->isValid()) {
+            /**
+             * @var \App\Entity\PaymentMethod $paymentChosen
+             */
+            $paymentChosen = $paymentOption->get('payment')->getData();
+            $optionForPay = $paymentChosen->getMethod();
+            /**
+             * @var \App\Entity\UserAddress $newAddress
+             */
+            $newAddress = $paymentOption->get('address')->getData();
+            $sold->setAddress($newAddress);
+            $sold->setPaymentMethod($optionForPay);
+            $country = $newAddress->getCountry();
+            $checkForCountry = $shippingRepository->findOneBy(['country' => $country]);
+            if ($checkForCountry instanceof Shipping) {
+                /**
+                 * @var \App\Entity\Shipping $checkForCountry
+                 */
+                $price = $checkForCountry->getPrice();
+                if ($price === null) {
+                    /**
+                     * @var \App\Entity\Shipping $defaultPrice
+                     */
+                    $defaultPrice = $shippingRepository->findOneBy(['country' => 'default']);
+                    $price = $defaultPrice->getPrice();
+                }
+            }
+            $sold->setShippingPrice($price);
+            $currentAmountToPay = $sold->getAfterDiscount();
+            $sold->setToPay($currentAmountToPay + $price);
+            $entityManager->merge($sold);
+            $entityManager->flush();
+            if ($optionForPay == 'Paypal') {
+                return $this->redirectToRoute(
+                    'paypal_show',
+                    [
+                        'id' => $sold->getId()
+                    ]
+                );
+            } elseif ($optionForPay == 'Invoice') {
+                return $this->redirectToRoute(
+                    'invoice_show',
+                    [
+                        'id' => $sold->getId()
+                    ]
+                );
+            }
+        }
+
+        return $this->render(
+            '/advertisement/choose_payment_option.html.twig',
+            [
+                'newAddress' => $formNewAddress->createView(),
+                'paymentOption' => $paymentOption->createView(),
+                'pages' => $arrayWithHeaderData['customPages'],
+                'categories' => $arrayWithHeaderData['categories'],
+            ]
         );
     }
 
