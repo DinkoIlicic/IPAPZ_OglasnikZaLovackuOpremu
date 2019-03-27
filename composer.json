@@ -5,9 +5,12 @@
         "php": "^7.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
         "braintree/braintree_php": "^3.39",
         "dompdf/dompdf": "^0.8.3",
         "knplabs/knp-paginator-bundle": "^2.8",
+        "league/csv": "^9.2",
         "paypal/rest-api-sdk-php": "*",
         "phpoffice/phpspreadsheet": "^1.6",
         "sensio/framework-extra-bundle": "^5.2",
@@ -28,9 +31,7 @@
         "symfony/twig-bundle": "4.2.*",
         "symfony/validator": "4.2.*",
         "symfony/yaml": "4.2.*",
-        "tinymce/tinymce": "4",
-        "ext-json": "*",
-      "ext-openssl": "*"
+        "tinymce/tinymce": "4"
     },
     "config": {
         "preferred-install": {

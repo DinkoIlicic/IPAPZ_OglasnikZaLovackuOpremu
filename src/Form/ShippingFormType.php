@@ -10,6 +10,7 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,7 +21,7 @@ class ShippingFormType extends AbstractType
         $builder
             ->add(
                 'query',
-                \Symfony\Component\Form\Extension\Core\Type\TextType::class,
+                TextType::class,
                 [
                     'attr' => [
                         'placeholder' => 'Enter here'

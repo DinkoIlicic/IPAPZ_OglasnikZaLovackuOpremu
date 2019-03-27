@@ -9,15 +9,15 @@
 namespace App\Controller;
 
 use App\Entity\Shipping;
+use App\Form\ShippingCsvFileFormType;
 use App\Form\ShippingDefaultFormType;
 use App\Form\ShippingFormType;
 use App\Repository\ShippingRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Csv\Reader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route; //@codingStandardsIgnoreLine
-use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -62,12 +62,47 @@ class ShippingController extends AbstractController
             }
         }
 
+        $formCsv = $this->createForm(ShippingCsvFileFormType::class);
+        $formCsv->handleRequest($request);
+        if ($this->isGranted('ROLE_ADMIN') && $formCsv->isSubmitted() && $formCsv->isValid()) {
+            $csvFile = $formCsv->get('file')->getData();
+            $ext = $csvFile->getClientOriginalExtension();
+            if ($ext === "csv") {
+                $path = $csvFile->getPathName();
+                $reader = Reader::createFromPath($path);
+                $reader->setHeaderOffset(0);
+                $header = $reader->getHeader();
+                $find = ['country', 'countryCode', 'price'];
+
+                if (count(array_intersect($find, $header)) == count($header)) {
+                    $results = $reader->getRecords();
+                    foreach ($results as $read) {
+                        $found = $shippingRepository->findOneBy(['country' => $read['country']]);
+                        if ($found instanceof Shipping) {
+                            $found->setPrice($read['price']);
+                            $entityManager->merge($found);
+                        }
+                    }
+
+                    $entityManager->flush();
+                } else {
+                    $this->addFlash(
+                        'warning',
+                        'File does not contain right data (required country, countryCode and price)!'
+                    );
+                }
+            } else {
+                $this->addFlash('warning', 'Wrong file, please upload CSV file!');
+            }
+        };
+
         return $this->render(
             '/admin/view_shipping_price.html.twig',
             [
                 'default' => $default,
                 'defaultForm' => $defaultForm->createView(),
                 'form' => $form->createView(),
+                'formCsv' => $formCsv->createView(),
             ]
         );
     }
@@ -132,6 +167,15 @@ class ShippingController extends AbstractController
                 'shipping' => $shipping
             ]
         );
+    }
+
+    public function checkCsvData()
+    {
+
+    }
+    public function readAndInsertCsvData()
+    {
+
     }
 
     private function bulkAllCountries(EntityManagerInterface $entityManager)
@@ -394,6 +438,7 @@ class ShippingController extends AbstractController
                 ['countryCode' => 'ZM', 'Country' => 'Zambia'],
                 ['countryCode' => 'ZW', 'Country' => 'Zimbabwe'],
              ];
+
         foreach ($arrayCountries as $country) {
             $shipping = new Shipping();
             $shipping->setCountry($country['Country']);
