@@ -13,7 +13,6 @@ use App\Entity\Comment;
 use App\Entity\Product;
 use App\Entity\Shipping;
 use App\Entity\Sold;
-use App\Entity\UserAddress;
 use App\Entity\Wishlist;
 use App\Form\CommentFormType;
 use App\Form\ContactFormType;
@@ -30,7 +29,6 @@ use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
 use App\Repository\ShippingRepository;
 use App\Repository\SoldRepository;
-use App\Repository\UserAddressRepository;
 use App\Repository\WishlistRepository;
 use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -419,6 +417,7 @@ class AdvertisementController extends AbstractController
                     $price = $defaultPrice->getPrice();
                 }
             }
+
             $sold->setShippingPrice($price);
             $currentAmountToPay = $sold->getAfterDiscount();
             $sold->setToPay($currentAmountToPay + $price);

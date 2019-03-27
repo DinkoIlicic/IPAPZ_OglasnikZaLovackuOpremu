@@ -60,14 +60,14 @@ class NewAddressFormType extends AbstractType
 
         $builder
             ->add(
-                'address1',
+                'addressFirst',
                 TextType::class,
                 [
                     'label' => 'Address line 1: '
                 ]
             )
             ->add(
-                'address2',
+                'addressSecond',
                 TextType::class,
                 [
                     'label' => 'Address line 2: '
@@ -104,8 +104,7 @@ class NewAddressFormType extends AbstractType
                 [
                     'label' => 'ZIP / Postal code: '
                 ]
-            )
-        ;
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver)

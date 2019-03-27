@@ -16,7 +16,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PaymentOptionFormType extends AbstractType
@@ -45,7 +44,7 @@ class PaymentOptionFormType extends AbstractType
                         /**
                          * @var \App\Entity\UserAddress $userAddress
                          */
-                        return $userAddress->getAddress1() . ', ' .
+                        return $userAddress->getAddressFirst() . ', ' .
                             $userAddress->getCity() . ', ' .
                             $userAddress->getCountry();
                     },

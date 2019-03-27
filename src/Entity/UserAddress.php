@@ -37,12 +37,12 @@ class UserAddress
     /**
      * @\Doctrine\ORM\Mapping\Column(type="string")
      */
-    private $address1;
+    private $addressFirst;
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="string")
      */
-    private $address2;
+    private $addressSecond;
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="string")
@@ -100,35 +100,35 @@ class UserAddress
     }
 
     /**
-     * @param mixed $address1
+     * @return mixed
      */
-    public function setAddress1($address1): void
+    public function getAddressFirst()
     {
-        $this->address1 = $address1;
+        return $this->addressFirst;
+    }
+
+    /**
+     * @param mixed $addressFirst
+     */
+    public function setAddressFirst($addressFirst): void
+    {
+        $this->addressFirst = $addressFirst;
     }
 
     /**
      * @return mixed
      */
-    public function getAddress1()
+    public function getAddressSecond()
     {
-        return $this->address1;
+        return $this->addressSecond;
     }
 
     /**
-     * @param mixed $address2
+     * @param mixed $addressSecond
      */
-    public function setAddress2($address2): void
+    public function setAddressSecond($addressSecond): void
     {
-        $this->address2 = $address2;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAddress2()
-    {
-        return $this->address2;
+        $this->addressSecond = $addressSecond;
     }
 
     /**
