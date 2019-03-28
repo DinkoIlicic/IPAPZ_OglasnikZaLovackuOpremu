@@ -2,27 +2,22 @@
 {% block categories %}
     <div class="dropdown show">
         <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Appliers
-        </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('check_apply_for_seller') }}">List of appliers for Seller</a>
-        </div>
-    </div>
-    <div class="dropdown show">
-        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Categories
-        </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('list_of_categories') }}">List of categories</a>
-            <a class="dropdown-item" href="{{ path('list_of_products') }}">List of products</a>
-        </div>
-    </div>
-    <div class="dropdown show">
-        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Users
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('list_of_users') }}">List of users</a>
+            <a class="dropdown-item" href="{{ path('list_of_users') }}">Users</a>
+            <a class="dropdown-item" href="{{ path('check_apply_for_seller') }}">Appliers</a>
+        </div>
+    </div>
+    <div class="dropdown show">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Products
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{{ path('list_of_categories') }}">Categories</a>
+            <a class="dropdown-item" href="{{ path('list_of_products') }}">Products</a>
+            <a class="dropdown-item" href="{{ path('add_coupon_group') }}">Add Coupon</a>
+            <a class="dropdown-item" href="{{ path('show_coupons') }}">Coupon list</a>
         </div>
     </div>
     <div class="dropdown show">
@@ -40,16 +35,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             <a class="dropdown-item" href="{{ path('add_custom_page_admin') }}">Add page</a>
-            <a class="dropdown-item" href="{{ path('view_custom_pages_admin') }}">Page list</a>
-        </div>
-    </div>
-    <div class="dropdown show">
-        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Coupons
-        </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('add_coupon_group') }}">Add Coupon</a>
-            <a class="dropdown-item" href="{{ path('show_coupons') }}">Coupon list</a>
+            <a class="dropdown-item" href="{{ path('view_custom_pages_admin') }}">Pages</a>
         </div>
     </div>
     <div class="dropdown show">
@@ -58,14 +44,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             <a class="dropdown-item" href="{{ path('show_payment_methods') }}">Payment methods</a>
-        </div>
-    </div>
-    <div class="dropdown show">
-        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Shipping
-        </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ path('show_shipping_price') }}">Show shipping price</a>
+            <a class="dropdown-item" href="{{ path('show_shipping_price') }}">Shipping prices</a>
         </div>
     </div>
 {% endblock %}

@@ -45,8 +45,8 @@ class CategoryController extends AbstractController
              */
             $category = $form->getData();
             $category->setUser($this->getUser());
-            $category->setVisibility(1);
-            $category->setVisibilityAdmin(1);
+            $category->setVisibility(true);
+            $category->setVisibilityAdmin(true);
             $entityManager->persist($category);
             $entityManager->flush();
             $this->addFlash('success', 'New category added!');
@@ -80,7 +80,7 @@ class CategoryController extends AbstractController
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($category);
             $entityManager->flush();
-            $this->addFlash('success', 'Updated category!');
+            $this->addFlash('success', 'Category updated!');
             return $this->redirectToRoute('list_of_categories');
         }
 
@@ -103,11 +103,11 @@ class CategoryController extends AbstractController
         Category $category,
         EntityManagerInterface $entityManager
     ) {
-        if ($category->getVisibilityAdmin() === 0) {
-            $category->setVisibilityAdmin(1);
+        if ($category->getVisibilityAdmin() === false) {
+            $category->setVisibilityAdmin(true);
             $this->addFlash('success', 'Category made visible!');
-        } elseif ($category->getVisibilityAdmin() === 1) {
-            $category->setVisibilityAdmin(0);
+        } elseif ($category->getVisibilityAdmin() === true) {
+            $category->setVisibilityAdmin(false);
             $this->addFlash('success', 'Category hidden!');
         } else {
             $this->addFlash('warning', 'Something went wrong!');

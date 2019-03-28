@@ -160,7 +160,7 @@ class ProductController extends AbstractController
                     /**
                      * @var $wishlistProduct \App\Entity\Wishlist
                      */
-                    $wishlistProduct->setNotify(1);
+                    $wishlistProduct->setNotify(true);
                     $entityManager->persist($wishlistProduct);
                 }
             }
@@ -239,11 +239,11 @@ class ProductController extends AbstractController
         Product $product,
         EntityManagerInterface $entityManager
     ) {
-        if ($product->getVisibilityAdmin() === 0) {
-            $product->setVisibilityAdmin(1);
+        if ($product->getVisibilityAdmin() === false) {
+            $product->setVisibilityAdmin(true);
             $this->addFlash('success', 'Product made visible!');
-        } elseif ($product->getVisibilityAdmin() === 1) {
-            $product->setVisibilityAdmin(0);
+        } elseif ($product->getVisibilityAdmin() === true) {
+            $product->setVisibilityAdmin(false);
             $this->addFlash('success', 'Product hidden!');
         } else {
             $this->addFlash('warning', 'Something went wrong');

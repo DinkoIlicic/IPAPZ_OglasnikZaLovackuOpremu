@@ -24,6 +24,7 @@ class CustomPage
     private $id;
 
     /**
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      * @\Symfony\Component\Validator\Constraints\Regex(
      *     pattern     = "/^[a-zA-Z0-9 _.-]+$/i",
      *     message     = "Only letters, numbers, space, underscore, dot and minus are allowed"

@@ -123,11 +123,11 @@ class CustomPageController extends AbstractController
      */
     public function updateVisibilityCustomPage(EntityManagerInterface $entityManager, CustomPage $customPage)
     {
-        if ($customPage->getVisibilityAdmin() === 0) {
-            $customPage->setVisibilityAdmin(1);
+        if ($customPage->getVisibilityAdmin() === false) {
+            $customPage->setVisibilityAdmin(true);
             $this->addFlash('success', 'Page made visible!');
-        } elseif ($customPage->getVisibilityAdmin() === 1) {
-            $customPage->setVisibilityAdmin(0);
+        } elseif ($customPage->getVisibilityAdmin() === true) {
+            $customPage->setVisibilityAdmin(false);
             $this->addFlash('success', 'Page hidden!');
         } else {
             $this->addFlash('warning', 'Something went wrong');

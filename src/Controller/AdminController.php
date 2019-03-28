@@ -84,12 +84,12 @@ class AdminController extends AbstractController
      */
     public function verifyApplier(Seller $seller, EntityManagerInterface $entityManager)
     {
-        if ($seller->getVerified() === 0) {
-            $seller->setVerified(1);
+        if ($seller->getVerified() === false) {
+            $seller->setVerified(true);
             $seller->getUser()->setRoles(['ROLE_SELLER']);
             $this->addFlash('success', 'Applier verified!');
-        } elseif ($seller->getVerified() === 1) {
-            $seller->setVerified(0);
+        } elseif ($seller->getVerified() === true) {
+            $seller->setVerified(false);
             $seller->getUser()->setRoles(['ROLE_USER']);
             $this->addFlash('success', 'Applier unverified!');
         }
