@@ -19,6 +19,7 @@ use App\Repository\ProductRepository;
 use App\Repository\WishlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
@@ -183,6 +184,7 @@ class ProductController extends AbstractController
      * @Route("/admin/update-product-image/{id}", name="update_product_image")
      * @param                                     EntityManagerInterface $entityManager
      * @param                                     ProductService $productService
+     * @param                                     Filesystem $filesystem
      * @param                                     Request $request
      * @param                                     Product $product
      * @return                                    \Symfony\Component\HttpFoundation\Response
@@ -191,11 +193,14 @@ class ProductController extends AbstractController
         Product $product,
         Request $request,
         EntityManagerInterface $entityManager,
-        ProductService $productService
+        ProductService $productService,
+        Filesystem $filesystem
     ) {
+        $oldImage = $this->getParameter('image_directory') . DIRECTORY_SEPARATOR . $product->getImage();
         $product->setImage(
             new File($this->getParameter('image_directory') . DIRECTORY_SEPARATOR . $product->getImage())
         );
+
         $form = $this->createForm(ProductImageFormType::class, $product);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
@@ -210,6 +215,7 @@ class ProductController extends AbstractController
                     $this->getParameter('image_directory'),
                     $fileName
                 );
+                $filesystem->remove($oldImage);
             } catch (FileException $e) {
                 // ... handle exception if something happens during file upload
             }

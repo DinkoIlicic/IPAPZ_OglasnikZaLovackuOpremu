@@ -12,6 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ShippingCsvFileFormType extends AbstractType
 {
@@ -22,7 +23,11 @@ class ShippingCsvFileFormType extends AbstractType
                 'file',
                 FileType::class,
                 [
-                    'label' => 'Insert Your CSV file here: '
+                    'label' => 'Insert Your CSV file here: ',
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             );
     }

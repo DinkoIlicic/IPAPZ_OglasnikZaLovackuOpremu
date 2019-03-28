@@ -20,7 +20,7 @@
                         {{ form_start(form) }}
                             {{ form_row(form.quantity) }}
                             {{ form_row(form.couponCodeName) }}
-                            <button type="submit" class="btn btn-primary" formnovalidate>Buy</button>
+                            <button type="submit" class="btn btn-primary" onclick="submitOnce(this, form)" formnovalidate>Buy</button>
                         {{ form_end(form) }}
                     {% else %}
                         <p>Not available</p>
@@ -43,7 +43,7 @@
                         {{ form_row(emailForm.name) }}
                         {{ form_row(emailForm.from) }}
                         {{ form_row(emailForm.message) }}
-                        <button type="submit" class="btn btn-primary" formnovalidate>Send</button>
+                        <button type="submit" class="btn btn-primary" onclick="submitOnce(this, form)" formnovalidate>Send</button>
                     {{ form_end(emailForm) }}
                 </div>
             </div>
@@ -54,7 +54,7 @@
                 <div class="col-12">
                     {{ form_start(commentForm) }}
                         {{ form_row(commentForm.content) }}
-                        <button type="submit" class="btn btn-primary" formnovalidate>Comment</button>
+                        <button type="submit" class="btn btn-primary" onclick="submitOnce(this, form)" formnovalidate>Comment</button>
                     {{ form_end(commentForm) }}
                 </div>
             </div><br />

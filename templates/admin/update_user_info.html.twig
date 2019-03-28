@@ -12,6 +12,6 @@
         {{ form_row(profileForm.lastName) }}
         {{ form_row(profileForm.email) }}
         {{ form_row(profileForm.phoneNumber) }}
-        <button class="btn btn-lg btn-primary" formnovalidate>Update</button>
+        <button class="btn btn-lg btn-primary" onclick="submitOnce(this, form)" formnovalidate>Update</button>
     {{ form_end(profileForm) }}
 {% endblock %}

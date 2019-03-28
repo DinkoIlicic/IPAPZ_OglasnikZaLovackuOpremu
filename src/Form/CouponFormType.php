@@ -13,6 +13,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CouponFormType extends AbstractType
 {
@@ -23,14 +24,22 @@ class CouponFormType extends AbstractType
                 'codeGroupName',
                 TextType::class,
                 [
-                    'label' => 'Insert Your Group Code Name here: '
+                    'label' => 'Insert Your Group Code Name here: ',
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             )
             ->add(
                 'discount',
                 TextType::class,
                 [
-                    'label' => 'Insert Your discount here: '
+                    'label' => 'Insert Your discount here: ',
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             );
     }

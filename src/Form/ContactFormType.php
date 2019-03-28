@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ContactFormType extends AbstractType
 {
@@ -24,21 +25,33 @@ class ContactFormType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'Name: ',
-                    'required' => true
+                    'required' => true,
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             )
             ->add(
                 'from',
                 EmailType::class,
                 [
-                    'label' => 'Your email: '
+                    'label' => 'Your email: ',
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             )
             ->add(
                 'message',
                 TextareaType::class,
                 [
-                    'label' => 'Message: '
+                    'label' => 'Message: ',
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             );
     }

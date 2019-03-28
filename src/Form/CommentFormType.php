@@ -13,6 +13,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CommentFormType extends AbstractType
 {
@@ -23,7 +24,11 @@ class CommentFormType extends AbstractType
                 'content',
                 TextareaType::class,
                 [
-                    'label' => 'Add new comment'
+                    'label' => 'Add new comment',
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             );
     }

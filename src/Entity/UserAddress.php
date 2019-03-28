@@ -31,11 +31,13 @@ class UserAddress
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $country;
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $addressFirst;
 
@@ -46,16 +48,19 @@ class UserAddress
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $city;
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $state;
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="integer")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $postalCode;
 

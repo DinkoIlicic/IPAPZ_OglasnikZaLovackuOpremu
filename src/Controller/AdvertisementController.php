@@ -24,6 +24,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\CouponCodesRepository;
 use App\Repository\CustomPageRepository;
 use App\Repository\PaymentMethodRepository;
+use App\Repository\PaymentTransactionRepository;
 use App\Repository\ProductCategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SellerRepository;
@@ -73,11 +74,11 @@ class AdvertisementController extends AbstractController
      * @param CustomPageRepository $customPageRepository
      * @return array
      */
-    public function findDataForHeader(
+    private function findDataForHeader(
         CustomPageRepository $customPageRepository,
         CategoryRepository $categoryRepository
     ) {
-        $allCustomPages = $customPageRepository->findAll();
+        $allCustomPages = $customPageRepository->findBy(['visibilityAdmin' => true]);
         $categories = $this->getAllVisibleCategories($categoryRepository);
         $arrayWithHeaderData = [];
         $arrayWithHeaderData['customPages'] = $allCustomPages;
@@ -89,7 +90,7 @@ class AdvertisementController extends AbstractController
      * @param  CategoryRepository $categoryRepository
      * @return array
      */
-    public function getAllVisibleCategories(CategoryRepository $categoryRepository)
+    private function getAllVisibleCategories(CategoryRepository $categoryRepository)
     {
         $categories = $categoryRepository->findBy(
             [
@@ -269,7 +270,7 @@ class AdvertisementController extends AbstractController
         );
     }
 
-    public function userBuyProduct(
+    private function userBuyProduct(
         Sold $sold,
         Product $product,
         EntityManagerInterface $entityManager,
@@ -363,6 +364,7 @@ class AdvertisementController extends AbstractController
      * @param CustomPageRepository $customPageRepository
      * @param EntityManagerInterface $entityManager
      * @param ShippingRepository $shippingRepository
+     * @param PaymentTransactionRepository $paymentTransactionRepository
      * @param Sold $sold
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -372,8 +374,18 @@ class AdvertisementController extends AbstractController
         CategoryRepository $categoryRepository,
         CustomPageRepository $customPageRepository,
         Sold $sold,
-        ShippingRepository $shippingRepository
+        ShippingRepository $shippingRepository,
+        PaymentTransactionRepository $paymentTransactionRepository
     ) {
+        $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
+        if ($checkIfExists !== null) {
+            return $this->redirectToRoute('advertisement_index');
+        }
+
+        if ($this->getUser() !== $sold->getUser()) {
+            return $this->redirectToRoute('advertisement_index');
+        }
+
         $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
 
         $formNewAddress = $this->createForm(NewAddressFormType::class);
@@ -458,7 +470,7 @@ class AdvertisementController extends AbstractController
      * @param CouponCodesRepository $couponCodesRepository
      * @return bool
      */
-    public function checkCouponCode(
+    private function checkCouponCode(
         $couponCode,
         Product $product,
         ProductCategoryRepository $productCategoryRepository,
@@ -540,18 +552,9 @@ class AdvertisementController extends AbstractController
                 [
                     'pageName' => $product->getCustomUrl()]
             );
-        } elseif (filter_var($from, FILTER_VALIDATE_EMAIL)) {
-            $this->addFlash(
-                'success',
-                'Mail sent. Name: ' . $name . ', from: ' . $from . ', to: '
-                . $to . ', message: ' . $message
-            );
-            return $this->redirectToRoute(
-                'check_product',
-                [
-                    'pageName' => $product->getCustomUrl()]
-            );
-        } else {
+        }
+
+        if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
             $this->addFlash('warning', 'Your email is not valid!');
             return $this->redirectToRoute(
                 'check_product',
@@ -559,6 +562,17 @@ class AdvertisementController extends AbstractController
                     'pageName' => $product->getCustomUrl()]
             );
         }
+
+        $this->addFlash(
+            'success',
+            'Mail sent. Name: ' . $name . ', from: ' . $from . ', to: '
+            . $to . ', message: ' . $message
+        );
+        return $this->redirectToRoute(
+            'check_product',
+            [
+                'pageName' => $product->getCustomUrl()]
+        );
     }
 
     /**
@@ -790,7 +804,13 @@ class AdvertisementController extends AbstractController
         $pageName
     ) {
         $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
-        $customPage = $customPageRepository->findOneBy(['pageName' => $pageName]);
+        $customPage = $customPageRepository->findOneBy(['pageName' => $pageName, 'visibilityAdmin' => true]);
+        if (!$customPage) {
+            return $this->redirectToRoute(
+                'advertisement_index'
+            );
+        }
+
         return $this->render(
             '/advertisement/custom_page_layout.html.twig',
             [

@@ -30,6 +30,10 @@ class Shipping
      * @\Symfony\Component\Validator\Constraints\GreaterThan(
      *     value = 0
      * )
+     * @\Symfony\Component\Validator\Constraints\Regex(
+     *     pattern     = "/^[0-9.]+$/i",
+     *     message     = "Only numbers and dot are allowed"
+     * )
      */
     private $price;
 

@@ -23,6 +23,7 @@ use App\Repository\WishlistRepository;
 use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -152,11 +153,15 @@ class SellerController extends AbstractController
         Product $product,
         EntityManagerInterface $entityManager
     ) {
-        if ($product->getVisibility() === 0) {
-            $product->setVisibility(1);
+        if ($this->getUser() !== $product->getUser()) {
+            return $this->redirectToRoute('show_my_products');
+        }
+
+        if ($product->getVisibility() === false) {
+            $product->setVisibility(true);
             $this->addFlash('success', 'Product made visible!');
-        } elseif ($product->getVisibility() === 1) {
-            $product->setVisibility(0);
+        } elseif ($product->getVisibility() === true) {
+            $product->setVisibility(false);
             $this->addFlash('success', 'Product hidden!');
         } else {
             $this->addFlash('warning', 'Something went wrong');
@@ -291,6 +296,7 @@ class SellerController extends AbstractController
      * @Route("/seller/update-product-image/{id}", name="update_my_product_image")
      * @param                                      EntityManagerInterface $entityManager
      * @param                                      ProductService $productService
+     * @param                                      Filesystem $filesystem
      * @param                                      Request $request
      * @param                                      Product $product
      * @return                                     \Symfony\Component\HttpFoundation\Response
@@ -299,12 +305,14 @@ class SellerController extends AbstractController
         Product $product,
         Request $request,
         EntityManagerInterface $entityManager,
-        ProductService $productService
+        ProductService $productService,
+        Filesystem $filesystem
     ) {
         if ($this->getUser() !== $product->getUser()) {
             return $this->redirectToRoute('show_my_products');
         }
 
+        $oldImage = $this->getParameter('image_directory') . DIRECTORY_SEPARATOR . $product->getImage();
         $product->setImage(
             new File($this->getParameter('image_directory') . DIRECTORY_SEPARATOR . $product->getImage())
         );
@@ -322,6 +330,7 @@ class SellerController extends AbstractController
                     $this->getParameter('image_directory'),
                     $fileName
                 );
+                $filesystem->remove($oldImage);
             } catch (FileException $e) {
                 // ... handle exception if something happens during file upload
             }
@@ -476,11 +485,11 @@ class SellerController extends AbstractController
             return $this->redirectToRoute('sold_items_per_user');
         }
 
-        if ($sold->getConfirmed() === 0) {
-            $sold->setConfirmed(1);
+        if ($sold->getConfirmed() === false) {
+            $sold->setConfirmed(true);
             $this->addFlash('success', 'Buy confirmed!');
-        } elseif ($sold->getConfirmed() === 1) {
-            $sold->setConfirmed(0);
+        } elseif ($sold->getConfirmed() === true) {
+            $sold->setConfirmed(false);
             $this->addFlash('success', 'Buy unconfirmed!');
         }
 
@@ -591,11 +600,11 @@ class SellerController extends AbstractController
             return $this->redirectToRoute('list_of_sold_items_per_product');
         }
 
-        if ($sold->getConfirmed() === 0) {
-            $sold->setConfirmed(1);
+        if ($sold->getConfirmed() === false) {
+            $sold->setConfirmed(true);
             $this->addFlash('success', 'Buy confirmed!');
-        } elseif ($sold->getConfirmed() === 1) {
-            $sold->setConfirmed(0);
+        } elseif ($sold->getConfirmed() === true) {
+            $sold->setConfirmed(false);
             $this->addFlash('success', 'Buy unconfirmed!');
         }
 

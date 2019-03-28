@@ -11,7 +11,7 @@
         {{ form_start(form) }}
             {{ form_row(form.codeGroupName) }}
             {{ form_row(form.discount) }}
-            <button type="submit" class="btn btn-primary" formnovalidate>Insert</button>
+            <button type="submit" class="btn btn-primary" onclick="submitOnce(this, form)" formnovalidate>Insert</button>
         {{ form_end(form) }}
     </div>
 {% endblock %}

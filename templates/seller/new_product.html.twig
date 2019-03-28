@@ -16,7 +16,7 @@
             {{ form_row(form.productCategory) }}
             {{ form_row(form.customUrl) }}
             {{ form_row(form.content) }}
-            <button type="submit" class="btn btn-primary" formnovalidate>Insert</button>
+            <button type="submit" onclick="submitOnce(this, form)" class="btn btn-primary" formnovalidate>Insert</button>
         {{ form_end(form) }}
     </div>
 {% endblock %}

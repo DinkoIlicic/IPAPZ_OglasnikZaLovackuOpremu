@@ -10,6 +10,7 @@ namespace App\Controller;
 
 use App\Entity\PaymentTransaction;
 use App\Entity\Sold;
+use App\Repository\PaymentTransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -24,10 +25,22 @@ class PaymentTransactionController extends AbstractController
     /**
      * @Route("/transaction/paypal-show/{id}", name="paypal_show")
      * @param                      Sold $sold
+     * @param                      PaymentTransactionRepository $paymentTransactionRepository
      * @return                     \Symfony\Component\HttpFoundation\Response
      */
-    public function paypalShow(Sold $sold)
-    {
+    public function paypalShow(
+        Sold $sold,
+        PaymentTransactionRepository $paymentTransactionRepository
+    ) {
+        $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
+        if ($checkIfExists !== null) {
+            return $this->redirectToRoute('advertisement_index');
+        }
+
+        if ($this->getUser() !== $sold->getUser()) {
+            return $this->redirectToRoute('advertisement_index');
+        }
+
         $gateway = self::gateway();
         return $this->render(
             'paypal/paypal.html.twig',
@@ -41,12 +54,26 @@ class PaymentTransactionController extends AbstractController
     /**
      * @Route("/transaction/paypal-payment/{id}", name="paypal_payment")
      * @param Request $request
+     * @param PaymentTransactionRepository $paymentTransactionRepository
      * @param Sold $sold
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function payment(EntityManagerInterface $entityManager, Sold $sold, Request $request)
-    {
+    public function payment(
+        EntityManagerInterface $entityManager,
+        Sold $sold,
+        Request $request,
+        PaymentTransactionRepository $paymentTransactionRepository
+    ) {
+        $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
+        if ($checkIfExists !== null) {
+            return $this->redirectToRoute('advertisement_index');
+        }
+
+        if ($this->getUser() !== $sold->getUser()) {
+            return $this->redirectToRoute('advertisement_index');
+        }
+
         $gateway = self::gateway();
         $amount = $sold->getToPay();
         $nonce = $request->get('payment_method_nonce');
@@ -80,7 +107,7 @@ class PaymentTransactionController extends AbstractController
         return $this->redirectToRoute('my_items');
     }
 
-    public function gateway()
+    private function gateway()
     {
         return $gateway = new \Braintree_Gateway(
             [
@@ -95,10 +122,20 @@ class PaymentTransactionController extends AbstractController
     /**
      * @Route("/transaction/invoice-show/{id}", name="invoice_show")
      * @param                      Sold $sold
+     * @param                      PaymentTransactionRepository $paymentTransactionRepository
      * @return                     \Symfony\Component\HttpFoundation\Response
      */
-    public function invoiceShow(Sold $sold)
+    public function invoiceShow(Sold $sold, PaymentTransactionRepository $paymentTransactionRepository)
     {
+        $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
+        if ($checkIfExists !== null) {
+            return $this->redirectToRoute('advertisement_index');
+        }
+
+        if ($this->getUser() !== $sold->getUser()) {
+            return $this->redirectToRoute('advertisement_index');
+        }
+
         return $this->render(
             'invoice/invoice.html.twig',
             [
@@ -110,12 +147,21 @@ class PaymentTransactionController extends AbstractController
     /**
      * @Route("/transaction/invoice-pay/{id}", name="invoice_pay")
      * @param EntityManagerInterface $entityManager
+     * @param PaymentTransactionRepository $paymentTransactionRepository
      * @param Sold $sold
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function choseOnDeliveryMethod(Sold $sold, EntityManagerInterface $entityManager)
-    {
-        if ($sold === null) {
+    public function choseOnDeliveryMethod(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        PaymentTransactionRepository $paymentTransactionRepository
+    ) {
+        $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
+        if ($checkIfExists !== null) {
+            return $this->redirectToRoute('advertisement_index');
+        }
+
+        if ($this->getUser() !== $sold->getUser()) {
             return $this->redirectToRoute('advertisement_index');
         }
 
@@ -143,7 +189,7 @@ class PaymentTransactionController extends AbstractController
      * @param PaymentTransaction $invoice
      * @param EntityManagerInterface $entityManager
      */
-    public function createDomPdf(Sold $sold, PaymentTransaction $invoice, EntityManagerInterface $entityManager)
+    private function createDomPdf(Sold $sold, PaymentTransaction $invoice, EntityManagerInterface $entityManager)
     {
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
@@ -172,7 +218,7 @@ class PaymentTransactionController extends AbstractController
 
         $output = $domPdf->output();
 
-        $publicDirectory = '../public/invoice/';
+        $publicDirectory = self::returnPathToInvoice();
 
         $pdfFilepath =  $publicDirectory . $pdfName;
 
@@ -210,6 +256,11 @@ class PaymentTransactionController extends AbstractController
      */
     public function confirmInvoicePayment(PaymentTransaction $paymentTransaction, EntityManagerInterface $entityManager)
     {
+        $invoice = $paymentTransaction->getMethod();
+        if ($invoice !== 'Invoice') {
+            return $this->redirectToRoute('admin_index');
+        }
+
         if ($paymentTransaction->getConfirmed() === true) {
             $paymentTransaction->setConfirmed(false);
             $this->addFlash('success', 'Payment transaction confirm removed!');
@@ -233,18 +284,42 @@ class PaymentTransactionController extends AbstractController
      * @Route("/admin/delete-payment-transaction/{paymentTransaction}",name="delete_payment_transaction")
      * @param EntityManagerInterface $entityManager
      * @param Filesystem $filesystem
+     * @param PaymentTransactionRepository $paymentTransactionRepository
      * @param PaymentTransaction $paymentTransaction
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteInvoicePayment(
+    public function deletePaymentTransaction(
         EntityManagerInterface $entityManager,
         PaymentTransaction $paymentTransaction,
+        PaymentTransactionRepository $paymentTransactionRepository,
         Filesystem $filesystem
     ) {
-        $filesystem->remove($paymentTransaction->getTransactionId());
+        $checkIfExists = $paymentTransactionRepository->findOneBy(['id' => $paymentTransaction->getId()]);
+        if ($checkIfExists === null) {
+            return $this->redirectToRoute('admin_index');
+        }
+
+        if ($paymentTransaction->getMethod() === 'Invoice') {
+            $publicDirectory = self::returnPathToInvoice();
+            $filesystem->remove($publicDirectory . $paymentTransaction->getTransactionId());
+        }
+
+        /**
+         * @var \App\Entity\Sold $soldProduct
+         */
+        $soldProduct = $paymentTransaction->getSoldProduct();
+        $soldProduct->setConfirmed(false);
+        $soldProduct->setPaymentMethod(null);
+        $soldProduct->setAddress(null);
         $entityManager->remove($paymentTransaction);
         $entityManager->flush();
-        $this->addFlash('success', 'Invoice deleted!');
+        $this->addFlash('success', 'Payment deleted!');
         return $this->redirectToRoute('view_sold_items_per_person');
+    }
+
+    private function returnPathToInvoice()
+    {
+        $publicDirectory = '../public/invoice/';
+        return $publicDirectory;
     }
 }

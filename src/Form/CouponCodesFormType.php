@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CouponCodesFormType extends AbstractType
 {
@@ -28,7 +29,11 @@ class CouponCodesFormType extends AbstractType
                 [
                     'label' => 'Insert number of codes to generate: ',
                     'required' => true,
-                    'data' => 1
+                    'data' => 1,
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             )
             ->add(

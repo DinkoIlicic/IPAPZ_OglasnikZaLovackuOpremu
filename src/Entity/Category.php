@@ -28,6 +28,7 @@ class Category
     private $id;
 
     /**
+     * @\Symfony\Component\Validator\Constraints\NotBlank(message="Please, insert category name.")
      * @\Doctrine\ORM\Mapping\Column(type="string")
      */
     private $name;
@@ -37,11 +38,6 @@ class Category
      * @\Doctrine\ORM\Mapping\JoinColumn(nullable=false)
      */
     private $user;
-
-    /**
-     * @\Doctrine\ORM\Mapping\Column(type="boolean")
-     */
-    private $visibility;
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="boolean")
@@ -105,22 +101,6 @@ class Category
     public function setName($name): void
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVisibility()
-    {
-        return $this->visibility;
-    }
-
-    /**
-     * @param mixed $visibility
-     */
-    public function setVisibility($visibility): void
-    {
-        $this->visibility = $visibility;
     }
 
     /**

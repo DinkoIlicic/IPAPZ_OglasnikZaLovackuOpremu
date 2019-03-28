@@ -13,6 +13,8 @@ use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ShippingFormType extends AbstractType
 {
@@ -26,8 +28,11 @@ class ShippingFormType extends AbstractType
                     'attr' => [
                         'placeholder' => 'Enter here'
                     ],
-                    'label' => 'Country name: '
-
+                    'label' => 'Country name: ',
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             )
             ->add(
@@ -35,6 +40,12 @@ class ShippingFormType extends AbstractType
                 MoneyType::class,
                 [
                     'label' => 'Shipping price:  ',
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                            new GreaterThanOrEqual(['value' => 0]),
+                        ],
+                    'invalid_message' => 'Only numbers and dot allowed!',
                 ]
             );
     }

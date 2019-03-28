@@ -48,9 +48,10 @@ class PaymentOptionFormType extends AbstractType
                             $userAddress->getCity() . ', ' .
                             $userAddress->getCountry();
                     },
-                    'constraints' => array(
-                        new NotBlank(),
-                    )
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
 
                 ]
             )
@@ -69,7 +70,11 @@ class PaymentOptionFormType extends AbstractType
                          * @var \App\Entity\PaymentMethod $option
                          */
                         return $option->getMethod();
-                    }
+                    },
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             );
     }

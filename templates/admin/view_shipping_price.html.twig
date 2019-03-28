@@ -7,20 +7,20 @@
     <div>
         {{ form_start(defaultForm) }}
             {{ form_row(defaultForm.price) }}
-            <button type="submit" class="btn btn-primary" formnovalidate>Update</button>
+            <button type="submit" class="btn btn-primary" onclick="submitOnce(this, form)" formnovalidate>Update</button>
         {{ form_end(defaultForm) }}
     </div><br /><br /><br />
     <div>
         {{ form_start(form) }}
             {{ form_row(form.query) }}
             {{ form_row(form.price) }}
-            <button type="submit" class="btn btn-primary" formnovalidate>Update</button>
+            <button type="submit" class="btn btn-primary" onclick="submitOnce(this, form)" formnovalidate>Update</button>
         {{ form_end(form) }}
     </div><br /><br /><br />
     <div>
         {{ form_start(formCsv) }}
             {{ form_row(formCsv.file) }}
-            <button type="submit" class="btn btn-primary" formnovalidate>Update</button>
+            <button type="submit" class="btn btn-primary" onclick="submitOnce(this, form)" formnovalidate>Update</button>
         {{ form_end(formCsv) }}
     </div>
 {% endblock %}

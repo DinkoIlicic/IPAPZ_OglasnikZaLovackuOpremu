@@ -66,34 +66,43 @@ class ShippingController extends AbstractController
         $formCsv->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $formCsv->isSubmitted() && $formCsv->isValid()) {
             $csvFile = $formCsv->get('file')->getData();
-            $ext = $csvFile->getClientOriginalExtension();
-            if ($ext === "csv") {
-                $path = $csvFile->getPathName();
-                $reader = Reader::createFromPath($path);
-                $reader->setHeaderOffset(0);
-                $header = $reader->getHeader();
-                $find = ['country', 'countryCode', 'price'];
-
-                if (count(array_intersect($find, $header)) == count($header)) {
-                    $results = $reader->getRecords();
-                    foreach ($results as $read) {
-                        $found = $shippingRepository->findOneBy(['country' => $read['country']]);
-                        if ($found instanceof Shipping) {
-                            $found->setPrice($read['price']);
-                            $entityManager->merge($found);
-                        }
-                    }
-
-                    $entityManager->flush();
-                } else {
-                    $this->addFlash(
-                        'warning',
-                        'File does not contain right data (required country, countryCode and price)!'
-                    );
-                }
-            } else {
-                $this->addFlash('warning', 'Wrong file, please upload CSV file!');
+            if (empty($csvFile)) {
+                $this->addFlash(
+                    'warning',
+                    'Please select a file!'
+                );
+                return $this->redirectToRoute('show_shipping_price');
             }
+
+            $ext = $csvFile->getClientOriginalExtension();
+            if ($ext !== "csv") {
+                $this->addFlash('warning', 'Wrong file, please upload CSV file!');
+                return $this->redirectToRoute('show_shipping_price');
+            }
+
+            $path = $csvFile->getPathName();
+            $reader = Reader::createFromPath($path);
+            $reader->setHeaderOffset(0);
+            $header = $reader->getHeader();
+            $find = ['country', 'countryCode', 'price'];
+            if (count(array_intersect($find, $header)) != count($header)) {
+                $this->addFlash(
+                    'warning',
+                    'File does not contain right data (required country, countryCode and price)!'
+                );
+                return $this->redirectToRoute('show_shipping_price');
+            }
+
+            $results = $reader->getRecords();
+            foreach ($results as $read) {
+                $found = $shippingRepository->findOneBy(['country' => $read['country']]);
+                if ($found instanceof Shipping) {
+                    $found->setPrice($read['price']);
+                    $entityManager->merge($found);
+                }
+            }
+
+            $entityManager->flush();
         };
 
         return $this->render(

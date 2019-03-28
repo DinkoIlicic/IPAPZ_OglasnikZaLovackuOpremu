@@ -32,6 +32,7 @@
                     <p>Method: {{ payment.method }}</p>
                     <p>Transaction id: {{ payment.transactionId }}</p>
                     <p>Paid at: {{ payment.paidAt|date("d. m. Y. H:i") }}</p>
+                    <p><a class="btn btn-danger" href={{path('delete_payment_transaction',{'paymentTransaction':payment.id})}}>Delete</a></p>
                 {% elseif (payment.method == 'Invoice') %}
                     <p>Method: {{ payment.method }}</p>
                     <p>Invoice id:  <a class="card-link" href={{path('pdf_download',{'fileName':payment.transactionId})}}>{{ payment.transactionId }}</a></p>

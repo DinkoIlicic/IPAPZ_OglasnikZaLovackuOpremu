@@ -24,6 +24,7 @@ class PaymentMethod
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="text")
+     * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $method;
 

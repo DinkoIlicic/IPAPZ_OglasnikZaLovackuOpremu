@@ -12,6 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RemoveCouponCodesFormType extends AbstractType
 {
@@ -24,6 +25,10 @@ class RemoveCouponCodesFormType extends AbstractType
                 [
                     'label' => 'Starting id: ',
                     'required' => true,
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             )
             ->add(
@@ -32,6 +37,10 @@ class RemoveCouponCodesFormType extends AbstractType
                 [
                     'label' => 'Ending id: ',
                     'required' => true,
+                    'constraints' =>
+                        [
+                            new NotBlank(),
+                        ]
                 ]
             );
     }
