@@ -29,7 +29,7 @@ class ListOfUserBoughtItemsFormType extends AbstractType
                         /**
                          * @var User $user
                          */
-                        return $user->getFirstName() . ' ' . $user->getLastName();
+                        return $user->getFullName();
                     },
                 ]
             );

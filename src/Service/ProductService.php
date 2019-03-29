@@ -9,9 +9,6 @@
 namespace App\Service;
 
 use App\Entity\Product;
-use App\Entity\Sold;
-use App\Repository\ProductRepository;
-use App\Repository\WishlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -176,39 +173,6 @@ class ProductService
 
         $pageName = $customUrl . $productUrlNum;
         return $pageName;
-    }
-
-    public function deleteProductItem(
-        Sold $sold,
-        EntityManagerInterface $entityManager,
-        ProductRepository $productRepository,
-        WishlistRepository $wishlistRepository
-    ) {
-        /**
-         * @var Product $productOld
-         */
-        $productOld = $productRepository->findOneBy(
-            [
-                'id' => $sold->getProduct()->getId()
-            ]
-        );
-        if ($productOld->getAvailableQuantity() === 0) {
-            $wishlistProducts = $wishlistRepository->findBy(
-                [
-                    'product' => $productOld->getId()]
-            );
-            foreach ($wishlistProducts as $wishlistProduct) {
-                /**
-                 * @var $wishlistProduct \App\Entity\Wishlist;
-                 */
-                $wishlistProduct->setNotify(1);
-                $entityManager->persist($wishlistProduct);
-            }
-        }
-
-        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
-        $entityManager->remove($sold);
-        $entityManager->flush();
     }
 
     /**

@@ -9,9 +9,9 @@
 namespace App\Controller;
 
 use App\Entity\PaymentTransaction;
+use App\Entity\Product;
 use App\Entity\Sold;
 use App\Entity\User;
-use App\Form\AdminListOfBoughtItemsPerProductFormType;
 use App\Repository\PaymentTransactionRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SoldRepository;
@@ -20,19 +20,18 @@ use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route; //@codingStandardsIgnoreLine
 
 class SoldProductsController extends AbstractController
 {
     /**
-     * @Route("/admin/handle-search-per-user-admin/{_query?}",
-     *      name="handle_search_per_user_admin", methods={"POST", "GET"})
+     * @Route("/seller/handle-search-per-user/{_query?}",
+     *      name="handle_search_per_user", methods={"POST", "GET"})
      * @var                                     $_query
      * @param                                   ProductService $productService
      * @return                                  JsonResponse
      */
-    public function handleSearchRequestPerUserAdmin($_query, ProductService $productService)
+    public function handleSearchRequestPerUser($_query, ProductService $productService)
     {
         $em = $this->getDoctrine()->getManager();
         if ($_query) {
@@ -46,78 +45,318 @@ class SoldProductsController extends AbstractController
     }
 
     /**
-     * @Route("/admin/ajax-person-sold-per-user-admin/{id?}", name="ajax_person_sold_admin_user")
+     * @Route("/seller/handle-search-per-product/{_query?}",
+     *      name="handle_search_per_product", methods={"POST", "GET"})
+     * @var                                     $_query
+     * @param                                   ProductService $productService
+     * @return                                  JsonResponse
+     */
+    public function handleSearchRequestPerProduct($_query, ProductService $productService)
+    {
+        $em = $this->getDoctrine()->getManager();
+        if ($_query) {
+            $data = $em->getRepository(Product::class)->findByName($_query);
+        } else {
+            $data = $em->getRepository(Product::class)->findAll();
+        }
+
+        $jsonObject = $productService->returnJsonObjectUser($data);
+        return new JsonResponse($jsonObject, 200, [], true);
+    }
+
+    /**
+     * @Route("/admin/ajax-sold-per-user-admin/{id?}", name="ajax_sold_per_user_admin")
      * @param                                  SoldRepository $soldRepository
      * @param                                  ProductRepository $productRepository
      * @param                                  User $id
      * @return                                 JsonResponse
      */
-    public function ajaxListPersonPerPersonAdmin(
+    public function ajaxListPersonPerUserAdmin(
         SoldRepository $soldRepository,
         ProductRepository $productRepository,
         User $id = null
     ) {
         $products = $productRepository->findAll();
         if ($id) {
-            $userName = $id->getFullName();
-            $soldPerUser = $soldRepository->getSoldProductPerUser($id, $products);
+            $hName = $id->getFullName();
+            $soldPerUser = $soldRepository->getSoldProductPerUserAdmin($id, $products);
         } else {
-            $userName = "All users";
-            $soldPerUser = $soldRepository->getSoldProductPerUserAll($products);
+            $hName = "All users";
+            $soldPerUser = $soldRepository->getSoldProductAllAdmin($products);
         }
 
         return new JsonResponse(
             [
                 'soldItems' => $soldPerUser,
-                'userName' => $userName,
+                'hName' => $hName,
             ]
         );
     }
 
     /**
-     * @Route("/admin/item-sold-per-user/{id?}", name="view_sold_items_per_person")
+     * @Route("/admin/ajax-sold-per-product-admin/{id?}", name="ajax_sold_per_product_admin")
+     * @param                                  SoldRepository $soldRepository
+     * @param                                  ProductRepository $productRepository
+     * @param                                  Product $id
+     * @return                                 JsonResponse
+     */
+    public function ajaxListPersonPerProductAdmin(
+        SoldRepository $soldRepository,
+        ProductRepository $productRepository,
+        Product $id = null
+    ) {
+        $products = $productRepository->findAll();
+        if ($id) {
+            $hName = $id->getName();
+            $soldPerUser = $soldRepository->getSoldProductPerProductAdmin($id, $products);
+        } else {
+            $hName = "All products";
+            $soldPerUser = $soldRepository->getSoldProductAllAdmin($products);
+        }
+
+        return new JsonResponse(
+            [
+                'soldItems' => $soldPerUser,
+                'hName' => $hName,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/seller/ajax-sold-per-user-seller/{id?}", name="ajax_sold_per_user_seller")
+     * @param                                  SoldRepository $soldRepository
+     * @param                                  ProductRepository $productRepository
+     * @param                                  User $id
+     * @return                                 JsonResponse
+     */
+    public function ajaxListPersonPerUserSeller(
+        SoldRepository $soldRepository,
+        ProductRepository $productRepository,
+        User $id = null
+    ) {
+
+        $products = $productRepository->findAll();
+        if ($id) {
+            $hName = $id->getFullName();
+            $soldPerUser = $soldRepository->getSoldProductPerUserSeller($id, $products, $this->getUser());
+        } else {
+            $hName = "All users";
+            $soldPerUser = $soldRepository->getSoldProductAllSeller($products, $this->getUser());
+        }
+
+        return new JsonResponse(
+            [
+                'soldItems' => $soldPerUser,
+                'hName' => $hName,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/seller/ajax-sold-per-product-seller/{id?}", name="ajax_sold_per_product_seller")
+     * @param                                  SoldRepository $soldRepository
+     * @param                                  ProductRepository $productRepository
+     * @param                                  Product $id
+     * @return                                 JsonResponse
+     */
+    public function ajaxListPersonPerProductSeller(
+        SoldRepository $soldRepository,
+        ProductRepository $productRepository,
+        Product $id = null
+    ) {
+        $products = $productRepository->findAll();
+        if ($id) {
+            $hName = $id->getName();
+            $soldPerUser = $soldRepository->getSoldProductPerProductSeller($id, $products, $this->getUser());
+        } else {
+            $hName = "All products";
+            $soldPerUser = $soldRepository->getSoldProductAllSeller($products, $this->getUser());
+        }
+
+        return new JsonResponse(
+            [
+                'soldItems' => $soldPerUser,
+                'hName' => $hName,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/item-sold-per-user/{id?}", name="view_sold_items_per_user_admin")
      * @param                                    SoldRepository $soldRepository
      * @param                                    ProductRepository $productRepository
      * @param                                    User $id
      * @return                                   \Symfony\Component\HttpFoundation\Response
      */
-    public function listOfPeopleThatBoughtMyProduct(
+    public function listOfBoughtItemsPerUser(
         SoldRepository $soldRepository,
         ProductRepository $productRepository,
         User $id = null
     ) {
         $products = $productRepository->findAll();
         if ($id) {
-            $userName = $id->getFullName();
-            $soldPerUser = $soldRepository->getSoldProductPerUser($id, $products);
+            $hName = $id->getFullName();
+            $soldPerUser = $soldRepository->getSoldProductPerUserAdmin($id, $products);
         } else {
-            $userName = "All users";
-            $soldPerUser = $soldRepository->getSoldProductPerUserAll($products);
+            $hName = "All users";
+            $soldPerUser = $soldRepository->getSoldProductAllAdmin($products);
         };
 
         return $this->render(
-            '/admin/view_sold_items_per_person.html.twig',
+            '/search/sold_products.html.twig',
             [
                 'soldItems' => $soldPerUser,
-                'userName' => $userName,
+                'hName' => $hName,
+                'header'  => '/admin/header.html.twig',
+                'search' => 'user',
+                'searchType' => 'userAdmin',
+                'searchAll' => 'view_sold_items_per_user_admin',
+                'viewSold' => 'view_sold_product_info_admin',
+                'viewSoldPayment' => 'view_sold_item_payment_method_per_user_admin',
+                'deleteSold' => 'delete_sold_item_per_user_admin'
             ]
         );
     }
 
     /**
-     * @Route("/admin/sold-item-payment-method/{id?}", name="view_sold_items_per_user_payment_method")
-     * @param PaymentTransaction $paymentTransaction
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @Route("/admin/item-sold-per-product/{id?}", name="view_sold_items_per_product_admin")
+     * @param                                 Product $id
+     * @param                                 SoldRepository $soldRepository
+     * @param                                 ProductRepository $productRepository
+     * @return                                \Symfony\Component\HttpFoundation\Response
      */
-    public function viewSoldItemPerUserPaymentMethod(
-        PaymentTransaction $paymentTransaction
+    public function listOfBoughtItemsPerProductAdmin(
+        SoldRepository $soldRepository,
+        ProductRepository $productRepository,
+        Product $id = null
     ) {
+        $products = $productRepository->findAll();
+        if ($id) {
+            /**
+             * @var \App\Entity\Product $product
+             */
+            $hName = $id->getName();
+            $soldPerProduct = $soldRepository->getSoldProductPerProductAdmin($id, $products);
+        } else {
+            $hName = "All products";
+            $soldPerProduct = $soldRepository->getSoldProductAllAdmin($products);
+        }
+
         return $this->render(
-            '/admin/view_sold_item_payment_method.html.twig',
+            '/search/sold_products.html.twig',
             [
-                'payment' => $paymentTransaction
+                'soldItems' => $soldPerProduct,
+                'hName' => $hName,
+                'header'  => '/admin/header.html.twig',
+                'search' => 'product',
+                'searchType' => 'productAdmin',
+                'searchAll' => 'view_sold_items_per_product_admin',
+                'viewSold' => 'view_sold_product_info_admin',
+                'viewSoldPayment' => 'view_sold_item_payment_method_per_product_admin',
+                'deleteSold' => 'delete_sold_item_per_product_admin'
             ]
         );
+    }
+
+    /**
+     * @Route("/seller/item-sold-per-user/{id?}", name="view_sold_items_per_user_seller")
+     * @param                                    SoldRepository $soldRepository
+     * @param                                    ProductRepository $productRepository
+     * @param                                    User $id
+     * @return                                   \Symfony\Component\HttpFoundation\Response
+     */
+    public function listOfBoughtItemsPerUserSeller(
+        SoldRepository $soldRepository,
+        ProductRepository $productRepository,
+        User $id = null
+    ) {
+        $products = $productRepository->findAll();
+        if ($id) {
+            $hName = $id->getFullName();
+            $soldPerUser = $soldRepository->getSoldProductPerUserSeller($id, $products, $this->getUser());
+        } else {
+            $hName = "All users";
+            $soldPerUser = $soldRepository->getSoldProductAllSeller($products, $this->getUser());
+        };
+
+        return $this->render(
+            '/search/sold_products.html.twig',
+            [
+                'soldItems' => $soldPerUser,
+                'hName' => $hName,
+                'header'  => '/seller/header.html.twig',
+                'search' => 'user',
+                'searchType' => 'userSeller',
+                'searchAll' => 'view_sold_items_per_user_seller',
+                'viewSold' => 'view_sold_product_info_seller',
+                'viewSoldPayment' => 'view_sold_item_payment_method_per_user_seller',
+                'deleteSold' => 'delete_sold_item_per_user_seller'
+            ]
+        );
+    }
+
+    /**
+     * @Route("/seller/item-sold-per-product/{id?}", name="view_sold_items_per_product_seller")
+     * @param                                 Product $id
+     * @param                                 SoldRepository $soldRepository
+     * @param                                 ProductRepository $productRepository
+     * @return                                \Symfony\Component\HttpFoundation\Response
+     */
+    public function listOfBoughtItemsPerProductSeller(
+        SoldRepository $soldRepository,
+        ProductRepository $productRepository,
+        Product $id = null
+    ) {
+        $products = $productRepository->findAll();
+        if ($id) {
+            /**
+             * @var \App\Entity\Product $product
+             */
+            $hName = $id->getName();
+            $soldPerProduct = $soldRepository->getSoldProductPerProductSeller($id, $products, $this->getUser());
+        } else {
+            $hName = "All products";
+            $soldPerProduct = $soldRepository->getSoldProductAllSeller($products, $this->getUser());
+        }
+
+        return $this->render(
+            '/search/sold_products.html.twig',
+            [
+                'soldItems' => $soldPerProduct,
+                'hName' => $hName,
+                'header'  => '/seller/header.html.twig',
+                'search' => 'product',
+                'searchType' => 'productSeller',
+                'searchAll' => 'view_sold_items_per_product_seller',
+                'viewSold' => 'view_sold_product_info_seller',
+                'viewSoldPayment' => 'view_sold_item_payment_method_per_product_seller',
+                'deleteSold' => 'delete_sold_item_per_product_seller'
+            ]
+        );
+    }
+
+    private function confirmBuyAdmin(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        PaymentTransactionRepository $paymentTransactionRepository
+    ) {
+        /**
+         * @var $invoice \App\Entity\PaymentTransaction
+         */
+        $invoice = $paymentTransactionRepository->findOneBy(
+            [
+                'soldProduct' => $sold->getId()
+            ]
+        );
+        if ($invoice->getConfirmed() === 0) {
+            $invoice->setConfirmed(1);
+            $this->addFlash('success', 'Buy confirmed!');
+        } elseif ($invoice->getConfirmed() === 1) {
+            $invoice->setConfirmed(0);
+            $this->addFlash('success', 'Buy unconfirmed!');
+        }
+
+        $entityManager->flush();
     }
 
     /**
@@ -132,6 +371,42 @@ class SoldProductsController extends AbstractController
         EntityManagerInterface $entityManager,
         PaymentTransactionRepository $paymentTransactionRepository
     ) {
+        self::confirmBuyAdmin($sold, $entityManager, $paymentTransactionRepository);
+        return $this->redirectToRoute(
+            'view_sold_items_per_user_admin',
+            [
+                'id' => $sold->getUser()->getId()
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/confirm-buy-per-product-admin/{id}", name="confirm_buy_per_product_admin")
+     * @param                                              EntityManagerInterface $entityManager
+     * @param                                             PaymentTransactionRepository $paymentTransactionRepository
+     * @param                                              Sold $sold
+     * @return                                             \Symfony\Component\HttpFoundation\Response
+     */
+    public function confirmBuyPerProductAdmin(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        PaymentTransactionRepository $paymentTransactionRepository
+    ) {
+        self::confirmBuyAdmin($sold, $entityManager, $paymentTransactionRepository);
+
+        return $this->redirectToRoute(
+            'view_sold_items_per_product_admin',
+            [
+                'id' => $sold->getUser()->getId()
+            ]
+        );
+    }
+
+    private function confirmBuySeller(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        PaymentTransactionRepository $paymentTransactionRepository
+    ) {
         /**
          * @var $invoice \App\Entity\PaymentTransaction
          */
@@ -141,6 +416,10 @@ class SoldProductsController extends AbstractController
                 'soldProduct' => $sold->getId()
             ]
         );
+        if (!$invoice || $this->getUser() !== $sold->getProduct()->getUser()) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
         if ($invoice->getConfirmed() === 0) {
             $invoice->setConfirmed(1);
             $this->addFlash('success', 'Buy confirmed!');
@@ -150,11 +429,82 @@ class SoldProductsController extends AbstractController
         }
 
         $entityManager->flush();
+    }
+
+    /**
+     * @Route("/seller/confirm-buy-per-user-seller/{id}", name="confirm_buy_per_user_seller")
+     * @param                                             EntityManagerInterface $entityManager
+     * @param                                             PaymentTransactionRepository $paymentTransactionRepository
+     * @param                                             Sold $sold
+     * @return                                            \Symfony\Component\HttpFoundation\Response
+     */
+    public function confirmBuyPerUserSeller(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        PaymentTransactionRepository $paymentTransactionRepository
+    ) {
+        self::confirmBuyAdmin($sold, $entityManager, $paymentTransactionRepository);
         return $this->redirectToRoute(
-            'view_sold_items_per_person',
+            'view_sold_items_per_user_seller',
             [
-                'id' => $sold->getUser()->getId()]
+                'id' => $sold->getUser()->getId()
+            ]
         );
+    }
+
+    /**
+     * @Route("/seller/confirm-buy-per-product-seller/{id}", name="confirm_buy_per_product_seller")
+     * @param                                              EntityManagerInterface $entityManager
+     * @param                                             PaymentTransactionRepository $paymentTransactionRepository
+     * @param                                              Sold $sold
+     * @return                                             \Symfony\Component\HttpFoundation\Response
+     */
+    public function confirmBuyPerProductSeller(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        PaymentTransactionRepository $paymentTransactionRepository
+    ) {
+        self::confirmBuySeller($sold, $entityManager, $paymentTransactionRepository);
+
+        return $this->redirectToRoute(
+            'view_sold_items_per_product_seller',
+            [
+                'id' => $sold->getUser()->getId()
+            ]
+        );
+    }
+
+    public function deleteProductItemAdmin(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        ProductRepository $productRepository,
+        WishlistRepository $wishlistRepository
+    ) {
+        /**
+         * @var Product $productOld
+         */
+        $productOld = $productRepository->findOneBy(
+            [
+                'id' => $sold->getProduct()->getId()
+            ]
+        );
+        if ($productOld->getAvailableQuantity() === 0) {
+            $wishlistProducts = $wishlistRepository->findBy(
+                [
+                    'product' => $productOld->getId()]
+            );
+            foreach ($wishlistProducts as $wishlistProduct) {
+                /**
+                 * @var $wishlistProduct \App\Entity\Wishlist;
+                 */
+                $wishlistProduct->setNotify(1);
+                $entityManager->persist($wishlistProduct);
+            }
+        }
+
+        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
+        $entityManager->remove($sold);
+        $entityManager->flush();
     }
 
     /**
@@ -162,118 +512,132 @@ class SoldProductsController extends AbstractController
      * @param                                                  ProductRepository $productRepository
      * @param                                                  EntityManagerInterface $entityManager
      * @param                                                  WishlistRepository $wishlistRepository
-     * @param                                                  ProductService $productService
      * @param                                                  Sold $sold
      * @return                                                 \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteSoldItemPerUser(
+    public function deleteSoldItemPerUserAdmin(
         Sold $sold,
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository,
-        WishlistRepository $wishlistRepository,
-        ProductService $productService
+        WishlistRepository $wishlistRepository
     ) {
-        $productService->deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
+        self::deleteProductItemAdmin($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute(
-            'view_sold_items_per_person',
+            'view_sold_items_per_user_admin',
             [
-                'id' => $sold->getUser()->getId()]
-        );
-    }
-
-    /**
-     * @Route("/admin/item-sold-per-product", name="view_sold_items_per_product")
-     * @param                                 Request $request
-     * @param                                 SoldRepository $soldRepository
-     * @param                                 ProductRepository $productRepository
-     * @return                                \Symfony\Component\HttpFoundation\Response
-     */
-    public function listOfBoughtItemsPerProduct(
-        Request $request,
-        SoldRepository $soldRepository,
-        ProductRepository $productRepository
-    ) {
-        $products = $productRepository->findAll();
-        $form = $this->createForm(AdminListOfBoughtItemsPerProductFormType::class);
-        $form->handleRequest($request);
-        if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
-            /**
-             * @var \App\Entity\Product $product
-             */
-            $product = $form->getData()->getProduct();
-            $message = $product->getName();
-            $listOfSoldItems = $soldRepository->findBy(
-                [
-                    'product' => $product->getId()
-                ],
-                [
-                    'boughtAt' => 'DESC'
-                ]
-            );
-        } else {
-            $message = "All products";
-            $listOfSoldItems = $soldRepository->findBy(
-                [
-                    'product' => $products
-                ],
-                [
-                    'boughtAt' => 'DESC'
-                ]
-            );
-        }
-
-        return $this->render(
-            '/admin/view_sold_items_per_product.html.twig',
-            [
-                'form' => $form->createView(),
-                'soldItems' => $listOfSoldItems,
-                'message' => $message
+                'id' => $sold->getUser()->getId()
             ]
         );
     }
 
     /**
-     * @Route("/admin/confirm-buy-per-product-admin/{id}", name="confirm_buy_per_product_admin")
-     * @param                                              EntityManagerInterface $entityManager
-     * @param                                              Sold $sold
-     * @return                                             \Symfony\Component\HttpFoundation\Response
-     */
-    public function confirmBuyPerProductAdmin(
-        Sold $sold,
-        EntityManagerInterface $entityManager
-    ) {
-        if ($sold->getConfirmed() === 0) {
-            $sold->setConfirmed(1);
-            $this->addFlash('success', 'Buy confirmed!');
-        } elseif ($sold->getConfirmed() === 1) {
-            $sold->setConfirmed(0);
-            $this->addFlash('success', 'Buy unconfirmed!');
-        }
-
-        $entityManager->flush();
-        return $this->redirectToRoute('view_sold_items_per_product');
-    }
-
-    /**
-     * @Route("/seller/delete-sold-item-per-product-admin/{id}", name="delete_sold_item_per_product_admin")
+     * @Route("/admin/delete-sold-item-per-product-admin/{id}", name="delete_sold_item_per_product_admin")
      * @param                                                    ProductRepository $productRepository
      * @param                                                    EntityManagerInterface $entityManager
      * @param                                                    WishlistRepository $wishlistRepository
-     * @param                                                    ProductService $productService
      * @param                                                    Sold $sold
      * @return                                                   \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteSoldItemPerProduct(
+    public function deleteSoldItemPerProductAdmin(
         Sold $sold,
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository,
-        WishlistRepository $wishlistRepository,
-        ProductService $productService
+        WishlistRepository $wishlistRepository
     ) {
-        $productService->deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
+        self::deleteProductItemAdmin($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
-        return $this->redirectToRoute('view_sold_items_per_product');
+        return $this->redirectToRoute(
+            'view_sold_items_per_product_admin',
+            [
+                'id' => $sold->getUser()->getId()
+            ]
+        );
+    }
+
+    public function deleteProductItemSeller(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        ProductRepository $productRepository,
+        WishlistRepository $wishlistRepository
+    ) {
+        if ($this->getUser() !== $sold->getProduct()->getUser()) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
+        /**
+         * @var Product $productOld
+         */
+        $productOld = $productRepository->findOneBy(
+            [
+                'id' => $sold->getProduct()->getId()
+            ]
+        );
+        if ($productOld->getAvailableQuantity() === 0) {
+            $wishlistProducts = $wishlistRepository->findBy(
+                [
+                    'product' => $productOld->getId()]
+            );
+            foreach ($wishlistProducts as $wishlistProduct) {
+                /**
+                 * @var $wishlistProduct \App\Entity\Wishlist;
+                 */
+                $wishlistProduct->setNotify(1);
+                $entityManager->persist($wishlistProduct);
+            }
+        }
+
+        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
+        $entityManager->remove($sold);
+        $entityManager->flush();
+    }
+
+    /**
+     * @Route("/seller/delete-sold-item-per-user-seller/{id}", name="delete_sold_item_per_user_seller")
+     * @param                                                  ProductRepository $productRepository
+     * @param                                                  EntityManagerInterface $entityManager
+     * @param                                                  WishlistRepository $wishlistRepository
+     * @param                                                  Sold $sold
+     * @return                                                 \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteSoldItemPerUserSeller(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        ProductRepository $productRepository,
+        WishlistRepository $wishlistRepository
+    ) {
+        self::deleteProductItemSeller($sold, $entityManager, $productRepository, $wishlistRepository);
+        $this->addFlash('success', 'Item deleted!');
+        return $this->redirectToRoute(
+            'view_sold_items_per_user_seller',
+            [
+                'id' => $sold->getUser()->getId()
+            ]
+        );
+    }
+
+    /**
+     * @Route("/seller/delete-sold-item-per-product-seller/{id}", name="delete_sold_item_per_product_seller")
+     * @param                                                    ProductRepository $productRepository
+     * @param                                                    EntityManagerInterface $entityManager
+     * @param                                                    WishlistRepository $wishlistRepository
+     * @param                                                    Sold $sold
+     * @return                                                   \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteSoldItemPerProductSeller(
+        Sold $sold,
+        EntityManagerInterface $entityManager,
+        ProductRepository $productRepository,
+        WishlistRepository $wishlistRepository
+    ) {
+        self::deleteProductItemSeller($sold, $entityManager, $productRepository, $wishlistRepository);
+        $this->addFlash('success', 'Item deleted!');
+        return $this->redirectToRoute(
+            'view_sold_items_per_product_seller',
+            [
+                'id' => $sold->getUser()->getId()
+            ]
+        );
     }
 
     /**
@@ -281,12 +645,103 @@ class SoldProductsController extends AbstractController
      * @param                             Sold $sold
      * @return                            \Symfony\Component\HttpFoundation\Response
      */
-    public function viewSoldProductInfo(Sold $sold)
+    public function viewSoldProductInfoAdmin(Sold $sold)
     {
         return $this->render(
             '/admin/view_sold_item.html.twig',
             [
                 'sold' => $sold
+            ]
+        );
+    }
+
+    /**
+     * @Route("/seller/sold-product/{id}", name="view_sold_product_info_seller")
+     * @param                             Sold $sold
+     * @return                            \Symfony\Component\HttpFoundation\Response
+     */
+    public function viewSoldProductInfoSeller(Sold $sold)
+    {
+        if ($this->getUser() !== $sold->getProduct()->getUser()) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
+        return $this->render(
+            '/seller/view_sold_item.html.twig',
+            [
+                'sold' => $sold
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/sold-item-payment-method-per-user/{id?}", name="view_sold_item_payment_method_per_user_admin")
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function viewSoldItemPerUserPaymentMethodAdmin(
+        PaymentTransaction $paymentTransaction
+    ) {
+        return $this->render(
+            '/admin/view_sold_item_payment_method.html.twig',
+            [
+                'payment' => $paymentTransaction,
+                'deletePayment' => 'delete_payment_transaction_per_user_admin',
+                'confirmPayment' => 'confirm_payment_transaction_per_user_admin'
+            ]
+        );
+    }
+
+    /**
+     * @Route("/admin/sold-item-payment-method-per-product/{id?}", name="view_sold_item_payment_method_per_product_admin")
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function viewSoldItemPerProductPaymentMethodAdmin(
+        PaymentTransaction $paymentTransaction
+    ) {
+        return $this->render(
+            '/admin/view_sold_item_payment_method.html.twig',
+            [
+                'payment' => $paymentTransaction,
+                'deletePayment' => 'delete_payment_transaction_per_product_admin',
+                'confirmPayment' => 'confirm_payment_transaction_per_product_admin'
+            ]
+        );
+    }
+
+    /**
+     * @Route("/seller/sold-item-payment-per-user-method/{id?}", name="view_sold_item_payment_method_per_user_seller")
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function viewSoldItemPerUserPaymentMethodSeller(
+        PaymentTransaction $paymentTransaction
+    ) {
+        return $this->render(
+            '/seller/view_sold_item_payment_method.html.twig',
+            [
+                'payment' => $paymentTransaction,
+                'deletePayment' => 'delete_payment_transaction_per_user_seller',
+                'confirmPayment' => 'confirm_payment_transaction_per_user_seller'
+            ]
+        );
+    }
+
+    /**
+     * @Route("/seller/sold-item-payment-per-product-method/{id?}", name="view_sold_item_payment_method_per_product_seller")
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function viewSoldItemPerProductPaymentMethodSeller(
+        PaymentTransaction $paymentTransaction
+    ) {
+        return $this->render(
+            '/seller/view_sold_item_payment_method.html.twig',
+            [
+                'payment' => $paymentTransaction,
+                'deletePayment' => 'delete_payment_transaction_per_product_seller',
+                'confirmPayment' => 'confirm_payment_transaction_per_product_seller'
             ]
         );
     }

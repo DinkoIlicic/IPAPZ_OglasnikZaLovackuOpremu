@@ -36,4 +36,20 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return Product[] Returns an array of User objects
+     * @param  $value
+     */
+    public function findByName($value)
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.id', '(p.name) as fullName')
+            ->andWhere('p.name like :query')
+            ->setParameter('query', "%" . $value . "%")
+            ->orderBy('p.name', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 }

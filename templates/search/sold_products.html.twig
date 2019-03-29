@@ -1,0 +1,218 @@
+{% extends header %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/search.css') }}">
+{% endblock %}
+{% block body %}
+    <p>Search</p>
+    <div>
+        {{
+        render(
+            controller('App\\Controller\\AdvertisementController::searchBar')
+        )
+        }}
+        <br/><br />
+        <p><a class="btn btn-primary" href="{{ path( searchAll ) }}">Show all</a></p>
+    </div><hr />
+    <h4 id="nameForTable">{{ hName }}</h4>
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Product Name</th>
+            <th scope="col">Seller</th>
+            <th scope="col">Buyer</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total price</th>
+            <th scope="col">Bought at</th>
+            <th scope="col">Method</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody id="tbodyChange">
+        {% for eachItem in soldItems %}
+            <tr>
+                <td><a href="{{ path(viewSold, {'id': eachItem.id}) }}" class="card-link">{{ eachItem.productName }}</a></td>
+                <td>{{ eachItem.sellerName }}</td>
+                <td>{{ eachItem.buyerName }}</td>
+                <td>{{ eachItem.quantity }}</td>
+                <td>{{ eachItem.totalPrice }}</td>
+                <td>{{ eachItem.boughtAt|date("d. m. Y. H:i") }}</td>
+                <td>
+                    {% if (eachItem.ptMethod == 'Paypal') %}
+                        <a class="card-link" href="{{ path(viewSoldPayment, {'id': eachItem.ptId}) }}">Paid with paypal</a>
+                    {% elseif (eachItem.ptMethod == 'Invoice') %}
+                        {% if (eachItem.ptConfirmed == 1) %}
+                            <a class="card-link" href="{{ path(viewSoldPayment, {'id': eachItem.ptId}) }}">Paid with invoice</a>
+                        {% elseif (eachItem.ptConfirmed == 0) %}
+                            <a class="card-link" href="{{ path(viewSoldPayment, {'id': eachItem.ptId}) }}">Invoice</a>
+                        {% endif %}
+                    {% elseif (eachItem.ptMethod == null) %}
+                        Not chosen
+                    {% endif %}
+                </td>
+                <td>
+                    {% if (eachItem.ptConfirmed == 1) %}
+                        Paid
+                    {% elseif (eachItem.ptConfirmed == 0) %}
+                        <a class="btn btn-danger" href="{{ path(deleteSold, {'id': eachItem.id}) }}">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/bloodhound.jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/typeahead.jquery.js') }}"></script>
+    <script>
+        {% if searchType == 'userAdmin' %}
+            var url1 = "/seller/handle-search-per-user/%QUERY%";
+            var url2 = "/admin/ajax-sold-per-user-admin/";
+            var url3 = "/admin/sold-product/";
+            var url4 = "/admin/sold-item-payment-method-per-user/";
+            var url5 = "/admin/delete-sold-item-per-user-admin/";
+        {% elseif searchType == 'productAdmin' %}
+            var url1 = "/seller/handle-search-per-product/%QUERY%";
+            var url2 = "/admin/ajax-sold-per-product-admin/";
+            var url3 = "/admin/sold-product/";
+            var url4 = "/admin/sold-item-payment-method-per-product/";
+            var url5 = "/admin/delete-sold-item-per-product-admin/";
+        {% elseif searchType == 'userSeller' %}
+            var url1 = "/seller/handle-search-per-user/%QUERY%";
+            var url2 = "/seller/ajax-sold-per-user-seller/";
+            var url3 = "/seller/sold-product/";
+            var url4 = "/seller/sold-item-payment-method-per-user/";
+            var url5 = "/seller/delete-sold-item-per-user-seller/";
+        {% elseif searchType == 'productSeller' %}
+            var url1 = "/seller/handle-search-per-product/%QUERY%";
+            var url2 = "/seller/ajax-sold-per-product-seller/";
+            var url3 = "/seller/sold-product/";
+            var url4 = "/seller/sold-item-payment-method-per-product/";
+            var url5 = "/seller/delete-sold-item-per-product-seller/";
+        {% endif %}
+        $(document).ready(function () {
+            var finds = new Bloodhound(
+                {
+                    datumTokenizer: Bloodhound.tokenizers.whitespace,
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    remote: {
+                        url: url1,
+                        wildcard: '%QUERY%',
+                        filter: function (finds) {
+                            return $.map(finds, function (find) {
+                                return {
+                                    find_id: find.id,
+                                    find_fullName: find.fullName
+                                }
+                            })
+                        }
+                    }
+                }
+            );
+            finds.initialize();
+            $('#form_query').typeahead(
+                {
+                    hint: true,
+                    highlight: true,
+                    minLength: 3,
+                },
+                {
+                    name: 'finds',
+                    limit: 10,
+                    source: finds.ttAdapter(),
+                    display: 'find_fullName',
+                    templates: {
+                        empty: [
+                            '<div class="empty-message">',
+                            'No user found!',
+                            '</div>'
+                        ].join('\n'),
+                        suggestion: function (data) {
+                            return `
+                                <div>
+                                    <span>`+data.find_fullName+`</span>
+                                </div>
+                            `
+                        }
+                    }
+                }
+            ).on('typeahead:autocomplete', function (event, data) {
+                event.preventDefault();
+                $.ajax({
+                    method: 'POST',
+                    url: url2 + data.find_id
+                }).done(function (data) {
+                    prepareSoldProducts(data);
+                })
+            }).on('typeahead:selected', function (event, data) {
+                event.preventDefault();
+                $.ajax({
+                    method: 'POST',
+                    url: url2 + data.find_id
+                }).done(function (data) {
+                    prepareSoldProducts(data);
+                })
+            }).on('typeahead:select', function (event, data) {
+                event.preventDefault();
+                $.ajax({
+                    method: 'POST',
+                    url: url2 + data.find_id
+                }).done(function (data) {
+                    prepareSoldProducts(data);
+                })
+            });
+        });
+
+        function prepareSoldProducts(data)
+        {
+            var userNameTable = document.getElementById('nameForTable');
+            userNameTable.innerHTML = data.hName;
+            var table = document.getElementById("tbodyChange");
+            table.innerHTML = '';
+            var numbers = data.soldItems;
+            numbers.forEach(renderSoldProducts);
+        }
+
+        function renderSoldProducts(item, index)
+        {
+            var options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+            var table = document.getElementById("tbodyChange");
+            var row = table.insertRow(index);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            var cell6 = row.insertCell(5);
+            var cell7 = row.insertCell(6);
+            var cell8 = row.insertCell(7);
+            cell1.innerHTML = "<a class='card-link' href="+url3+item.id+">"+item.productName+"</a>";
+            cell2.innerHTML = item.sellerName;
+            cell3.innerHTML = item.buyerName;
+            cell4.innerHTML = item.quantity;
+            cell5.innerHTML = item.totalPrice;
+            var date1 = new Date(item.boughtAt.date);
+            cell6.innerHTML = date1.toLocaleDateString("hr-HR", options);
+            if (item.ptMethod === 'Paypal') {
+                cell7.innerHTML = "<a class='card-link' href="+url4+item.ptId+">Paid with paypal</a>";
+            } else if (item.ptMethod === 'Invoice') {
+                if (item.ptConfirmed === '1') {
+                    cell7.innerHTML = "<a class='card-link' href="+url4+item.ptId+">Paid with invoice</a>";
+                } else if (item.ptConfirmed === '0') {
+                    cell7.innerHTML = "<a class='card-link' href="+url4+item.ptId+">Invoice</a>";
+                }
+            } else if (item.ptMethod === null) {
+                cell7.innerHTML = "Not chosen";
+            }
+            if (item.ptConfirmed === '1') {
+                cell8.innerHTML = "Paid";
+            } else if (item.ptConfirmed === '0') {
+                cell8.innerHTML = "<a class='btn btn-danger' href="+url5+item.id+">Delete</a>";
+            } else if (item.ptConfirmed === null) {
+                cell8.innerHTML = "<a class='btn btn-danger' href="+url5+item.id+">Delete</a>";
+            }
+        }
+    </script>
+{% endblock %}

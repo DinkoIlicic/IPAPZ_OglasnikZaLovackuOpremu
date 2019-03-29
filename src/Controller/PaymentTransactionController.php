@@ -237,13 +237,49 @@ class PaymentTransactionController extends AbstractController
     }
 
     /**
-     * @Route("/admin/confirm-payment-transaction/{paymentTransaction}",name="confirm_payment_transaction")
+     * @Route("/seller/download/{fileName}",name="pdf_download_seller")
+     * @param PaymentTransactionRepository $paymentTransactionRepository
+     * @param $fileName
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function downloadPdfSeller($fileName, PaymentTransactionRepository $paymentTransactionRepository)
+    {
+        $checkIfExists = $paymentTransactionRepository->findOneBy(['transactionId' => $fileName]);
+        if (!$checkIfExists) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
+        if ($this->getUser() !== $checkIfExists->getSoldProduct()->getProduct()->getUser()) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
+        $filePath = $this->getParameter('kernel.project_dir') . '/public/invoice/' . $fileName;
+
+        $response = new Response();
+        $response->headers->set('Content-type', 'application/octet-stream');
+        $response->headers->set(
+            'Content-Disposition',
+            sprintf('attachment; filename="%s"', $fileName)
+        );
+        $response->setContent(file_get_contents($filePath));
+        $response->setStatusCode(200);
+        $response->headers->set('Content-Transfer-Encoding', 'binary');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+        return $response;
+    }
+
+    /**
+     * @Route("/admin/confirm-payment-transaction-per-user/{paymentTransaction}",
+     *     name="confirm_payment_transaction_per_user_admin")
      * @param PaymentTransaction $paymentTransaction
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function confirmInvoicePayment(PaymentTransaction $paymentTransaction, EntityManagerInterface $entityManager)
-    {
+    public function confirmInvoicePaymentPerUserAdmin(
+        PaymentTransaction $paymentTransaction,
+        EntityManagerInterface $entityManager
+    ) {
         $invoice = $paymentTransaction->getMethod();
         if ($invoice !== 'Invoice') {
             return $this->redirectToRoute('admin_index');
@@ -261,7 +297,7 @@ class PaymentTransactionController extends AbstractController
         $entityManager->persist($paymentTransaction);
         $entityManager->flush();
         return $this->redirectToRoute(
-            'view_sold_items_per_user_payment_method',
+            'view_sold_item_payment_method_per_user_admin',
             [
                 'id' => $paymentTransaction->getId()
             ]
@@ -269,22 +305,133 @@ class PaymentTransactionController extends AbstractController
     }
 
     /**
-     * @Route("/admin/delete-payment-transaction/{paymentTransaction}",name="delete_payment_transaction")
-     * @param EntityManagerInterface $entityManager
-     * @param Filesystem $filesystem
-     * @param PaymentTransactionRepository $paymentTransactionRepository
+     * @Route("/admin/confirm-payment-transaction-per-product/{paymentTransaction}",
+     *     name="confirm_payment_transaction_per_product_admin")
      * @param PaymentTransaction $paymentTransaction
+     * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deletePaymentTransaction(
+    public function confirmInvoicePaymentPerProductAdmin(
+        PaymentTransaction $paymentTransaction,
+        EntityManagerInterface $entityManager
+    ) {
+        $invoice = $paymentTransaction->getMethod();
+        if ($invoice !== 'Invoice') {
+            return $this->redirectToRoute('admin_index');
+        }
+
+        if ($paymentTransaction->getConfirmed() === true) {
+            $paymentTransaction->setConfirmed(false);
+            $this->addFlash('success', 'Payment transaction confirm removed!');
+        } elseif ($paymentTransaction->getConfirmed() === false) {
+            $paymentTransaction->setConfirmed(true);
+            $paymentTransaction->onPrePersistPaidAt();
+            $this->addFlash('success', 'Payment transaction confirmed!');
+        }
+
+        $entityManager->persist($paymentTransaction);
+        $entityManager->flush();
+        return $this->redirectToRoute(
+            'view_sold_item_payment_method_per_product_admin',
+            [
+                'id' => $paymentTransaction->getId()
+            ]
+        );
+    }
+
+    /**
+     * @Route("/seller/confirm-payment-transaction-per-user/{paymentTransaction}",
+     *     name="confirm_payment_transaction_per_user_seller")
+     * @param PaymentTransaction $paymentTransaction
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function confirmInvoicePaymentPerUserSeller(
+        PaymentTransaction $paymentTransaction,
+        EntityManagerInterface $entityManager
+    ) {
+        $invoice = $paymentTransaction->getMethod();
+        if ($invoice !== 'Invoice') {
+            return $this->redirectToRoute('seller_index');
+        }
+
+        if ($this->getUser() !== $paymentTransaction->getSoldProduct()->getProduct()->getUser()) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
+        if ($paymentTransaction->getConfirmed() === true) {
+            $paymentTransaction->setConfirmed(false);
+            $this->addFlash('success', 'Payment transaction confirm removed!');
+        } elseif ($paymentTransaction->getConfirmed() === false) {
+            $paymentTransaction->setConfirmed(true);
+            $paymentTransaction->onPrePersistPaidAt();
+            $this->addFlash('success', 'Payment transaction confirmed!');
+        }
+
+        $entityManager->persist($paymentTransaction);
+        $entityManager->flush();
+        return $this->redirectToRoute(
+            'view_sold_item_payment_method_per_user_seller',
+            [
+                'id' => $paymentTransaction->getId()
+            ]
+        );
+    }
+
+    /**
+     * @Route("/seller/confirm-payment-transaction-per-user/{paymentTransaction}",
+     *     name="confirm_payment_transaction_per_product_seller")
+     * @param PaymentTransaction $paymentTransaction
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function confirmInvoicePaymentPerProductSeller(
+        PaymentTransaction $paymentTransaction,
+        EntityManagerInterface $entityManager
+    ) {
+        $invoice = $paymentTransaction->getMethod();
+        if ($invoice !== 'Invoice') {
+            return $this->redirectToRoute('seller_index');
+        }
+
+        if ($this->getUser() !== $paymentTransaction->getSoldProduct()->getProduct()->getUser()) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
+        if ($paymentTransaction->getConfirmed() === true) {
+            $paymentTransaction->setConfirmed(false);
+            $this->addFlash('success', 'Payment transaction confirm removed!');
+        } elseif ($paymentTransaction->getConfirmed() === false) {
+            $paymentTransaction->setConfirmed(true);
+            $paymentTransaction->onPrePersistPaidAt();
+            $this->addFlash('success', 'Payment transaction confirmed!');
+        }
+
+        $entityManager->persist($paymentTransaction);
+        $entityManager->flush();
+        return $this->redirectToRoute(
+            'view_sold_item_payment_method_per_product_seller',
+            [
+                'id' => $paymentTransaction->getId()
+            ]
+        );
+    }
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param PaymentTransaction $paymentTransaction
+     * @param PaymentTransactionRepository $paymentTransactionRepository
+     * @param Filesystem $filesystem
+     */
+    private function deletePaymentTransactionAdmin(
         EntityManagerInterface $entityManager,
         PaymentTransaction $paymentTransaction,
         PaymentTransactionRepository $paymentTransactionRepository,
         Filesystem $filesystem
     ) {
         $checkIfExists = $paymentTransactionRepository->findOneBy(['id' => $paymentTransaction->getId()]);
-        if ($checkIfExists === null) {
-            return $this->redirectToRoute('admin_index');
+        if (!$checkIfExists) {
+            throw $this->createNotFoundException("Page not found.");
         }
 
         if ($paymentTransaction->getMethod() === 'Invoice') {
@@ -301,8 +448,145 @@ class PaymentTransactionController extends AbstractController
         $soldProduct->setAddress(null);
         $entityManager->remove($paymentTransaction);
         $entityManager->flush();
+    }
+
+    /**
+     * @Route("/admin/delete-payment-transaction-per-user/{paymentTransaction}",
+     *     name="delete_payment_transaction_per_user_admin")
+     * @param EntityManagerInterface $entityManager
+     * @param Filesystem $filesystem
+     * @param PaymentTransactionRepository $paymentTransactionRepository
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deletePaymentTransactionPerUserAdmin(
+        EntityManagerInterface $entityManager,
+        PaymentTransaction $paymentTransaction,
+        PaymentTransactionRepository $paymentTransactionRepository,
+        Filesystem $filesystem
+    ) {
+        self::deletePaymentTransactionAdmin(
+            $entityManager,
+            $paymentTransaction,
+            $paymentTransactionRepository,
+            $filesystem
+        );
         $this->addFlash('success', 'Payment deleted!');
-        return $this->redirectToRoute('view_sold_items_per_person');
+        return $this->redirectToRoute('view_sold_items_per_user_admin');
+    }
+
+    /**
+     * @Route("/admin/delete-payment-transaction-per-product/{paymentTransaction}",
+     *     name="delete_payment_transaction_per_product_admin")
+     * @param EntityManagerInterface $entityManager
+     * @param Filesystem $filesystem
+     * @param PaymentTransactionRepository $paymentTransactionRepository
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deletePaymentTransactionPerProductAdmin(
+        EntityManagerInterface $entityManager,
+        PaymentTransaction $paymentTransaction,
+        PaymentTransactionRepository $paymentTransactionRepository,
+        Filesystem $filesystem
+    ) {
+        self::deletePaymentTransactionAdmin(
+            $entityManager,
+            $paymentTransaction,
+            $paymentTransactionRepository,
+            $filesystem
+        );
+        $this->addFlash('success', 'Payment deleted!');
+        return $this->redirectToRoute('view_sold_items_per_product_admin');
+    }
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param PaymentTransaction $paymentTransaction
+     * @param PaymentTransactionRepository $paymentTransactionRepository
+     * @param Filesystem $filesystem
+     */
+    private function deletePaymentTransactionSeller(
+        EntityManagerInterface $entityManager,
+        PaymentTransaction $paymentTransaction,
+        PaymentTransactionRepository $paymentTransactionRepository,
+        Filesystem $filesystem
+    ) {
+        $checkIfExists = $paymentTransactionRepository->findOneBy(['id' => $paymentTransaction->getId()]);
+        if (!$checkIfExists) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
+        if ($this->getUser() !== $paymentTransaction->getSoldProduct()->getProduct()->getUser()) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
+        if ($paymentTransaction->getMethod() === 'Invoice') {
+            $publicDirectory = self::returnPathToInvoice();
+            $filesystem->remove($publicDirectory . $paymentTransaction->getTransactionId());
+        }
+
+        /**
+         * @var \App\Entity\Sold $soldProduct
+         */
+        $soldProduct = $paymentTransaction->getSoldProduct();
+        $soldProduct->setConfirmed(false);
+        $soldProduct->setPaymentMethod(null);
+        $soldProduct->setAddress(null);
+        $entityManager->remove($paymentTransaction);
+        $entityManager->flush();
+    }
+
+    /**
+     * @Route("/seller/delete-payment-transaction-per-user/{paymentTransaction}",
+     *     name="delete_payment_transaction_per_user_seller")
+     * @param EntityManagerInterface $entityManager
+     * @param Filesystem $filesystem
+     * @param PaymentTransactionRepository $paymentTransactionRepository
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deletePaymentTransactionPerUserSeller(
+        EntityManagerInterface $entityManager,
+        PaymentTransaction $paymentTransaction,
+        PaymentTransactionRepository $paymentTransactionRepository,
+        Filesystem $filesystem
+    ) {
+        self::deletePaymentTransactionSeller(
+            $entityManager,
+            $paymentTransaction,
+            $paymentTransactionRepository,
+            $filesystem
+        );
+
+        $this->addFlash('success', 'Payment deleted!');
+        return $this->redirectToRoute('view_sold_items_per_user_seller');
+    }
+
+    /**
+     * @Route("/seller/delete-payment-transaction-per-user/{paymentTransaction}",
+     *     name="delete_payment_transaction_per_user_seller")
+     * @param EntityManagerInterface $entityManager
+     * @param Filesystem $filesystem
+     * @param PaymentTransactionRepository $paymentTransactionRepository
+     * @param PaymentTransaction $paymentTransaction
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deletePaymentTransactionPerProductSeller(
+        EntityManagerInterface $entityManager,
+        PaymentTransaction $paymentTransaction,
+        PaymentTransactionRepository $paymentTransactionRepository,
+        Filesystem $filesystem
+    ) {
+        self::deletePaymentTransactionSeller(
+            $entityManager,
+            $paymentTransaction,
+            $paymentTransactionRepository,
+            $filesystem
+        );
+
+        $this->addFlash('success', 'Payment deleted!');
+        return $this->redirectToRoute('view_sold_items_per_product_seller');
     }
 
     private function returnPathToInvoice()
