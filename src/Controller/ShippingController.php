@@ -204,6 +204,26 @@ class ShippingController extends AbstractController
     }
 
     /**
+     * @Route("/admin/bulk-insert-default", name="bulk_insert_default")
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function bulkDefault(EntityManagerInterface $entityManager)
+    {
+        $newDefault = new Shipping();
+        $newDefault->setCountry('Default');
+        $newDefault->setCountryCode('00');
+        $newDefault->setPrice(11);
+
+        $entityManager->persist($newDefault);
+        $entityManager->flush();
+
+        return $this->redirectToRoute(
+            'admin_index'
+        );
+    }
+
+    /**
      * @Route("/admin/bulk-insert-shipping", name="bulk_insert_shipping")
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
