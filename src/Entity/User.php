@@ -52,6 +52,10 @@ class User extends AbstractController implements UserInterface
     /**
      * @\Doctrine\ORM\Mapping\Column(type="string")
      * @\Symfony\Component\Validator\Constraints\NotBlank()
+     * @\Symfony\Component\Validator\Constraints\Regex(
+     *     pattern     = "/^[0-9]+$/i",
+     *     message     = "Only letters are allowed"
+     *     )
      */
     private $phoneNumber;
 
