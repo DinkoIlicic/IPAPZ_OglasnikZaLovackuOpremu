@@ -34,6 +34,15 @@ class CustomPage
     private $pageName;
 
     /**
+     * @\Symfony\Component\Validator\Constraints\Regex(
+     *     pattern     = "/^[a-zA-Z0-9 _.-]+$/i",
+     *     message     = "Only letters, numbers, space, underscore, dot and minus are allowed"
+     *     )
+     * @\Doctrine\ORM\Mapping\Column(name="custom_url", type="string", length=255)
+     */
+    private $customUrl;
+
+    /**
      * @\Symfony\Component\Validator\Constraints\Length(
      *      max = 5000,
      *      maxMessage = "Content cannot be longer than {{ limit }} characters"
@@ -103,5 +112,21 @@ class CustomPage
     public function setVisibilityAdmin($visibilityAdmin): void
     {
         $this->visibilityAdmin = $visibilityAdmin;
+    }
+
+    /**
+     * @param mixed $customUrl
+     */
+    public function setCustomUrl($customUrl): void
+    {
+        $this->customUrl = $customUrl;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomUrl()
+    {
+        return $this->customUrl;
     }
 }

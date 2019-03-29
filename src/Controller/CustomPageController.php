@@ -38,7 +38,7 @@ class CustomPageController extends AbstractController
                 return $this->redirectToRoute('view_custom_pages_admin');
             }
 
-            $customPage->setPageName(str_replace(' ', '-', $customPage->getPageName()));
+            $customPage->setCustomUrl(str_replace(' ', '-', $customPage->getPageName()));
             $customPage->setVisibilityAdmin(1);
             $entityManager->persist($customPage);
             $entityManager->flush();
@@ -100,7 +100,7 @@ class CustomPageController extends AbstractController
              * @var $customPage CustomPage
              */
             $customPage = $form->getData();
-            $customPage->setPageName(str_replace(' ', '-', $customPage->getPageName()));
+            $customPage->setCustomUrl(str_replace(' ', '-', $customPage->getPageName()));
             $entityManager->persist($customPage);
             $entityManager->flush();
             $this->addFlash('success', 'Page edited!');

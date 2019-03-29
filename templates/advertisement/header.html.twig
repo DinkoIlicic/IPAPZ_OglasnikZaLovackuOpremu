@@ -18,7 +18,7 @@
 
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             {% for page in pages %}
-                <a class="dropdown-item" href="{{ path('render_custom_page', {'pageName': page.pageName}) }}">{{ page.pageName }}</a>
+                <a class="dropdown-item" href="{{ path('render_custom_page', {'customUrl': page.customUrl}) }}">{{ page.pageName }}</a>
             {% endfor %}
         </div>
     </div>

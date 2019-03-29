@@ -803,19 +803,19 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/custom-page/{pageName}", name="render_custom_page")
+     * @Route("/custom-page/{customUrl}", name="render_custom_page")
      * @param                            CustomPageRepository $customPageRepository
      * @param                            CategoryRepository $categoryRepository
-     * @var                              $pageName
+     * @var                              $customUrl
      * @return                           \Symfony\Component\HttpFoundation\Response
      */
     public function renderCustomPage(
         CategoryRepository $categoryRepository,
         CustomPageRepository $customPageRepository,
-        $pageName
+        $customUrl
     ) {
         $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
-        $customPage = $customPageRepository->findOneBy(['pageName' => $pageName, 'visibilityAdmin' => true]);
+        $customPage = $customPageRepository->findOneBy(['customUrl' => $customUrl, 'visibilityAdmin' => true]);
         if (!$customPage) {
             return $this->redirectToRoute(
                 'advertisement_index'
