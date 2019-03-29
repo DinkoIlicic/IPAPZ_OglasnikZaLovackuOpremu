@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 
+use App\Entity\PaymentMethod;
 use App\Entity\Shipping;
 use App\Form\ShippingCsvFileFormType;
 use App\Form\ShippingDefaultFormType;
@@ -178,7 +179,30 @@ class ShippingController extends AbstractController
         );
     }
 
-    private function bulkAllCountries(EntityManagerInterface $entityManager)
+    /**
+     * @Route("/admin/bulk-insert-paypal", name="bulk_insert_paypal")
+     * @param EntityManagerInterface $entityManager
+     */
+    public function bulkAllPayments(EntityManagerInterface $entityManager)
+    {
+        $new1 = new PaymentMethod();
+        $new1->setMethod('Paypal');
+        $new1->setEnabled(true);
+
+        $new2 = new PaymentMethod();
+        $new2->setMethod('Invoice');
+        $new2->setEnabled(true);
+
+        $entityManager->persist($new1);
+        $entityManager->persist($new2);
+        $entityManager->flush();
+    }
+
+    /**
+     * @Route("/admin/bulk-insert-shipping", name="bulk_insert_shipping")
+     * @param EntityManagerInterface $entityManager
+     */
+    public function bulkAllCountries(EntityManagerInterface $entityManager)
     {
         $arrayCountries =
             [
