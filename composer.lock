@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d69a33722156aa05d3ea28ba9b431dee",
+    "content-hash": "f31973f7e6fac440cc657dcf29542ad4",
     "packages": [
         {
             "name": "braintree/braintree_php",
-            "version": "3.39.0",
+            "version": "3.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/braintree/braintree_php.git",
-                "reference": "19c6f50fa9fee1388ea5e7f556457243dc35a145"
+                "reference": "840fc6ebf8d96756fed475cce94565fef178187d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/braintree/braintree_php/zipball/19c6f50fa9fee1388ea5e7f556457243dc35a145",
-                "reference": "19c6f50fa9fee1388ea5e7f556457243dc35a145",
+                "url": "https://api.github.com/repos/braintree/braintree_php/zipball/840fc6ebf8d96756fed475cce94565fef178187d",
+                "reference": "840fc6ebf8d96756fed475cce94565fef178187d",
                 "shasum": ""
             },
             "require": {
@@ -51,20 +51,20 @@
                 }
             ],
             "description": "Braintree PHP Client Library",
-            "time": "2019-01-24T20:25:28+00:00"
+            "time": "2019-03-28T23:16:53+00:00"
         },
         {
             "name": "doctrine/annotations",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/annotations.git",
-                "reference": "c7f2050c68a9ab0bdb0f98567ec08d80ea7d24d5"
+                "reference": "53120e0eb10355388d6ccbe462f1fea34ddadb24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/c7f2050c68a9ab0bdb0f98567ec08d80ea7d24d5",
-                "reference": "c7f2050c68a9ab0bdb0f98567ec08d80ea7d24d5",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/53120e0eb10355388d6ccbe462f1fea34ddadb24",
+                "reference": "53120e0eb10355388d6ccbe462f1fea34ddadb24",
                 "shasum": ""
             },
             "require": {
@@ -119,7 +119,7 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2017-12-06T07:11:42+00:00"
+            "time": "2019-03-25T19:12:02+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -198,16 +198,16 @@
         },
         {
             "name": "doctrine/collections",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/collections.git",
-                "reference": "acc35813077be497dc7f658af76729fa456444e3"
+                "reference": "d2ae4ef05e25197343b6a39bae1d3c427a2f6956"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/collections/zipball/acc35813077be497dc7f658af76729fa456444e3",
-                "reference": "acc35813077be497dc7f658af76729fa456444e3",
+                "url": "https://api.github.com/repos/doctrine/collections/zipball/d2ae4ef05e25197343b6a39bae1d3c427a2f6956",
+                "reference": "d2ae4ef05e25197343b6a39bae1d3c427a2f6956",
                 "shasum": ""
             },
             "require": {
@@ -264,7 +264,7 @@
                 "iterators",
                 "php"
             ],
-            "time": "2019-03-24T18:21:39+00:00"
+            "time": "2019-03-25T19:03:48+00:00"
         },
         {
             "name": "doctrine/common",
@@ -1483,22 +1483,23 @@
         },
         {
             "name": "knplabs/knp-paginator-bundle",
-            "version": "v2.8.0",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpPaginatorBundle.git",
-                "reference": "f4ece5b347121b9fe13166264f197f90252d4bd2"
+                "reference": "06100a8f3a1e878d3d2d5d06a61c4e648f94aed7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/f4ece5b347121b9fe13166264f197f90252d4bd2",
-                "reference": "f4ece5b347121b9fe13166264f197f90252d4bd2",
+                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/06100a8f3a1e878d3d2d5d06a61c4e648f94aed7",
+                "reference": "06100a8f3a1e878d3d2d5d06a61c4e648f94aed7",
                 "shasum": ""
             },
             "require": {
                 "knplabs/knp-components": "~1.2",
-                "php": ">=5.3.3",
+                "php": ">=5.6.0",
                 "symfony/framework-bundle": "~2.7|~3.0|~4.0",
+                "symfony/translation": "~2.7|~3.0|~4.0",
                 "twig/twig": "~1.12|~2"
             },
             "require-dev": {
@@ -1508,7 +1509,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8.x-dev"
+                    "dev-master": "3.0.x-dev"
                 }
             },
             "autoload": {
@@ -1541,7 +1542,7 @@
                 "paginator",
                 "symfony"
             ],
-            "time": "2018-05-16T12:15:58+00:00"
+            "time": "2019-02-28T13:51:20+00:00"
         },
         {
             "name": "league/csv",
@@ -6120,24 +6121,23 @@
         },
         {
             "name": "composer/spdx-licenses",
-            "version": "1.5.0",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/spdx-licenses.git",
-                "reference": "7a9556b22bd9d4df7cad89876b00af58ef20d3a2"
+                "reference": "a1aa51cf3ab838b83b0867b14e56fc20fbd55b3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/7a9556b22bd9d4df7cad89876b00af58ef20d3a2",
-                "reference": "7a9556b22bd9d4df7cad89876b00af58ef20d3a2",
+                "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/a1aa51cf3ab838b83b0867b14e56fc20fbd55b3d",
+                "reference": "a1aa51cf3ab838b83b0867b14e56fc20fbd55b3d",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.3.2 || ^7.0"
+                "php": "^5.3.2 || ^7.0 || ^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5",
-                "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || 6.5 - 7"
             },
             "type": "library",
             "extra": {
@@ -6177,7 +6177,7 @@
                 "spdx",
                 "validator"
             ],
-            "time": "2018-11-01T09:45:54+00:00"
+            "time": "2019-03-26T10:23:26+00:00"
         },
         {
             "name": "composer/xdebug-handler",

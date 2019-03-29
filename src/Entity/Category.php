@@ -40,6 +40,12 @@ class Category
     private $user;
 
     /**
+     * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=true)
+     */
+    private $urlName;
+
+    /**
      * @\Doctrine\ORM\Mapping\Column(type="boolean")
      */
     private $visibilityAdmin;
@@ -125,5 +131,21 @@ class Category
     public function getProductCategory()
     {
         return $this->productCategory;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUrlName()
+    {
+        return $this->urlName;
+    }
+
+    /**
+     * @param mixed $urlName
+     */
+    public function setUrlName($urlName): void
+    {
+        $this->urlName = $urlName;
     }
 }

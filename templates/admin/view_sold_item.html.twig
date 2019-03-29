@@ -23,6 +23,10 @@
                 <p>Amount: {{ sold.quantity }}</p>
                 <p>Price: {{ sold.price }}</p>
                 <p>Total price: {{  sold.totalPrice }} </p>
+                <p>Discount: {{ sold.discount }}</p>
+                <p>After discount: {{ sold.afterDiscount }}</p>
+                <p>Shipping: {{ sold.shippingPrice }}</p>
+                <p>To pay: {{ sold.toPay }}</p>
                 <p>Status:
                     {% if(sold.confirmed == 1) %}
                         Finished transaction

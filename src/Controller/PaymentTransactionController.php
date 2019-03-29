@@ -33,12 +33,8 @@ class PaymentTransactionController extends AbstractController
         PaymentTransactionRepository $paymentTransactionRepository
     ) {
         $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
-        if ($checkIfExists !== null) {
-            return $this->redirectToRoute('advertisement_index');
-        }
-
-        if ($this->getUser() !== $sold->getUser()) {
-            return $this->redirectToRoute('advertisement_index');
+        if ($checkIfExists || ($this->getUser() !== $sold->getUser())) {
+            throw $this->createNotFoundException("Page not found.");
         }
 
         $gateway = self::gateway();
@@ -66,12 +62,8 @@ class PaymentTransactionController extends AbstractController
         PaymentTransactionRepository $paymentTransactionRepository
     ) {
         $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
-        if ($checkIfExists !== null) {
-            return $this->redirectToRoute('advertisement_index');
-        }
-
-        if ($this->getUser() !== $sold->getUser()) {
-            return $this->redirectToRoute('advertisement_index');
+        if ($checkIfExists || ($this->getUser() !== $sold->getUser())) {
+            throw $this->createNotFoundException("Page not found.");
         }
 
         $gateway = self::gateway();
@@ -128,12 +120,12 @@ class PaymentTransactionController extends AbstractController
     public function invoiceShow(Sold $sold, PaymentTransactionRepository $paymentTransactionRepository)
     {
         $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
-        if ($checkIfExists !== null) {
-            return $this->redirectToRoute('advertisement_index');
+        if ($checkIfExists || ($this->getUser() !== $sold->getUser())) {
+            throw $this->createNotFoundException("Page not found.");
         }
 
         if ($this->getUser() !== $sold->getUser()) {
-            return $this->redirectToRoute('advertisement_index');
+            throw $this->createNotFoundException("Page not found.");
         }
 
         return $this->render(
@@ -157,12 +149,8 @@ class PaymentTransactionController extends AbstractController
         PaymentTransactionRepository $paymentTransactionRepository
     ) {
         $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
-        if ($checkIfExists !== null) {
-            return $this->redirectToRoute('advertisement_index');
-        }
-
-        if ($this->getUser() !== $sold->getUser()) {
-            return $this->redirectToRoute('advertisement_index');
+        if ($checkIfExists || ($this->getUser() !== $sold->getUser())) {
+            throw $this->createNotFoundException("Page not found.");
         }
 
         $paymentTransaction = new PaymentTransaction();

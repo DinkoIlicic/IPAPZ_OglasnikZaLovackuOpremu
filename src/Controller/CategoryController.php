@@ -44,8 +44,8 @@ class CategoryController extends AbstractController
              * @var Category $category
              */
             $category = $form->getData();
+            $category->setUrlName(str_replace(' ', '-', $category->getName()));
             $category->setUser($this->getUser());
-            $category->setVisibility(true);
             $category->setVisibilityAdmin(true);
             $entityManager->persist($category);
             $entityManager->flush();
@@ -78,6 +78,11 @@ class CategoryController extends AbstractController
         $form = $this->createForm(CategoryFormType::class, $category);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
+            /**
+             * @var \App\Entity\Category $category
+             */
+            $category = $form->getData();
+            $category->setUrlName(str_replace(' ', '-', $category->getName()));
             $entityManager->persist($category);
             $entityManager->flush();
             $this->addFlash('success', 'Category updated!');

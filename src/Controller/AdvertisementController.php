@@ -8,7 +8,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Product;
 use App\Entity\Shipping;
@@ -95,29 +94,32 @@ class AdvertisementController extends AbstractController
         $categories = $categoryRepository->findBy(
             [
                 'visibilityAdmin' => 1
+            ],
+            [
+                'name' => 'ASC'
             ]
         );
         return $categories;
     }
 
     /**
-     * @Route("/show-categories/{id}", name="show_categories")
+     * @Route("/category/{urlName}", name="show_categories")
      * @param                          CategoryRepository $categoryRepository
      * @param                          ProductService $productService
      * @param                          Request $request
-     * @param                          Category $category
+     * @param                          $urlName
      * @param                          CustomPageRepository $customPageRepository
      * @return                         \Symfony\Component\HttpFoundation\Response
      */
     public function showProductsPerCategory(
-        Category $category,
+        $urlName,
         CategoryRepository $categoryRepository,
         ProductService $productService,
         Request $request,
         CustomPageRepository $customPageRepository
     ) {
         $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
-        $data = $productService->returnDataPerCategory($request, $category);
+        $data = $productService->returnDataPerCategory($request, $urlName);
         return $this->render(
             '/advertisement/category_products.html.twig',
             [
@@ -190,7 +192,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("/check-product/{pageName}", name="check_product")
+     * @Route("/product/{pageName}", name="check_product")
      * @param                              CategoryRepository $categoryRepository
      * @param                              EntityManagerInterface $entityManager
      * @param                              WishlistRepository $wishlistRepository
@@ -221,6 +223,10 @@ class AdvertisementController extends AbstractController
                 'customUrl' => $pageName
             ]
         );
+        if (!$product) {
+            throw $this->createNotFoundException("Page not found.");
+        }
+
         $productInWishlist = $wishlistRepository->findOneBy(
             [
                 'product' => $product,
@@ -378,12 +384,8 @@ class AdvertisementController extends AbstractController
         PaymentTransactionRepository $paymentTransactionRepository
     ) {
         $checkIfExists = $paymentTransactionRepository->findOneBy(['soldProduct' => $sold]);
-        if ($checkIfExists !== null) {
-            return $this->redirectToRoute('advertisement_index');
-        }
-
-        if ($this->getUser() !== $sold->getUser()) {
-            return $this->redirectToRoute('advertisement_index');
+        if ($checkIfExists || ($this->getUser() !== $sold->getUser())) {
+            throw $this->createNotFoundException("Page not found.");
         }
 
         $arrayWithHeaderData = self::findDataForHeader($customPageRepository, $categoryRepository);
@@ -520,7 +522,7 @@ class AdvertisementController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function commentOnProduct(Comment $comment, Product $product, EntityManagerInterface $entityManager)
+    private function commentOnProduct(Comment $comment, Product $product, EntityManagerInterface $entityManager)
     {
         $comment->setUser($this->getUser());
         $comment->setProduct($product);
@@ -539,7 +541,7 @@ class AdvertisementController extends AbstractController
      * @param Product $product
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function sendMail($formMailData, Product $product)
+    private function sendMail($formMailData, Product $product)
     {
         $name = $formMailData['name'];
         $from = $formMailData['from'];
@@ -726,6 +728,15 @@ class AdvertisementController extends AbstractController
                 'user' => $this->getUser(),
             ]
         );
+        if (!$removeProductFromWishlist) {
+            $this->addFlash('warning', 'Product not found in Your wishlist!');
+            return $this->redirectToRoute(
+                'check_product',
+                [
+                    'pageName' => $product->getCustomUrl()]
+            );
+        }
+
         $entityManager->remove($removeProductFromWishlist);
         $entityManager->flush();
 

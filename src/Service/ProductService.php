@@ -62,7 +62,7 @@ class ProductService
         return $results;
     }
 
-    public function returnDataPerCategory($request, $category)
+    public function returnDataPerCategory($request, $urlName)
     {
         $em = $this->em;
         $container = $this->container;
@@ -77,7 +77,7 @@ class ProductService
             JOIN
               c.category d
             WHERE 
-              d.id = :category and
+              d.urlName = :urlName and
               p.visibility = 1 and
               p.visibilityAdmin = 1 and
               d.visibilityAdmin = 1
@@ -85,7 +85,7 @@ class ProductService
               p.id DESC
             '
         );
-        $query->setParameter('category', $category);
+        $query->setParameter('urlName', $urlName);
         $paginator = $container->get('knp_paginator');
         $results = $paginator->paginate(
             $query,
