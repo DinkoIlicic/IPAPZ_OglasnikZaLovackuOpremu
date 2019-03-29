@@ -182,25 +182,31 @@ class ShippingController extends AbstractController
     /**
      * @Route("/admin/bulk-insert-paypal", name="bulk_insert_paypal")
      * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function bulkAllPayments(EntityManagerInterface $entityManager)
     {
-        $new1 = new PaymentMethod();
-        $new1->setMethod('Paypal');
-        $new1->setEnabled(true);
+        $newPaypal = new PaymentMethod();
+        $newPaypal->setMethod('Paypal');
+        $newPaypal->setEnabled(true);
 
-        $new2 = new PaymentMethod();
-        $new2->setMethod('Invoice');
-        $new2->setEnabled(true);
+        $newInvoice = new PaymentMethod();
+        $newInvoice->setMethod('Invoice');
+        $newInvoice->setEnabled(true);
 
-        $entityManager->persist($new1);
-        $entityManager->persist($new2);
+        $entityManager->persist($newPaypal);
+        $entityManager->persist($newInvoice);
         $entityManager->flush();
+
+        return $this->redirectToRoute(
+            'admin_index'
+        );
     }
 
     /**
      * @Route("/admin/bulk-insert-shipping", name="bulk_insert_shipping")
      * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function bulkAllCountries(EntityManagerInterface $entityManager)
     {
@@ -472,5 +478,9 @@ class ShippingController extends AbstractController
         }
 
         $entityManager->flush();
+
+        return $this->redirectToRoute(
+            'admin_index'
+        );
     }
 }
