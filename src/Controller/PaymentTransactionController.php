@@ -193,7 +193,7 @@ class PaymentTransactionController extends AbstractController
             ]
         );
 
-        $pdfName = date("Y") . $invoice->getId() . $sold->getUser()->getId() . '.pdf';
+        $pdfName = date("Y") . $sold->getUser()->getId() . $invoice->getId() . '.pdf';
         $invoice->setTransactionId($pdfName);
         $entityManager->persist($invoice);
         $entityManager->flush();
@@ -214,11 +214,10 @@ class PaymentTransactionController extends AbstractController
     }
 
     /**
-     * @Route("/admin/download/{fileName}",name="pdf_download")
      * @param $fileName
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function downloadPdf($fileName)
+    private function downloadPdf($fileName)
     {
         $filePath = $this->getParameter('kernel.project_dir') . '/public/invoice/' . $fileName;
 
@@ -234,6 +233,16 @@ class PaymentTransactionController extends AbstractController
         $response->headers->set('Pragma', 'no-cache');
         $response->headers->set('Expires', '0');
         return $response;
+    }
+
+    /**
+     * @Route("/admin/download/{fileName}",name="pdf_download")
+     * @param $fileName
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function downloadPdfAdmin($fileName)
+    {
+        return self::downloadPdf($fileName);
     }
 
     /**
@@ -253,36 +262,27 @@ class PaymentTransactionController extends AbstractController
             throw $this->createNotFoundException("Page not found.");
         }
 
-        $filePath = $this->getParameter('kernel.project_dir') . '/public/invoice/' . $fileName;
-
-        $response = new Response();
-        $response->headers->set('Content-type', 'application/octet-stream');
-        $response->headers->set(
-            'Content-Disposition',
-            sprintf('attachment; filename="%s"', $fileName)
-        );
-        $response->setContent(file_get_contents($filePath));
-        $response->setStatusCode(200);
-        $response->headers->set('Content-Transfer-Encoding', 'binary');
-        $response->headers->set('Pragma', 'no-cache');
-        $response->headers->set('Expires', '0');
-        return $response;
+        return self::downloadPdf($fileName);
     }
 
     /**
-     * @Route("/admin/confirm-payment-transaction-per-user/{paymentTransaction}",
-     *     name="confirm_payment_transaction_per_user_admin")
      * @param PaymentTransaction $paymentTransaction
      * @param EntityManagerInterface $entityManager
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return bool|\Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function confirmInvoicePaymentPerUserAdmin(
+    private function confirmInvoicePayment(
         PaymentTransaction $paymentTransaction,
         EntityManagerInterface $entityManager
     ) {
         $invoice = $paymentTransaction->getMethod();
         if ($invoice !== 'Invoice') {
-            return $this->redirectToRoute('admin_index');
+            return $this->redirectToRoute('seller_index');
+        }
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser() !== $paymentTransaction->getSoldProduct()->getProduct()->getUser()) {
+                throw $this->createNotFoundException("Page not found.");
+            }
         }
 
         if ($paymentTransaction->getConfirmed() === true) {
@@ -296,6 +296,22 @@ class PaymentTransactionController extends AbstractController
 
         $entityManager->persist($paymentTransaction);
         $entityManager->flush();
+        return true;
+    }
+
+    /**
+     * @Route("/admin/confirm-payment-transaction-per-user/{paymentTransaction}",
+     *     name="confirm_payment_transaction_per_user_admin")
+     * @param PaymentTransaction $paymentTransaction
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function confirmInvoicePaymentPerUserAdmin(
+        PaymentTransaction $paymentTransaction,
+        EntityManagerInterface $entityManager
+    ) {
+        self::confirmInvoicePayment($paymentTransaction, $entityManager);
+
         return $this->redirectToRoute(
             'view_sold_item_payment_method_per_user_admin',
             [
@@ -315,22 +331,8 @@ class PaymentTransactionController extends AbstractController
         PaymentTransaction $paymentTransaction,
         EntityManagerInterface $entityManager
     ) {
-        $invoice = $paymentTransaction->getMethod();
-        if ($invoice !== 'Invoice') {
-            return $this->redirectToRoute('admin_index');
-        }
+        self::confirmInvoicePayment($paymentTransaction, $entityManager);
 
-        if ($paymentTransaction->getConfirmed() === true) {
-            $paymentTransaction->setConfirmed(false);
-            $this->addFlash('success', 'Payment transaction confirm removed!');
-        } elseif ($paymentTransaction->getConfirmed() === false) {
-            $paymentTransaction->setConfirmed(true);
-            $paymentTransaction->onPrePersistPaidAt();
-            $this->addFlash('success', 'Payment transaction confirmed!');
-        }
-
-        $entityManager->persist($paymentTransaction);
-        $entityManager->flush();
         return $this->redirectToRoute(
             'view_sold_item_payment_method_per_product_admin',
             [
@@ -350,26 +352,8 @@ class PaymentTransactionController extends AbstractController
         PaymentTransaction $paymentTransaction,
         EntityManagerInterface $entityManager
     ) {
-        $invoice = $paymentTransaction->getMethod();
-        if ($invoice !== 'Invoice') {
-            return $this->redirectToRoute('seller_index');
-        }
+        self::confirmInvoicePayment($paymentTransaction, $entityManager);
 
-        if ($this->getUser() !== $paymentTransaction->getSoldProduct()->getProduct()->getUser()) {
-            throw $this->createNotFoundException("Page not found.");
-        }
-
-        if ($paymentTransaction->getConfirmed() === true) {
-            $paymentTransaction->setConfirmed(false);
-            $this->addFlash('success', 'Payment transaction confirm removed!');
-        } elseif ($paymentTransaction->getConfirmed() === false) {
-            $paymentTransaction->setConfirmed(true);
-            $paymentTransaction->onPrePersistPaidAt();
-            $this->addFlash('success', 'Payment transaction confirmed!');
-        }
-
-        $entityManager->persist($paymentTransaction);
-        $entityManager->flush();
         return $this->redirectToRoute(
             'view_sold_item_payment_method_per_user_seller',
             [
@@ -389,26 +373,8 @@ class PaymentTransactionController extends AbstractController
         PaymentTransaction $paymentTransaction,
         EntityManagerInterface $entityManager
     ) {
-        $invoice = $paymentTransaction->getMethod();
-        if ($invoice !== 'Invoice') {
-            return $this->redirectToRoute('seller_index');
-        }
+        self::confirmInvoicePayment($paymentTransaction, $entityManager);
 
-        if ($this->getUser() !== $paymentTransaction->getSoldProduct()->getProduct()->getUser()) {
-            throw $this->createNotFoundException("Page not found.");
-        }
-
-        if ($paymentTransaction->getConfirmed() === true) {
-            $paymentTransaction->setConfirmed(false);
-            $this->addFlash('success', 'Payment transaction confirm removed!');
-        } elseif ($paymentTransaction->getConfirmed() === false) {
-            $paymentTransaction->setConfirmed(true);
-            $paymentTransaction->onPrePersistPaidAt();
-            $this->addFlash('success', 'Payment transaction confirmed!');
-        }
-
-        $entityManager->persist($paymentTransaction);
-        $entityManager->flush();
         return $this->redirectToRoute(
             'view_sold_item_payment_method_per_product_seller',
             [
@@ -423,7 +389,7 @@ class PaymentTransactionController extends AbstractController
      * @param PaymentTransactionRepository $paymentTransactionRepository
      * @param Filesystem $filesystem
      */
-    private function deletePaymentTransactionAdmin(
+    private function deletePaymentTransaction(
         EntityManagerInterface $entityManager,
         PaymentTransaction $paymentTransaction,
         PaymentTransactionRepository $paymentTransactionRepository,
@@ -432,6 +398,12 @@ class PaymentTransactionController extends AbstractController
         $checkIfExists = $paymentTransactionRepository->findOneBy(['id' => $paymentTransaction->getId()]);
         if (!$checkIfExists) {
             throw $this->createNotFoundException("Page not found.");
+        }
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser() !== $paymentTransaction->getSoldProduct()->getProduct()->getUser()) {
+                throw $this->createNotFoundException("Page not found.");
+            }
         }
 
         if ($paymentTransaction->getMethod() === 'Invoice') {
@@ -465,7 +437,7 @@ class PaymentTransactionController extends AbstractController
         PaymentTransactionRepository $paymentTransactionRepository,
         Filesystem $filesystem
     ) {
-        self::deletePaymentTransactionAdmin(
+        self::deletePaymentTransaction(
             $entityManager,
             $paymentTransaction,
             $paymentTransactionRepository,
@@ -490,7 +462,7 @@ class PaymentTransactionController extends AbstractController
         PaymentTransactionRepository $paymentTransactionRepository,
         Filesystem $filesystem
     ) {
-        self::deletePaymentTransactionAdmin(
+        self::deletePaymentTransaction(
             $entityManager,
             $paymentTransaction,
             $paymentTransactionRepository,
@@ -498,43 +470,6 @@ class PaymentTransactionController extends AbstractController
         );
         $this->addFlash('success', 'Payment deleted!');
         return $this->redirectToRoute('view_sold_items_per_product_admin');
-    }
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param PaymentTransaction $paymentTransaction
-     * @param PaymentTransactionRepository $paymentTransactionRepository
-     * @param Filesystem $filesystem
-     */
-    private function deletePaymentTransactionSeller(
-        EntityManagerInterface $entityManager,
-        PaymentTransaction $paymentTransaction,
-        PaymentTransactionRepository $paymentTransactionRepository,
-        Filesystem $filesystem
-    ) {
-        $checkIfExists = $paymentTransactionRepository->findOneBy(['id' => $paymentTransaction->getId()]);
-        if (!$checkIfExists) {
-            throw $this->createNotFoundException("Page not found.");
-        }
-
-        if ($this->getUser() !== $paymentTransaction->getSoldProduct()->getProduct()->getUser()) {
-            throw $this->createNotFoundException("Page not found.");
-        }
-
-        if ($paymentTransaction->getMethod() === 'Invoice') {
-            $publicDirectory = self::returnPathToInvoice();
-            $filesystem->remove($publicDirectory . $paymentTransaction->getTransactionId());
-        }
-
-        /**
-         * @var \App\Entity\Sold $soldProduct
-         */
-        $soldProduct = $paymentTransaction->getSoldProduct();
-        $soldProduct->setConfirmed(false);
-        $soldProduct->setPaymentMethod(null);
-        $soldProduct->setAddress(null);
-        $entityManager->remove($paymentTransaction);
-        $entityManager->flush();
     }
 
     /**
@@ -552,7 +487,7 @@ class PaymentTransactionController extends AbstractController
         PaymentTransactionRepository $paymentTransactionRepository,
         Filesystem $filesystem
     ) {
-        self::deletePaymentTransactionSeller(
+        self::deletePaymentTransaction(
             $entityManager,
             $paymentTransaction,
             $paymentTransactionRepository,
@@ -578,7 +513,7 @@ class PaymentTransactionController extends AbstractController
         PaymentTransactionRepository $paymentTransactionRepository,
         Filesystem $filesystem
     ) {
-        self::deletePaymentTransactionSeller(
+        self::deletePaymentTransaction(
             $entityManager,
             $paymentTransaction,
             $paymentTransactionRepository,

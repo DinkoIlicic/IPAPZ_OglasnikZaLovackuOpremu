@@ -224,12 +224,29 @@ class ShippingController extends AbstractController
     }
 
     /**
-     * @Route("/admin/bulk-insert-shipping", name="bulk_insert_shipping")
+     * @Route("/admin/bulk-insert-all", name="bulk_insert_all")
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function bulkAllCountries(EntityManagerInterface $entityManager)
+    public function bulkAll(EntityManagerInterface $entityManager)
     {
+
+        $newPaypal = new PaymentMethod();
+        $newPaypal->setMethod('Paypal');
+        $newPaypal->setEnabled(true);
+        $newInvoice = new PaymentMethod();
+        $newInvoice->setMethod('Invoice');
+        $newInvoice->setEnabled(true);
+        $entityManager->persist($newPaypal);
+        $entityManager->persist($newInvoice);
+
+        $newDefault = new Shipping();
+        $newDefault->setCountry('Default');
+        $newDefault->setCountryCode('00');
+        $newDefault->setPrice(11);
+        $entityManager->persist($newDefault);
+
+
         $arrayCountries =
             [
                 ['countryCode' => 'AF', 'Country' => 'Afghanistan'],

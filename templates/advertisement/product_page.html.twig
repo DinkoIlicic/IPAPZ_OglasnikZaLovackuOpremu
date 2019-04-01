@@ -22,6 +22,8 @@
                             {{ form_row(form.couponCodeName) }}
                             <button type="submit" class="btn btn-primary" onclick="submitOnce(this, form)" formnovalidate>Buy</button>
                         {{ form_end(form) }}
+                    {% elseif (is_granted('ROLE_USER') == false and product.visibility == 1 and product.visibilityAdmin == 1) %}
+                        <p>Login to buy</p>
                     {% else %}
                         <p>Not available</p>
                     {% endif %}

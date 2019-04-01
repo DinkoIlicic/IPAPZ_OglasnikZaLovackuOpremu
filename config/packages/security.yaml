@@ -43,4 +43,4 @@ security:
         ROLE_ADMIN: [ROLE_USER, ROLE_SELLER]
         ROLE_SELLER: [ROLE_USER]
 
-    access_denied_url: advertisement_index
+    access_denied_url: redirect_to_index

@@ -335,7 +335,7 @@ class SoldProductsController extends AbstractController
         );
     }
 
-    private function confirmBuyAdmin(
+    private function confirmBuy(
         Sold $sold,
         EntityManagerInterface $entityManager,
         PaymentTransactionRepository $paymentTransactionRepository
@@ -348,6 +348,13 @@ class SoldProductsController extends AbstractController
                 'soldProduct' => $sold->getId()
             ]
         );
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser() !== $sold->getProduct()->getUser()) {
+                throw $this->createNotFoundException("Page not found.");
+            }
+        }
+
         if ($invoice->getConfirmed() === 0) {
             $invoice->setConfirmed(1);
             $this->addFlash('success', 'Buy confirmed!');
@@ -371,7 +378,7 @@ class SoldProductsController extends AbstractController
         EntityManagerInterface $entityManager,
         PaymentTransactionRepository $paymentTransactionRepository
     ) {
-        self::confirmBuyAdmin($sold, $entityManager, $paymentTransactionRepository);
+        self::confirmBuy($sold, $entityManager, $paymentTransactionRepository);
         return $this->redirectToRoute(
             'view_sold_items_per_user_admin',
             [
@@ -392,7 +399,7 @@ class SoldProductsController extends AbstractController
         EntityManagerInterface $entityManager,
         PaymentTransactionRepository $paymentTransactionRepository
     ) {
-        self::confirmBuyAdmin($sold, $entityManager, $paymentTransactionRepository);
+        self::confirmBuy($sold, $entityManager, $paymentTransactionRepository);
 
         return $this->redirectToRoute(
             'view_sold_items_per_product_admin',
@@ -400,35 +407,6 @@ class SoldProductsController extends AbstractController
                 'id' => $sold->getUser()->getId()
             ]
         );
-    }
-
-    private function confirmBuySeller(
-        Sold $sold,
-        EntityManagerInterface $entityManager,
-        PaymentTransactionRepository $paymentTransactionRepository
-    ) {
-        /**
-         * @var $invoice \App\Entity\PaymentTransaction
-         */
-        $invoice = $paymentTransactionRepository->findOneBy(
-            [
-                'user' => $sold->getUser()->getId(),
-                'soldProduct' => $sold->getId()
-            ]
-        );
-        if (!$invoice || $this->getUser() !== $sold->getProduct()->getUser()) {
-            throw $this->createNotFoundException("Page not found.");
-        }
-
-        if ($invoice->getConfirmed() === 0) {
-            $invoice->setConfirmed(1);
-            $this->addFlash('success', 'Buy confirmed!');
-        } elseif ($invoice->getConfirmed() === 1) {
-            $invoice->setConfirmed(0);
-            $this->addFlash('success', 'Buy unconfirmed!');
-        }
-
-        $entityManager->flush();
     }
 
     /**
@@ -443,7 +421,7 @@ class SoldProductsController extends AbstractController
         EntityManagerInterface $entityManager,
         PaymentTransactionRepository $paymentTransactionRepository
     ) {
-        self::confirmBuyAdmin($sold, $entityManager, $paymentTransactionRepository);
+        self::confirmBuy($sold, $entityManager, $paymentTransactionRepository);
         return $this->redirectToRoute(
             'view_sold_items_per_user_seller',
             [
@@ -464,7 +442,7 @@ class SoldProductsController extends AbstractController
         EntityManagerInterface $entityManager,
         PaymentTransactionRepository $paymentTransactionRepository
     ) {
-        self::confirmBuySeller($sold, $entityManager, $paymentTransactionRepository);
+        self::confirmBuy($sold, $entityManager, $paymentTransactionRepository);
 
         return $this->redirectToRoute(
             'view_sold_items_per_product_seller',
@@ -474,12 +452,19 @@ class SoldProductsController extends AbstractController
         );
     }
 
-    public function deleteProductItemAdmin(
+    private function deleteProductItem(
         Sold $sold,
         EntityManagerInterface $entityManager,
         ProductRepository $productRepository,
         WishlistRepository $wishlistRepository
     ) {
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser() !== $sold->getProduct()->getUser()) {
+                throw $this->createNotFoundException("Page not found.");
+            }
+        }
+
         /**
          * @var Product $productOld
          */
@@ -521,7 +506,7 @@ class SoldProductsController extends AbstractController
         ProductRepository $productRepository,
         WishlistRepository $wishlistRepository
     ) {
-        self::deleteProductItemAdmin($sold, $entityManager, $productRepository, $wishlistRepository);
+        self::deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute(
             'view_sold_items_per_user_admin',
@@ -545,7 +530,7 @@ class SoldProductsController extends AbstractController
         ProductRepository $productRepository,
         WishlistRepository $wishlistRepository
     ) {
-        self::deleteProductItemAdmin($sold, $entityManager, $productRepository, $wishlistRepository);
+        self::deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute(
             'view_sold_items_per_product_admin',
@@ -553,43 +538,6 @@ class SoldProductsController extends AbstractController
                 'id' => $sold->getUser()->getId()
             ]
         );
-    }
-
-    public function deleteProductItemSeller(
-        Sold $sold,
-        EntityManagerInterface $entityManager,
-        ProductRepository $productRepository,
-        WishlistRepository $wishlistRepository
-    ) {
-        if ($this->getUser() !== $sold->getProduct()->getUser()) {
-            throw $this->createNotFoundException("Page not found.");
-        }
-
-        /**
-         * @var Product $productOld
-         */
-        $productOld = $productRepository->findOneBy(
-            [
-                'id' => $sold->getProduct()->getId()
-            ]
-        );
-        if ($productOld->getAvailableQuantity() === 0) {
-            $wishlistProducts = $wishlistRepository->findBy(
-                [
-                    'product' => $productOld->getId()]
-            );
-            foreach ($wishlistProducts as $wishlistProduct) {
-                /**
-                 * @var $wishlistProduct \App\Entity\Wishlist;
-                 */
-                $wishlistProduct->setNotify(1);
-                $entityManager->persist($wishlistProduct);
-            }
-        }
-
-        $productOld->setAvailableQuantity($productOld->getAvailableQuantity() + $sold->getQuantity());
-        $entityManager->remove($sold);
-        $entityManager->flush();
     }
 
     /**
@@ -606,7 +554,7 @@ class SoldProductsController extends AbstractController
         ProductRepository $productRepository,
         WishlistRepository $wishlistRepository
     ) {
-        self::deleteProductItemSeller($sold, $entityManager, $productRepository, $wishlistRepository);
+        self::deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute(
             'view_sold_items_per_user_seller',
@@ -630,7 +578,7 @@ class SoldProductsController extends AbstractController
         ProductRepository $productRepository,
         WishlistRepository $wishlistRepository
     ) {
-        self::deleteProductItemSeller($sold, $entityManager, $productRepository, $wishlistRepository);
+        self::deleteProductItem($sold, $entityManager, $productRepository, $wishlistRepository);
         $this->addFlash('success', 'Item deleted!');
         return $this->redirectToRoute(
             'view_sold_items_per_product_seller',
