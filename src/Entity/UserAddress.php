@@ -42,8 +42,7 @@ class UserAddress
     private $addressFirst;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="string")
-     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=true)
+     * @\Doctrine\ORM\Mapping\Column(type="string", nullable=true)
      */
     private $addressSecond;
 
@@ -132,7 +131,7 @@ class UserAddress
     /**
      * @param mixed $addressSecond
      */
-    public function setAddressSecond($addressSecond): void
+    public function setAddressSecond($addressSecond)
     {
         $this->addressSecond = $addressSecond;
     }

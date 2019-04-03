@@ -70,7 +70,7 @@ class NewAddressFormType extends AbstractType
                 'addressSecond',
                 TextType::class,
                 [
-                    'label' => 'Address line 2: '
+                    'label' => 'Address line 2: ',
                 ]
             )
             ->add(
