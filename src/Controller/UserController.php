@@ -107,6 +107,7 @@ class UserController extends AbstractController
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('app_logout');
         }
+
         $user = $this->getUser();
         $form = $this->createForm(ProfileFormType::class, $user);
         $form->handleRequest($request);
