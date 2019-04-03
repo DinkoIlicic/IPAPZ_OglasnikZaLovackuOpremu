@@ -43,6 +43,7 @@ class UserAddress
 
     /**
      * @\Doctrine\ORM\Mapping\Column(type="string")
+     * @\Doctrine\ORM\Mapping\JoinColumn(nullable=true)
      */
     private $addressSecond;
 
