@@ -58,10 +58,6 @@ class UserController extends AbstractController
         LoginFormAuthenticator $authenticator,
         EntityManagerInterface $entityManager
     ) {
-        if ($this->isGranted('ROLE_USER')) {
-            return $this->redirectToRoute('advertisement_index');
-        }
-
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -107,6 +103,10 @@ class UserController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager
     ) {
+
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirectToRoute('app_logout');
+        }
         $user = $this->getUser();
         $form = $this->createForm(ProfileFormType::class, $user);
         $form->handleRequest($request);

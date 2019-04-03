@@ -69,7 +69,7 @@ class AdvertisementController extends AbstractController
     }
 
     /**
-     * @Route("redirect-to-index", name="redirect_to_index")
+     * @Route("/redirect-to-index", name="redirect_to_index")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function redirectToIndex()
