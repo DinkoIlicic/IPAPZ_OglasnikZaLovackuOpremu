@@ -44,7 +44,7 @@ class AdminListOfCategoriesFormType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => Category::class,
+                'data_class' => null
             ]
         );
     }

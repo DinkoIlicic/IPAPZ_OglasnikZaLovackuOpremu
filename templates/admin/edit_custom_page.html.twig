@@ -11,7 +11,7 @@
         {{ form_start(form) }}
             {{ form_row(form.pageName) }}
             {{ form_row(form.content, {'attr':{class: 'contentedittool'}}) }}
-            <button type="submit" class="btn btn-primary" onclick="submitOnce(this, form)" formnovalidate>Edit</button>
+            <button type="submit" class="btn btn-primary" id="disableButton" onclick="submitOnce(this, form)" formnovalidate>Edit</button>
         {{ form_end(form) }}
     </div>
 {% endblock %}

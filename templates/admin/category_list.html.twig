@@ -38,6 +38,6 @@
     <p>New Category</p>
     {{ form_start(form) }}
         {{ form_row(form.name) }}
-        <button type="submit" class="btn btn-primary" formnovalidate>Insert</button>
+        <button type="submit" class="btn btn-primary" id="disableButton" onclick="submitOnce(this, form)"  formnovalidate>Insert</button>
     {{ form_end(form) }}
 {% endblock %}

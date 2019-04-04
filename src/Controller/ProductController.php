@@ -40,11 +40,11 @@ class ProductController extends AbstractController
         $form = $this->createForm(AdminListOfCategoriesFormType::class);
         $form->handleRequest($request);
         if ($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid()) {
-            $category = $form->getData();
+            $category = $form->get('id')->getData();
             /**
              * @var \App\Entity\Category $category
              */
-            $message = $category->getId()->getName();
+            $message = $category->getName();
             $products = $productRepository->getProductsFromCategory($category->getId());
         } else {
             $products = $productRepository->findBy(

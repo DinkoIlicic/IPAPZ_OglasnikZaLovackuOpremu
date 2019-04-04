@@ -5,3 +5,7 @@ function submitOnce(obj, form)
         form.submit();
     }, 100);
 }
+
+document.getElementById("disableButton").addEventListener("click", function (event) {
+    event.preventDefault();
+});
