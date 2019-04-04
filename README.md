@@ -39,4 +39,10 @@ TO DO:
   - Poželjno je promisliti o implementaciji te modificirati dodatne stvari kako bi korisniku približili aplikaciju. Slobodno dodati nove funkcionalnosti. Postojeće funkcionalnosti ukratko dokumentirati u features/{određeni_entity}.md kako bi aplikacija bila preglednija i lakša za upoznavanje
   
 Extra:
-  - Dugačke funkciji razdvojiti u vise malih
+  - Add search on main page for customers
+  - Fix sold product search 
+  - Remove complete button for paypal
+  - Add shop cart 
+  - Increase to webshop
+  - Add option to have subcategories
+  - Test cron, test github branches
