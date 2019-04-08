@@ -33,4 +33,4 @@ Tasks:
   - Add shop cart 
   - Increase to webshop
   - Add option to have subcategories
-  - Test cron, test github branches
+  - Test cron, test github branches, cron job
