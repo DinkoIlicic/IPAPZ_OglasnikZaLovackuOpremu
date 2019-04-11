@@ -20,7 +20,7 @@ class Comment
     private $id;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="text")
+     * @\Doctrine\ORM\Mapping\Column(type="string", length=1000)
      * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $content;

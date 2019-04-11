@@ -23,7 +23,7 @@ class PaymentMethod
     private $id;
 
     /**
-     * @\Doctrine\ORM\Mapping\Column(type="text")
+     * @\Doctrine\ORM\Mapping\Column(type="string")
      * @\Symfony\Component\Validator\Constraints\NotBlank()
      */
     private $method;
